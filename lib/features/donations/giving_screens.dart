@@ -307,8 +307,9 @@ class _DonateScreenState extends ConsumerState<DonateScreen> {
             ),
             onChanged: (v) {
               final d = double.tryParse(v);
-              if (d != null && d >= 1)
+              if (d != null && d >= 1) {
                 setState(() => _amount = (d * 100).round());
+              }
             },
           ),
           const SizedBox(height: 20),
