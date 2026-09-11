@@ -1,0 +1,332 @@
+[
+  {
+    "id": "counter-surfing",
+    "title": "Stop jumping on counters and tables",
+    "category": "furniture",
+    "difficulty": 2,
+    "estimatedDays": 14,
+    "summary": "Teach your cat that the floor and a nearby perch are more rewarding than the kitchen counter – without ever scolding.",
+    "whyCatsDoIt": "Counters are high (safe), warm, smell of food and give a great view. Cats are not being 'naughty'; they are going where the good stuff is. Punishment only teaches them to wait until you leave the room.",
+    "steps": [
+      "Remove the payoff: keep counters free of food, crumbs and interesting objects for the whole training period.",
+      "Offer a legal alternative: place a cat tree or wall shelf right next to the counter at a similar height.",
+      "Reward the alternative: whenever your cat uses the perch, mark it with a click or a cheerful 'yes!' and give a tiny treat within two seconds.",
+      "When your cat jumps on the counter, calmly lift them down and place them on the perch. No talking, no eye contact. Reward as soon as all four paws are on the perch.",
+      "Practise 'off' cue: lure with a treat from counter to perch while saying 'off'. Repeat 5 times per session, twice a day.",
+      "Fade the lure: say 'off', wait 3 seconds, reward only when they move on their own.",
+      "Generalise: practise at different times of day and while you are cooking, since that is the hardest situation."
+    ],
+    "reinforcementTips": [
+      "Use pea-sized, high-value treats (freeze-dried chicken works for most cats).",
+      "Reward within 2 seconds so your cat connects the reward with the perch.",
+      "Sessions should be 3–5 minutes. End while your cat is still interested.",
+      "Reward calm behaviour on the floor during meal prep – the thing you *want* needs to pay better than the counter."
+    ],
+    "commonMistakes": [
+      "Spraying water, shouting or clapping. It damages trust and only suppresses the behaviour when you're watching.",
+      "Leaving food out 'just this once'. Intermittent rewards make counter-surfing stronger, not weaker.",
+      "Putting the perch across the room. It has to be at least as attractive as the counter."
+    ]
+  },
+  {
+    "id": "scratching-furniture",
+    "title": "Redirect scratching from the sofa to a post",
+    "category": "scratching",
+    "difficulty": 2,
+    "estimatedDays": 21,
+    "summary": "Scratching is a need, not a habit. Give your cat the right surface in the right place and reward using it.",
+    "whyCatsDoIt": "Scratching sheds claw sheaths, stretches back muscles and leaves visual and scent marks. Cats scratch where they wake up, near entrances and next to socially important spots – which is often the sofa arm.",
+    "steps": [
+      "Match the surface: watch whether your cat scratches vertically or horizontally and buy a sturdy post (at least 80 cm tall, must not wobble) in sisal or cardboard.",
+      "Place the post directly beside the furniture being scratched – not in a corner.",
+      "Make the post exciting: rub catnip or silver vine on it, drag a wand toy up the post so your cat's paws land on it.",
+      "Every time paws touch the post, mark and treat. Aim for 10 rewarded touches a day for the first week.",
+      "Make the sofa temporarily boring: cover the scratched spot with double-sided sticky tape or a smooth plastic sheet.",
+      "After 2–3 weeks of consistent use, move the post 10 cm per day toward your preferred final position.",
+      "Remove the tape once the post is used exclusively for a full week."
+    ],
+    "reinforcementTips": [
+      "Reward stretching and scratching on the post even if you didn't cue it – 'catch them being good'.",
+      "Cats love to scratch right after waking; keep a post next to favourite sleeping spots.",
+      "Praise in a soft, upbeat voice; many cats find loud excitement unsettling."
+    ],
+    "commonMistakes": [
+      "Taking the paws and physically 'showing' the cat how to scratch. Most cats hate this and will avoid the post.",
+      "Buying a post that's too short or wobbly.",
+      "Punishing the scratching instead of relocating it – scratching cannot be trained away."
+    ]
+  },
+  {
+    "id": "litter-box-avoidance",
+    "title": "Solve litter box avoidance",
+    "category": "litter",
+    "difficulty": 3,
+    "estimatedDays": 14,
+    "summary": "Peeing outside the box is almost always a message about health, the box itself or stress. Here's how to read it and fix it.",
+    "whyCatsDoIt": "Cats are fastidious. The most common reasons are pain (urinary tract issues – see a vet first!), a dirty or covered box, the wrong litter, a box in a scary location, or too few boxes in a multi-cat home.",
+    "steps": [
+      "Rule out medical causes: book a vet visit, especially if the change was sudden or your cat strains or cries in the box.",
+      "Apply the 'n + 1' rule: one box per cat plus one extra, in different rooms.",
+      "Use large, open boxes (1.5× the cat's length) with 5–7 cm of unscented, clumping litter.",
+      "Scoop twice daily and fully change litter weekly. Wash the box with mild soap only.",
+      "Clean accidents with an enzymatic cleaner to remove scent markers; never use ammonia-based products.",
+      "Place a box exactly where accidents happen, then move it 5 cm per day toward the target spot once it's being used.",
+      "Reward box use: quietly drop a treat near the box entrance after your cat finishes, for the first two weeks."
+    ],
+    "reinforcementTips": [
+      "Stay quiet and neutral around the box; cats don't want an audience.",
+      "If your cat likes a specific litter, don't switch brands to save money – consistency matters.",
+      "Reduce stress with predictable routines and vertical space."
+    ],
+    "commonMistakes": [
+      "Rubbing the cat's nose in the accident – this creates fear and makes things worse.",
+      "Using scented litter or liners; many cats dislike them.",
+      "Hiding the box in a noisy laundry room or next to a loud appliance."
+    ]
+  },
+  {
+    "id": "play-biting",
+    "title": "Stop play biting and ankle attacks",
+    "category": "biting",
+    "difficulty": 2,
+    "estimatedDays": 14,
+    "summary": "Redirect hunting energy onto toys, teach 'gentle' and make hands boring.",
+    "whyCatsDoIt": "Kittens learn bite inhibition from littermates. Cats who were hand-played with as kittens, or who lack enough play, treat moving hands and feet as prey.",
+    "steps": [
+      "Never use hands or feet as toys again – everyone in the household must agree.",
+      "Schedule two 10–15 minute wand-toy hunting sessions per day, ending with a 'catch' and a small meal.",
+      "If teeth touch skin: freeze, go completely still and quiet, then withdraw your hand slowly. Excitement is the reward – remove it.",
+      "Immediately offer a kicker toy so the cat can finish the 'kill' on something appropriate. Praise when they bite the toy.",
+      "Reward soft interactions: when your cat rubs or head-bumps your hand without biting, mark and treat.",
+      "For ankle ambushes, carry a small toy and toss it ahead of you when you see the crouch – reward the chase of the toy.",
+      "Add puzzle feeders and window perches to reduce boredom-driven aggression."
+    ],
+    "reinforcementTips": [
+      "Prey-like movements (toy hiding behind furniture, moving away) are far more rewarding than waving in the cat's face.",
+      "End play with a food reward so the hunting sequence feels complete.",
+      "Reward calm, four-paws-on-the-floor greetings."
+    ],
+    "commonMistakes": [
+      "Pulling your hand away fast – this mimics prey and triggers a harder bite.",
+      "Tapping the nose or scruffing; it increases fear and defensive biting.",
+      "Only playing when the cat demands it – set a routine instead."
+    ]
+  },
+  {
+    "id": "night-meowing",
+    "title": "Quiet nights: end 4 a.m. meowing",
+    "category": "vocalization",
+    "difficulty": 3,
+    "estimatedDays": 21,
+    "summary": "Shift your cat's activity peak to the evening and stop accidentally rewarding night-time noise.",
+    "whyCatsDoIt": "Cats are crepuscular – most active at dawn and dusk. If meowing has ever resulted in food, attention or the door opening, your cat learned that persistence pays.",
+    "steps": [
+      "Rule out medical causes in older cats (hyperthyroidism, pain, cognitive decline) with a vet check.",
+      "Move the biggest play session to 30 minutes before your bedtime: hunt, catch, then feed.",
+      "Use an automatic feeder set for 5 a.m. so food does not come from you.",
+      "Provide night entertainment: a window perch with a bird feeder outside, food puzzles filled at bedtime.",
+      "When your cat meows at night, do not respond at all – no talking, no getting up, no eye contact. Earplugs help in week one.",
+      "Reward silence: if your cat is quiet in the morning when you get up, greet and feed them promptly.",
+      "Expect an 'extinction burst' (louder meowing for a few nights) before it improves. Stay consistent."
+    ],
+    "reinforcementTips": [
+      "Reward quiet, settled behaviour on the bed or in their spot in the evening with calm petting.",
+      "A warm, covered bed in your room can reduce separation-based calling.",
+      "Consistency across all household members is essential."
+    ],
+    "commonMistakes": [
+      "Giving in on night five – this teaches your cat that meowing longer works.",
+      "Feeding as soon as you wake because of the meowing.",
+      "Locking the cat out of the bedroom without adding enrichment, which often increases yowling."
+    ]
+  },
+  {
+    "id": "carrier-training",
+    "title": "Love the carrier: stress-free vet trips",
+    "category": "handling",
+    "difficulty": 2,
+    "estimatedDays": 21,
+    "summary": "Turn the carrier from a trap into a safe den with tiny, rewarded steps.",
+    "whyCatsDoIt": "The carrier only ever appears before something scary happens, so cats learn to fear it. Making it part of everyday furniture removes the prediction.",
+    "steps": [
+      "Leave the carrier out permanently in a favourite room, door removed or propped open, with a soft blanket inside.",
+      "Day 1–3: drop treats near the carrier, then just inside the entrance. Never push the cat in.",
+      "Day 4–7: feed meals inside the carrier. Reward any voluntary entry with a treat.",
+      "Day 8–12: close the door for 2 seconds while the cat eats, open, treat. Build to 30 seconds, then 2 minutes.",
+      "Day 13–16: lift the carrier a few centimetres, set it down, open, treat. Build to carrying it across the room.",
+      "Day 17–21: short car rides that end at home with a special meal.",
+      "Before the vet: spray the blanket with a feline pheromone product 15 minutes before leaving."
+    ],
+    "reinforcementTips": [
+      "Use the highest value treats you have – this is a big ask.",
+      "Keep a towel over the carrier during transport to reduce visual stress.",
+      "Practise 'fake' trips regularly so the carrier doesn't only predict the vet."
+    ],
+    "commonMistakes": [
+      "Storing the carrier in a cupboard between vet visits.",
+      "Tipping the cat in through the top door under pressure – use it only as a last resort.",
+      "Going too fast; if the cat hesitates, go back a step."
+    ]
+  },
+  {
+    "id": "clicker-sit",
+    "title": "Clicker basics: 'sit' and 'come'",
+    "category": "tricks",
+    "difficulty": 1,
+    "estimatedDays": 7,
+    "summary": "Cats learn tricks fast when the timing is right. Start with charging the clicker, then teach sit and recall.",
+    "whyCatsDoIt": "A clicker is a precise marker that tells the cat exactly which movement earned the reward. It makes every other training goal easier.",
+    "steps": [
+      "Charge the clicker: click, treat. Repeat 10 times. Do this before every meal for two days until the cat looks for food on the click.",
+      "Sit: hold a treat just above the cat's nose and move it slowly back over their head. As the bottom touches the floor, click and treat.",
+      "Add the cue 'sit' just before the lure once the cat sits reliably 8/10 times.",
+      "Fade the lure: use an empty hand with the same motion, then just the word.",
+      "Come: say the cat's name + 'come' from one metre away, click when they take a step toward you, treat when they arrive.",
+      "Increase distance and add distractions gradually; always reward arriving.",
+      "Practise 2 minutes, 2–3 times per day."
+    ],
+    "reinforcementTips": [
+      "Timing is everything – click the instant the behaviour happens.",
+      "Use a soft, quiet clicker or a pen click for noise-sensitive cats.",
+      "Train before meals when motivation is highest."
+    ],
+    "commonMistakes": [
+      "Clicking without treating – the clicker loses its meaning.",
+      "Repeating the cue over and over; say it once.",
+      "Training when the cat is sleepy or overstimulated."
+    ]
+  },
+  {
+    "id": "waking-you-up",
+    "title": "Stop being woken up for breakfast",
+    "category": "feeding",
+    "difficulty": 2,
+    "estimatedDays": 14,
+    "summary": "Break the link between waking you and getting food using a timed feeder and rewarded patience.",
+    "whyCatsDoIt": "You are the food dispenser. If pawing at your face at 5 a.m. has ever produced breakfast, the behaviour is reinforced on a very powerful schedule.",
+    "steps": [
+      "Buy an automatic feeder and set the first meal for 15 minutes before the usual wake-up demand.",
+      "Feed a small meal right before your bedtime.",
+      "If woken, do not move, speak or push the cat off. Any reaction is attention.",
+      "Only get up once the cat has been quiet for at least one minute – and gradually stretch that time.",
+      "Move the feeder time later by 10 minutes every 3 days until it matches your schedule.",
+      "During the day, reward calm behaviour near the feeder with praise rather than food from your hand."
+    ],
+    "reinforcementTips": [
+      "Puzzle feeders slow eating and add mental stimulation.",
+      "Praise your cat for settling on the bed rather than on your chest."
+    ],
+    "commonMistakes": [
+      "Shutting the bedroom door without a feeder – the yowling will replace the pawing.",
+      "Occasionally giving in – variable rewards are the strongest kind."
+    ]
+  },
+  {
+    "id": "new-cat-intro",
+    "title": "Introduce a new cat without fights",
+    "category": "socialization",
+    "difficulty": 4,
+    "estimatedDays": 28,
+    "summary": "A slow, scent-first introduction protects both cats and sets up a lifetime of coexistence.",
+    "whyCatsDoIt": "Cats are territorial and do not need company. A stranger appearing suddenly in the core territory triggers fear-based aggression that is hard to undo.",
+    "steps": [
+      "Set up the newcomer in a separate room with litter, food, water, bed and scratching post for at least 3 days.",
+      "Scent swap: rub each cat with a soft cloth and place it in the other's space. Reward calm sniffing with treats.",
+      "Site swap: let the new cat explore the house while the resident cat spends time in the safe room. Repeat daily.",
+      "Feed both cats on either side of a closed door, moving bowls closer each day.",
+      "Visual contact through a baby gate or cracked door; play with both cats simultaneously and reward relaxed body language.",
+      "Short supervised meetings in a large room with escape routes and high perches. End before tension rises.",
+      "Increase duration slowly. Any hissing means go back a step for two days."
+    ],
+    "reinforcementTips": [
+      "Reward every glance at the other cat that isn't followed by tension – 'look at that' training.",
+      "Play sessions during meetings channel arousal into hunting instead of fighting.",
+      "Multiple resources (bowls, boxes, beds) in separate places prevent competition."
+    ],
+    "commonMistakes": [
+      "Putting the cats face to face on day one.",
+      "Letting them 'work it out' – a serious fight can poison the relationship for years.",
+      "Ignoring subtle stress signs like staring, blocking doorways or overgrooming."
+    ]
+  },
+  {
+    "id": "nail-trims",
+    "title": "Calm nail trims and handling",
+    "category": "handling",
+    "difficulty": 3,
+    "estimatedDays": 21,
+    "premium": true,
+    "summary": "Desensitise paws step by step so nail trims become a treat-filled routine.",
+    "whyCatsDoIt": "Paws are sensitive and being restrained triggers a fight-or-flight response. Cats tolerate what they've been taught predicts good things.",
+    "steps": [
+      "Touch a paw for one second, treat. Repeat 10 times over a day when the cat is relaxed.",
+      "Gently press a toe pad to extend a claw, treat. Build up to holding for 3 seconds.",
+      "Show the clippers, treat. Tap the clippers on the paw, treat.",
+      "Clip one nail, treat with something amazing, and stop for the day.",
+      "Add one nail per session. Never restrain – if the cat walks off, the session is over.",
+      "Once all nails are done in one sitting, maintain with a monthly trim and weekly paw handling."
+    ],
+    "reinforcementTips": [
+      "Lickable treats on a mat keep the cat busy while you work.",
+      "Train when the cat is sleepy, e.g. after a big play session.",
+      "Only trim the clear tip – avoid the pink quick."
+    ],
+    "commonMistakes": [
+      "Doing all claws at once the first time.",
+      "Wrapping the cat in a towel as the default – it should only ever be an emergency measure.",
+      "Skipping practice between trims."
+    ]
+  },
+  {
+    "id": "harness-walks",
+    "title": "Harness and leash training",
+    "category": "enrichment",
+    "difficulty": 3,
+    "estimatedDays": 28,
+    "premium": true,
+    "summary": "Safe outdoor enrichment for indoor cats, built on the same tiny-steps method.",
+    "whyCatsDoIt": "A harness feels like being held by a predator until the cat learns it predicts treats and adventures.",
+    "steps": [
+      "Leave the harness near the food bowl for 3 days.",
+      "Drape the harness over the cat's back for a second, treat. Build up to fastening it loosely.",
+      "Wear the harness indoors for 1 minute during play, gradually up to 15 minutes.",
+      "Attach the leash and let it drag indoors, supervised, rewarding calm walking.",
+      "First outdoor trips: a quiet garden or balcony, 5 minutes, carried out and back.",
+      "Let the cat choose the direction; a cat walk is a supervised sniff, not a hike."
+    ],
+    "reinforcementTips": [
+      "Reward frequently outdoors; the environment is very distracting.",
+      "Always carry the cat through doors so they never learn to bolt out."
+    ],
+    "commonMistakes": [
+      "Using a collar instead of an H-style or vest harness – cats slip out of collars.",
+      "Going outside before the harness is fully accepted indoors.",
+      "Forcing the walk when the cat freezes."
+    ]
+  },
+  {
+    "id": "door-dashing",
+    "title": "Stop door dashing",
+    "category": "furniture",
+    "difficulty": 2,
+    "estimatedDays": 14,
+    "summary": "Teach a 'station' behaviour so the front door opening predicts treats away from the door.",
+    "whyCatsDoIt": "The door leads to a huge, exciting territory. Every successful dash is a massive reward.",
+    "steps": [
+      "Choose a station (a mat or cat tree) 2–3 metres from the door.",
+      "Reward the cat for going to the station on cue ('mat!') – toss the treat onto the mat.",
+      "Practise touching the door handle, then cue 'mat', reward on the mat. Repeat 10 times per session.",
+      "Open the door 5 cm, cue, reward. Build up to fully opening.",
+      "Have a helper ring the doorbell or knock; cue 'mat', reward.",
+      "Keep a jar of treats by the door so everyone rewards the station every time they come home."
+    ],
+    "reinforcementTips": [
+      "Toss treats away from the door so the reward location competes with the exit.",
+      "Provide outdoor enrichment alternatives (catio, window perch) to reduce motivation."
+    ],
+    "commonMistakes": [
+      "Chasing the cat back inside – chasing is a fun game.",
+      "Practising only when guests are arriving; train in quiet sessions first."
+    ]
+  }
+]

@@ -1,0 +1,42 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+*.log
+
+# Generated localizations are produced by `flutter gen-l10n`
+lib/l10n/generated/
+
+# Firebase local config (generate with `flutterfire configure`)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+.firebaserc
+
+# Secrets
+.env
+.env.*
+functions/.env
+functions/node_modules/
+functions/lib/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/ephemeral/
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/**/*.keystore
+
+# OS
+.DS_Store

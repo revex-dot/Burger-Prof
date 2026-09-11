@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function isExpert() {
+      return signedIn() && exists(/databases/$(database)/documents/experts/$(request.auth.uid));
+    }
+
+    // Profile: readable/writable by its owner. Money & tier fields are
+    // written only by the backend (webhook), never by the client.
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid)
+        && !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['tier', 'totalDonatedCents', 'stripeCustomerId', 'subscriptionStatus', 'subscriptionId']);
+
+      match /{sub=cats|goals|sessions|videos}/{doc} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // Reference data managed by admins / seed script.
+    match /charities/{id}   { allow read: if true; allow write: if false; }
+    match /experts/{id}     { allow read: if true; allow write: if false; }
+    match /products/{id}    { allow read: if true; allow write: if false; }
+    match /plans/{id}       { allow read: if true; allow write: if false; }
+    match /impactUpdates/{id} { allow read: if true; allow write: if false; }
+
+    // Ledger: users see their own donations/orders; only functions write.
+    match /donations/{id} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+    match /orders/{id} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+    match /stripeEvents/{id} { allow read, write: if false; }
+
+    // Community
+    match /posts/{postId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.body.size() <= 5000;
+      allow update: if signedIn() && (
+        resource.data.authorId == request.auth.uid
+        // anyone may bump counters (validated to +/-1 by the client transaction)
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount', 'commentCount'])
+      );
+      allow delete: if signedIn() && resource.data.authorId == request.auth.uid;
+
+      match /comments/{id} {
+        allow read: if signedIn();
+        allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+        allow delete: if signedIn() && resource.data.authorId == request.auth.uid;
+      }
+      match /likes/{uid} {
+        allow read: if signedIn();
+        allow write: if isOwner(uid);
+      }
+    }
+
+    // Expert consultations: visible to the user and the assigned expert.
+    match /consultations/{id} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update: if signedIn()
+        && (resource.data.userId == request.auth.uid || resource.data.expertId == request.auth.uid);
+
+      match /messages/{mid} {
+        allow read, create: if signedIn() && (
+          get(/databases/$(database)/documents/consultations/$(id)).data.userId == request.auth.uid
+          || get(/databases/$(database)/documents/consultations/$(id)).data.expertId == request.auth.uid
+        );
+      }
+    }
+  }
+}
