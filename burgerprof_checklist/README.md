@@ -23,8 +23,17 @@ v1.0) helyett.
 * **Előzmények** – az utolsó 45 nap, naponként a három lista státusza
   (kész / nincs aláírva / részben / nem töltötték ki), megnyitva a fotókkal
   és aláírásokkal. Korábbi napot csak vezető módosíthat.
-* **Beállítások (vezetői PIN)** – dolgozók névsora, a sablonok szerkesztése
-  (szöveg, sorrend, heti napok, új tétel, törlés), PIN.
+* **Hiánytalanság kikényszerítése** – aláírni csak akkor lehet, ha minden
+  feladat le van zárva. Ami nem készült el, ahhoz írásos indok kell, és az
+  bekerül a vezetői ellenőrzésbe. A `required` tételeket nem lehet kihagyni,
+  a `photo` tételeket csak fotóval lehet kipipálni. Listánként `dueBy`
+  határidő, utána a lista „késésben”.
+* **Ellenőrzés fül (csak vezetőknek)** – figyelmet igénylő tételek 8 napra,
+  14 napos napi áttekintő mátrix, szúrópróba (feladatonként rendben/kifogás
+  + megjegyzés, `audits/` alá mentve), 30 napos teljesítési statisztika,
+  CSV export.
+* **Beállítások (csak vezetőknek)** – dolgozók névsora, sablonok szerkesztése
+  (szöveg, sorrend, heti napok, kötelező, fotó kell, határidő, aláírási mód).
 
 ## Hogyan fut
 
@@ -34,6 +43,26 @@ A fájl a claude.ai Artifact futtatókörnyezetére épül:
   `shifts/<dátum>_<lista>`, `photos/*`).
 * `assets` képesség – fotók tárolása teljes méretben (csak szerkesztési joggal
   megosztott nézőknek; enélkül a fotó kicsinyítve az adatbázisba kerül).
+* `downloads` képesség – CSV export.
+
+### Hozzáférés
+
+A vezetői jogot nem PIN adja, hanem a platform megosztási szintje. A db
+szabályai:
+
+| útvonal | olvasás | írás |
+|---|---|---|
+| `` (gyökér: `shifts`, `photos`) | interact | interact |
+| `templates`, `settings` | interact | admin |
+| `audits`, `admin` | admin | admin |
+
+A dolgozók „megtekintheti” (interact) joggal kapják a linket: kitöltik a
+listákat, de a sablonokat nem írhatják át, és az ellenőrzéseket nem is
+látják. A vezetők „szerkesztheti” (admin) joggal kapják.
+
+A felület az `admin/marker` dokumentum olvasásával dönti el, vezető-e a
+néző: dolgozói szinten ez nemlétezőnek látszik, ezért az Ellenőrzés fül
+meg sem jelenik.
 
 Ha a fájlt önállóan, `window.claude` nélkül nyitod meg, ugyanaz a felület
 `localStorage`-ba ment – csak azon az egy eszközön látszik.

@@ -1,5 +1,5 @@
 <title>BurgerProf Feladatlista</title>
-<meta name="description" content="Napi nyitó és záró feladatlisták a Burger Prof csapatának: pipálás, fotó, aláírás.">
+<meta name="description" content="Napi nyitó és záró feladatlisták a Burger Prof csapatának: pipálás, fotó, aláírás, vezetői ellenőrzés.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">
 <style>
@@ -69,8 +69,11 @@
   .who {
     border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); color: #F3EFE7;
     border-radius: 999px; padding: 6px 12px 6px 10px; display: flex; align-items: center; gap: 8px;
-    font-weight: 600; max-width: 55%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-weight: 600; max-width: 60%; min-width: 0; flex: 0 1 auto;
   }
+  .who #whoName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .brand { min-width: 0; overflow: hidden; white-space: nowrap; }
+  @media (max-width: 440px) { .brand small { display: none; } }
   .who.empty { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .who .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
   .who.empty .dot { background: var(--accent-ink); }
@@ -82,6 +85,9 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tabs .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .tabs.admin .wrap { grid-template-columns: repeat(4, 1fr); }
+  .tab { font-size: 15px; }
+  .tabs.admin .tab { font-size: 13px; letter-spacing: .04em; }
   .tab {
     background: none; border: 0; padding: 10px 4px 8px; color: var(--ink-3);
     font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase;
@@ -244,7 +250,7 @@
 
   .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: #F3EFE7; padding: 10px 16px; border-radius: 999px; font-weight: 600; z-index: 60; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; }
   .banner { background: var(--warn-soft); color: var(--warn); font-size: 14px; font-weight: 600; padding: 8px 16px; text-align: center; }
-  .empty { color: var(--ink-3); text-align: center; padding: 32px 16px; }
+  .empty-state { color: var(--ink-3); text-align: center; padding: 32px 16px; }
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   @media print {
@@ -252,6 +258,63 @@
     body { background: #fff; color: #000; padding: 0; }
     .item { break-inside: avoid; }
   }
+  /* ---- állapotjelzők, ellenőrzés ---- */
+  .item.skipped { background: var(--warn-soft); border-color: transparent; }
+  .item.skipped .box { border-color: var(--warn); color: var(--warn); border-style: dashed; }
+  .item.skipped .box svg { width: 22px; height: 22px; }
+  .item .reason { margin-top: 4px; font-size: 14px; color: var(--warn); font-weight: 500; }
+  .badge { font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; }
+  .badge.req { background: var(--danger-soft); color: var(--danger); }
+  .badge.pho { background: var(--surface-2); color: var(--ink-2); }
+  .pill.late { background: var(--danger-soft); color: var(--danger); }
+
+  .alert { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--warn); border-radius: var(--radius); padding: 10px 12px; }
+  .alert.bad { border-left-color: var(--danger); }
+  .alert.ok { border-left-color: var(--done); }
+  .alert .ic { width: 22px; height: 22px; color: var(--warn); }
+  .alert.bad .ic { color: var(--danger); }
+  .alert .t { display: block; font-weight: 600; line-height: 1.25; }
+  .alert .s { display: block; font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .alert .go { color: var(--ink-3); font-size: 20px; }
+
+  .matrix { width: 100%; border-collapse: separate; border-spacing: 3px; }
+  .matrix th { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); padding: 0 0 4px; text-align: center; line-height: 1.15; }
+  .matrix th.dt { text-align: left; width: 74px; }
+  .matrix td.dt { font-size: 13px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .matrix td.dt b { color: var(--ink); font-weight: 600; }
+  .mx { width: 100%; height: 36px; border: 0; border-radius: 7px; font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .03em; color: var(--ink-2); background: var(--surface-2); display: flex; align-items: center; justify-content: center; gap: 3px; }
+  .mx.closed { background: var(--done); color: #fff; }
+  .mx.late { background: var(--warn); color: #fff; }
+  .mx.unsigned { background: var(--accent); color: var(--accent-ink); }
+  .mx.open { background: var(--accent-soft); color: var(--accent-ink); }
+  .mx.none { background: var(--danger-soft); color: var(--danger); }
+  .mx .dotm { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .75; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  .audit-bar { display: flex; gap: 8px; align-items: center; background: var(--ink); color: #F3EFE7; border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; }
+  .audit-bar .t { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; flex: 1; }
+  .audit-bar .btn { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .audit-bar .btn.ghost { background: transparent; border-color: rgba(255,255,255,.3); color: #F3EFE7; }
+  .verd { display: flex; gap: 6px; margin-top: 6px; }
+  .vbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; min-height: 34px; padding: 4px 12px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+  .vbtn.ok.on { background: var(--done); border-color: var(--done); color: #fff; }
+  .vbtn.bad.on { background: var(--danger); border-color: var(--danger); color: #fff; }
+  .audit-rec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .audit-rec .hd { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .audit-rec ul { margin: 8px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+
+  .stat-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .stat-row:last-child { border-bottom: 0; }
+  .stat-row .v { font-family: var(--font-display); font-weight: 700; font-size: 19px; font-variant-numeric: tabular-nums; }
+  .minibar { height: 5px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 5px; }
+  .minibar i { display: block; height: 100%; background: var(--done); }
+  .fix-list { display: flex; flex-direction: column; gap: 8px; }
+  .fix-item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .fix-item .t { font-weight: 600; line-height: 1.3; }
+  .fix-item .acts { display: flex; gap: 8px; margin-top: 8px; }
+
 </style>
 
 <header class="top">
@@ -262,13 +325,16 @@
 </header>
 <div id="banner" hidden class="banner"></div>
 <main class="wrap" id="view"></main>
-<nav class="tabs" aria-label="Fő navigáció">
+<nav class="tabs" id="tabs" aria-label="Fő navigáció">
   <div class="wrap">
     <button class="tab active" data-tab="today" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Ma
     </button>
     <button class="tab" data-tab="history" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Előzmények
+    </button>
+    <button class="tab" data-tab="audit" type="button" id="tabAudit" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Ellenőrzés
     </button>
     <button class="tab" data-tab="settings" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Beállítások
@@ -281,16 +347,18 @@
 /* ============================================================
    BurgerProf Feladatlista
    - Adatok: claude db (közös, valós idejű) — ha nem elérhető, localStorage
-   - Fotók: claude assets (ha szerkesztési jog van) — különben kicsinyítve a db-be
+   - Fotók: claude assets; export: claude downloads
+   - Vezetői hozzáférés: a platform megosztási szintje dönti el
+     („szerkesztheti” = vezető). Az ellenőrzések csak nekik olvashatók.
    ============================================================ */
 (function () {
 'use strict';
 
 /* ---------- Alap sablonok (a nyomtatott listák v3.0 / v1.0 alapján) ---------- */
 const DEFAULT_TEMPLATES = [
-  { id: 'morning_counter', order: 1, name: 'Reggeli feladatok', section: 'Pult', perItem: false, items: [
-    { id: 'm01', text: 'Gépek be: hűtő lámpa, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti logó, terminálok (Wolt / Foodora / bankkártya + akku)' },
-    { id: 'm02', text: 'Napi nyitás + váltópénz és nyitó összeg leszámolása; gépekbe papír + tartalék a közelben' },
+  { id: 'morning_counter', order: 1, name: 'Reggeli feladatok', section: 'Pult', perItem: false, dueBy: '11:00', items: [
+    { id: 'm01', text: 'Gépek be: hűtő lámpa, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti logó, terminálok (Wolt / Foodora / bankkártya + akku)', required: true },
+    { id: 'm02', text: 'Napi nyitás + váltópénz és nyitó összeg leszámolása; gépekbe papír + tartalék a közelben', required: true },
     { id: 'm03', text: 'Zene lejátszólista elindítása' },
     { id: 'm04', text: 'Benti asztalok letörlése' },
     { id: 'm05', text: 'Felsepregetés, felmosás' },
@@ -308,13 +376,13 @@ const DEFAULT_TEMPLATES = [
     { id: 'm17', text: 'Szemetesek check, ürítés, külső törlés' },
     { id: 'm18', text: 'WC-papír töltés' },
     { id: 'm19', text: 'WC vízkőoldás, WC-olaj' },
-    { id: 'm20', text: 'Mosdó padlójának takarítása' },
+    { id: 'm20', text: 'Mosdó padlójának takarítása', photo: true },
     { id: 'm21', text: 'Ablaktisztítás', weekly: [1, 5] },
     { id: 'm22', text: 'Boxok, asztalok elhúzása', weekly: [2, 4, 6, 7] },
   ]},
-  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', perItem: false, items: [
+  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', perItem: false, dueBy: '23:59', items: [
     { id: 'e01', text: 'Benti asztalok letörlése' },
-    { id: 'e02', text: 'Székek felpakolása az asztalokra' },
+    { id: 'e02', text: 'Székek felpakolása az asztalokra', photo: true },
     { id: 'e03', text: 'Padló felsepregetés' },
     { id: 'e04', text: 'Szalvétaadagoló, sóadagoló behozása' },
     { id: 'e05', text: 'Napernyők behúzása' },
@@ -325,23 +393,23 @@ const DEFAULT_TEMPLATES = [
     { id: 'e10', text: 'Fagyi utántöltése' },
     { id: 'e11', text: 'Töltésre helyezés: banki terminál, kültéri lámpák, aksis eszközök' },
     { id: 'e12', text: 'WC-k átnézve, rendben' },
-    { id: 'e13', text: 'Gépek ki: hűtő világítás, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti és kültéri logó' },
-    { id: 'e14', text: 'Napi zárás: készpénz leszámolása + papírok + boríték a kasszába (dátum, összeg, aláírás)' },
-    { id: 'e15', text: 'Világítás lekapcsolva, ajtó bezárva' },
+    { id: 'e13', text: 'Gépek ki: hűtő világítás, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti és kültéri logó', required: true },
+    { id: 'e14', text: 'Napi zárás: készpénz leszámolása + papírok + boríték a kasszába (dátum, összeg, aláírás)', required: true },
+    { id: 'e15', text: 'Világítás lekapcsolva, ajtó bezárva', required: true },
   ]},
-  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', perItem: true, items: [
+  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', perItem: true, dueBy: '23:59', items: [
     { id: 'k01', text: 'Dohányzó teljes rendezése' },
-    { id: 'k02', text: 'Padló teljes tisztítása' },
+    { id: 'k02', text: 'Padló teljes tisztítása', photo: true },
     { id: 'k03', text: 'Konyhai kuka kívülről takarítva, zsák kiürítése és új zsák belerakása' },
-    { id: 'k04', text: 'Mosogatás, mosogató üresre pakolása, fertőtlenítése, tisztára törlése' },
+    { id: 'k04', text: 'Mosogatás, mosogató üresre pakolása, fertőtlenítése, tisztára törlése', required: true },
     { id: 'k05', text: 'Összeszerelő hűtő takarítása kívül, belül' },
     { id: 'k06', text: 'Kézmosó eltakarítása' },
     { id: 'k07', text: 'Bucipirító és az alatta lévő asztal eltakarítása' },
     { id: 'k08', text: 'Középső asztal teljes tisztítása és rendezése (alsó szint is)' },
     { id: 'k09', text: 'Fritu takarítása kívülről' },
     { id: 'k10', text: 'Grilles hűtő takarítása kívül, belül' },
-    { id: 'k11', text: 'Teljes rostlap takarítás' },
-    { id: 'k12', text: 'Olajos edény kiürítve, elmosva' },
+    { id: 'k11', text: 'Teljes rostlap takarítás', photo: true, required: true },
+    { id: 'k12', text: 'Olajos edény kiürítve, elmosva', required: true },
     { id: 'k13', text: 'Elszívó 1 rács tisztára mosva' },
     { id: 'k14', text: 'Rostlap alatt takarítás', weekly: [1] },
     { id: 'k15', text: 'Fritu alatt takarítás', weekly: [1] },
@@ -349,7 +417,7 @@ const DEFAULT_TEMPLATES = [
     { id: 'k17', text: 'Csempe takarítás', weekly: [2, 5] },
     { id: 'k18', text: 'Fritu csere', weekly: [2, 6] },
     { id: 'k19', text: 'Konyhai kuka belülről', weekly: [3] },
-    { id: 'k20', text: 'Reggeli tennivaló lista kitöltése' },
+    { id: 'k20', text: 'Reggeli tennivaló lista kitöltése', required: true },
   ]},
 ];
 const DAY_NAMES = ['', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'];
@@ -362,18 +430,15 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&a
 const pad = n => String(n).padStart(2, '0');
 const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
-const weekdayOf = s => ((parseYmd(s).getDay() + 6) % 7) + 1; // 1=Hétfő … 7=Vasárnap
+const weekdayOf = s => ((parseYmd(s).getDay() + 6) % 7) + 1;
 const hhmm = iso => { const d = new Date(iso); return isNaN(d) ? '' : `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 const longDate = s => { const d = parseYmd(s); return `${d.getFullYear()}. ${MONTHS[d.getMonth()]} ${d.getDate()}.`; };
-const shortDate = s => { const d = parseYmd(s); return `${MONTHS[d.getMonth()].slice(0, 3)}. ${d.getDate()}.`; };
+const shortDate = s => { const d = parseYmd(s); return `${d.getMonth() + 1}. ${d.getDate()}.`; };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return ymd(d); };
 const ls = {
   get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
-};
-const ss = {
-  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
-  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
 };
 
 let toastTimer;
@@ -382,21 +447,24 @@ function toast(msg) {
   if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
   t.textContent = msg;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.remove(), 2600);
+  toastTimer = setTimeout(() => t.remove(), 3000);
 }
 
 const ICON = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  minus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>',
   camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
   back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
   pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
   up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>',
   down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
   trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
-  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  down2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>',
 };
 
-/* ---------- Helyi tároló, ami a db felületét utánozza (ha nincs közös adatbázis) ---------- */
+/* ---------- Helyi tároló, ami a db felületét utánozza ---------- */
 function makeLocalStore() {
   const KEY = 'bp_local_db';
   const data = ls.get(KEY, {});
@@ -441,66 +509,95 @@ function makeLocalStore() {
   return { doc: docRef, collection: colRef, local: true };
 }
 
-/* ---------- Alkalmazás állapot ---------- */
+/* ---------- Állapot ---------- */
 const state = {
-  db: null, assets: null, assetsChecked: false,
-  templates: null,          // db-ből; null → alapértelmezett
-  settings: null,           // { pin, staff }
+  db: null, assets: null, assetsChecked: false, downloads: null,
+  isAdmin: false, adminChecked: false,
+  templates: null, settings: null,
   who: ls.get('bp_who', ''),
-  route: { tab: 'today' },  // {tab:'today'} | {tab:'check', date, tplId} | {tab:'history'} | {tab:'settings'}
-  todayShifts: {},          // tplId -> shift doc (mai)
-  openShift: null,          // a megnyitott lista dokumentuma
-  history: [],              // shift docs (utolsó 45 nap)
-  unsub: {},
-  photoCache: {},
-  editTemplates: null,      // beállításokban szerkesztés alatt
+  route: { tab: 'today' },
+  todayShifts: {}, openShift: null, history: [], audits: [],
+  unsub: {}, photoCache: {}, editTemplates: null,
+  audit: null,           // { verdicts: {itemId:{v,c}}, note }
+  _day: ymd(new Date()),
 };
 
 function templates() {
   const t = state.templates && state.templates.length ? state.templates : DEFAULT_TEMPLATES;
   return [...t].sort((a, b) => (a.order || 0) - (b.order || 0));
 }
-function templateById(id) { return templates().find(t => t.id === id) || DEFAULT_TEMPLATES.find(t => t.id === id); }
+function templateById(id) { return templates().find(t => t.id === id) || DEFAULT_TEMPLATES.find(t => t.id === id) || { id, name: id, section: '', items: [] }; }
 function staff() { return (state.settings && Array.isArray(state.settings.staff)) ? state.settings.staff : []; }
 function itemsForDay(tpl, dateStr) {
   const wd = weekdayOf(dateStr);
   return (tpl.items || []).filter(it => !it.weekly || !it.weekly.length || it.weekly.includes(wd));
 }
+function defsOf(shift, tpl, dateStr) {
+  if (shift && shift.items_def && shift.items_def.length) return shift.items_def;
+  return itemsForDay(tpl, dateStr).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length), required: !!it.required, photo: !!it.photo }));
+}
 function shiftId(dateStr, tplId) { return `${dateStr}_${tplId}`; }
-/* true → feladatonként külön elvégző személy (konyha); false → egy felelős az egész listára (pult) */
 function isPerItem(tpl, shift) {
   if (shift && typeof shift.perItem === 'boolean') return shift.perItem;
   return !!(tpl && tpl.perItem);
+}
+function dueOf(tpl, shift) { return (shift && shift.dueBy) || (tpl && tpl.dueBy) || ''; }
+function dueDate(dateStr, due) {
+  if (!due) return null;
+  const [h, m] = due.split(':').map(Number);
+  const d = parseYmd(dateStr); d.setHours(h || 0, m || 0, 0, 0); return d;
 }
 function peopleOf(shift) {
   if (!shift) return [];
   const set = new Set();
   if (shift.owner) set.add(shift.owner);
-  Object.values(shift.items || {}).forEach(r => { if (r && r.done && r.by) set.add(r.by); });
+  Object.values(shift.items || {}).forEach(r => { if (r && (r.done || r.skipped) && r.by) set.add(r.by); });
   (shift.signatures || []).forEach(x => set.add(x.name));
   return [...set];
 }
-function isManager() { return ss.get('bp_mgr') === '1' || !(state.settings && state.settings.pin); }
 
-/* Egy lista állapota: {total, done, signed, closed} */
+/* Egy lista állapota */
 function shiftStats(shift, tpl, dateStr) {
-  const items = shift && shift.items_def ? shift.items_def : itemsForDay(tpl, dateStr);
-  const total = items.length;
-  const done = items.filter(it => shift && shift.items && shift.items[it.id] && shift.items[it.id].done).length;
+  const defs = defsOf(shift, tpl, dateStr);
+  const items = shift && shift.items || {};
+  let done = 0, skipped = 0;
+  defs.forEach(d => { const r = items[d.id]; if (r && r.done) done++; else if (r && r.skipped) skipped++; });
+  const total = defs.length;
+  const open = total - done - skipped;
   const signed = !!(shift && shift.signatures && shift.signatures.length);
-  return { total, done, signed, closed: total > 0 && done === total && signed };
+  const closed = total > 0 && open === 0 && signed;
+  const due = dueDate(dateStr, dueOf(tpl, shift));
+  const closedAt = shift && shift.closedAt ? new Date(shift.closedAt) : null;
+  let late = false;
+  if (due) late = closed ? (closedAt ? closedAt > due : false) : (new Date() > due);
+  const touched = done + skipped > 0 || signed;
+  const code = !touched ? 'none' : closed ? (late ? 'late' : 'closed') : open === 0 ? 'unsigned' : 'open';
+  return { total, done, skipped, open, signed, closed, late, code, touched };
 }
+const STATUS = {
+  none: { label: 'Nem töltötték ki', cls: 'none' },
+  open: { label: 'Folyamatban', cls: 'open' },
+  unsigned: { label: 'Aláírás hiányzik', cls: 'unsigned' },
+  closed: { label: 'Kész, aláírva', cls: 'closed' },
+  late: { label: 'Kész, de késve', cls: 'late' },
+};
 
 /* ---------- Adatréteg ---------- */
 async function initStore() {
   let db = null;
   try { if (window.claude && typeof window.claude.use === 'function') db = await window.claude.use('db'); } catch (e) { db = null; }
   state.db = db || makeLocalStore();
-  if (!db) showBanner('Csak ezen az eszközön mentődik (nincs közös adatbázis). Nyisd meg a claude.ai-n megosztott linkről a közös használathoz.');
+  if (!db) showBanner('Csak ezen az eszközön mentődik (nincs közös adatbázis). A közös használathoz a megosztott linket nyisd meg.');
+  await checkAdmin();
   subscribeBase();
   subscribeToday();
   render();
-  // fotótár – csak akkor kérjük, ha kell (első fotónál)
+}
+async function checkAdmin() {
+  state.adminChecked = true;
+  if (state.db.local) { state.isAdmin = true; return; }
+  try { const s = await state.db.doc('admin/marker').get(); state.isAdmin = !!s.exists; }
+  catch (e) { state.isAdmin = false; }
 }
 async function getAssets() {
   if (state.assetsChecked) return state.assets;
@@ -540,14 +637,19 @@ function subscribeOpenShift(id) {
 }
 function subscribeHistory() {
   if (state.unsub.hist) return;
-  const from = new Date(); from.setDate(from.getDate() - 45);
-  state.unsub.hist = state.db.collection('shifts').where('date', '>=', ymd(from)).orderBy('date', 'desc').limit(400).onSnapshot(snap => {
+  state.unsub.hist = state.db.collection('shifts').where('date', '>=', daysAgo(45)).orderBy('date', 'desc').limit(400).onSnapshot(snap => {
     state.history = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
   }, err => console.warn('history', err));
 }
+function subscribeAudits() {
+  if (state.unsub.audits || !state.isAdmin) return;
+  state.unsub.audits = state.db.collection('audits').where('date', '>=', daysAgo(45)).orderBy('date', 'desc').limit(300).onSnapshot(snap => {
+    state.audits = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('audits', err));
+}
 
-/* A napi dokumentum létrehozása az első interakciónál (a sablon aznapi tételeit lemásolva) */
 async function ensureShift(dateStr, tplId) {
   const id = shiftId(dateStr, tplId);
   const ref = state.db.doc('shifts/' + id);
@@ -556,9 +658,10 @@ async function ensureShift(dateStr, tplId) {
   const tpl = templateById(tplId);
   const body = {
     date: dateStr, templateId: tplId, templateName: tpl.name, section: tpl.section,
-    weekday: weekdayOf(dateStr), perItem: !!tpl.perItem, owner: null,
-    items_def: itemsForDay(tpl, dateStr).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) })),
-    items: {}, signatures: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+    weekday: weekdayOf(dateStr), perItem: !!tpl.perItem, dueBy: tpl.dueBy || '', owner: null,
+    items_def: itemsForDay(tpl, dateStr).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length), required: !!it.required, photo: !!it.photo })),
+    items: {}, signatures: [], closedAt: null,
+    createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   };
   await ref.set(body);
   return { id, ...body };
@@ -570,6 +673,15 @@ async function patchShift(id, patch) {
     console.warn(e);
     toast(e && e.code === 'quota_exceeded' ? 'Megtelt az adatbázis – szólj a vezetőnek.' : 'Nem sikerült menteni, próbáld újra.');
   }
+}
+async function writeItem(itemId, patchFn) {
+  const shift = await ensureShift(state.route.date, state.route.tplId);
+  const rec = (shift.items && shift.items[itemId]) || {};
+  const next = patchFn(rec);
+  state.openShift = state.openShift || shift;
+  state.openShift.items = { ...(state.openShift.items || {}), [itemId]: next };
+  render();
+  await patchShift(shift.id, { items: { [itemId]: next } });
 }
 
 /* ---------- Fotók ---------- */
@@ -632,25 +744,28 @@ async function deletePhoto(ref) {
 
 /* ---------- Render ---------- */
 function render() {
-  const whoBtn = $('#whoBtn');
   $('#whoName').textContent = state.who || 'Ki vagy?';
-  whoBtn.classList.toggle('empty', !state.who);
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === (state.route.tab === 'check' ? state.route.from || 'today' : state.route.tab)));
+  $('#whoBtn').classList.toggle('empty', !state.who);
+  $('#tabAudit').hidden = !state.isAdmin;
+  $('#tabs').classList.toggle('admin', state.isAdmin);
+  const active = state.route.tab === 'check' ? (state.route.from || 'today') : state.route.tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === active));
   const v = $('#view');
   const r = state.route;
   if (r.tab === 'today') v.innerHTML = renderToday();
   else if (r.tab === 'check') v.innerHTML = renderCheck();
   else if (r.tab === 'history') { subscribeHistory(); v.innerHTML = renderHistory(); }
+  else if (r.tab === 'audit') { subscribeHistory(); subscribeAudits(); v.innerHTML = renderAudit(); }
   else if (r.tab === 'settings') v.innerHTML = renderSettings();
 }
 
-function ringSvg(done, total) {
+function ringSvg(done, total, code) {
   const pct = total ? done / total : 0;
-  const r = 20, c = 2 * Math.PI * r;
-  const color = total && done === total ? 'var(--done)' : 'var(--accent)';
+  const rr = 20, c = 2 * Math.PI * rr;
+  const color = code === 'closed' ? 'var(--done)' : code === 'late' ? 'var(--warn)' : 'var(--accent)';
   return `<svg class="ring" viewBox="0 0 52 52" aria-hidden="true">
-    <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="6"/>
-    <circle cx="26" cy="26" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
+    <circle cx="26" cy="26" r="${rr}" fill="none" stroke="var(--surface-2)" stroke-width="6"/>
+    <circle cx="26" cy="26" r="${rr}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
       stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - pct)}" transform="rotate(-90 26 26)"/>
     <text x="26" y="30" text-anchor="middle" font-family="var(--font-display)" font-weight="700" font-size="14" fill="var(--ink)">${done}/${total}</text>
   </svg>`;
@@ -662,27 +777,30 @@ function renderToday() {
   const cards = templates().map(tpl => {
     const shift = state.todayShifts[tpl.id];
     const st = shiftStats(shift, tpl, today);
-    const cls = st.closed ? 'state-done' : (st.done > 0 || st.signed) ? 'state-partial' : '';
-    const weekly = itemsForDay(tpl, today).filter(i => i.weekly && i.weekly.length).length;
+    const cls = st.closed ? 'state-done' : st.touched ? 'state-partial' : '';
+    const defs = defsOf(shift, tpl, today);
+    const weekly = defs.filter(i => i.weekly).length;
     const people = peopleOf(shift);
+    const due = dueOf(tpl, shift);
     let pill;
-    if (st.closed) pill = '<span class="pill done">Lezárva, aláírva</span>';
-    else if (st.done === st.total && st.total) pill = '<span class="pill warn">Aláírás hiányzik</span>';
-    else if (st.done > 0) pill = '<span class="pill partial">Folyamatban</span>';
-    else pill = '<span class="pill">Még nem kezdték el</span>';
+    if (st.closed) pill = `<span class="pill ${st.late ? 'warn' : 'done'}">${st.late ? 'Kész, de késve' : 'Kész, aláírva'}</span>`;
+    else if (st.late) pill = `<span class="pill late">Késésben – ${esc(due)} a határidő</span>`;
+    else if (st.open === 0 && st.total) pill = '<span class="pill warn">Aláírás hiányzik</span>';
+    else if (st.touched) pill = `<span class="pill partial">Folyamatban – még ${st.open}</span>`;
+    else pill = `<span class="pill">Még nem kezdték el${due ? ` · ${esc(due)}-ig` : ''}</span>`;
     return `<button class="list-card ${cls}" type="button" data-open="${tpl.id}" data-date="${today}">
       <div>
         <div class="eyebrow">${esc(tpl.section)}</div>
         <div class="name">${esc(tpl.name)}</div>
-        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${people.length ? ` · ${esc(people.join(', '))}` : ''}</div>
+        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${people.length ? ` · ${esc(people.join(', '))}` : ''}${st.skipped ? ` · ${st.skipped} kihagyva` : ''}</div>
         <div style="margin-top:8px">${pill}</div>
       </div>
-      <div class="prog">${ringSvg(st.done, st.total)}</div>
+      <div class="prog">${ringSvg(st.done + st.skipped, st.total, st.code)}</div>
     </button>`;
   }).join('');
   return `<div class="today-head"><h1>Ma</h1><div class="date">${DAY_NAMES[wd]} · ${longDate(today)}</div></div>
     <div class="stack">${cards}</div>
-    <p class="muted small" style="margin-top:18px">Válaszd ki a listát, pipáld ki a kész feladatokat, fotózz, ha kell, a végén írd alá. Minden mentés azonnal látszik a többieknél is.</p>`;
+    <p class="muted small" style="margin-top:18px">Pipáld ki a kész feladatokat, fotózz, ahol kérik, a végén írd alá. Aláírni csak akkor lehet, ha minden feladat kész – amit nem sikerült megcsinálni, azt indoklással kell lezárni.</p>`;
 }
 
 function renderCheck() {
@@ -690,36 +808,47 @@ function renderCheck() {
   const tpl = templateById(tplId);
   const shift = state.openShift;
   const perItem = isPerItem(tpl, shift);
-  const items = shift && shift.items_def ? shift.items_def : itemsForDay(tpl, date).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) }));
+  const defs = defsOf(shift, tpl, date);
   const st = shiftStats(shift, tpl, date);
   const today = ymd(new Date());
-  const editable = date === today || isManager();
+  const editable = (date === today || state.isAdmin) && !state.audit;
+  const auditing = !!state.audit;
   const wd = weekdayOf(date);
   const owner = (shift && shift.owner) || '';
+  const due = dueOf(tpl, shift);
 
-  const rows = items.map(it => {
+  const rows = defs.map(it => {
     const rec = shift && shift.items ? shift.items[it.id] : null;
     const done = !!(rec && rec.done);
+    const skipped = !!(rec && rec.skipped && !done);
     const url = rec && rec.photo ? photoUrl(rec.photo) : null;
     let who = '';
-    if (perItem) {
-      if (done || (rec && rec.by)) {
-        who = `<button class="who-chip" type="button" data-person="${esc(it.id)}" ${editable ? '' : 'disabled'} aria-label="Elvégző személy módosítása">${esc(rec.by || '—')}${editable ? ICON.pen : ''}</button>`;
-      } else if (editable) {
-        who = `<button class="who-chip empty" type="button" data-person="${esc(it.id)}">+ Elvégző személy</button>`;
-      }
+    if (perItem && (done || skipped || (rec && rec.by))) {
+      who = `<button class="who-chip" type="button" data-person="${esc(it.id)}" ${editable ? '' : 'disabled'}>${esc((rec && rec.by) || '—')}${editable ? ICON.pen : ''}</button>`;
+    } else if (perItem && editable) {
+      who = `<button class="who-chip empty" type="button" data-person="${esc(it.id)}">+ Elvégző személy</button>`;
     }
-    return `<div class="item ${done ? 'done' : ''}" data-item="${esc(it.id)}">
-      <button class="box" type="button" data-toggle="${esc(it.id)}" aria-pressed="${done}" aria-label="${done ? 'Kész' : 'Nincs kész'}: ${esc(it.text)}" ${editable ? '' : 'disabled'}>${done ? ICON.check : ''}</button>
+    const v = auditing ? (state.audit.verdicts[it.id] || {}) : null;
+    const verdict = auditing ? `<div class="verd">
+        <button class="vbtn ok ${v.v === 'ok' ? 'on' : ''}" type="button" data-verdict="${esc(it.id)}:ok">Rendben</button>
+        <button class="vbtn bad ${v.v === 'bad' ? 'on' : ''}" type="button" data-verdict="${esc(it.id)}:bad">Kifogás</button>
+        ${v.c ? `<span class="small" style="align-self:center;color:var(--danger)">${esc(v.c)}</span>` : ''}
+      </div>` : '';
+    return `<div class="item ${done ? 'done' : skipped ? 'skipped' : ''}" data-item="${esc(it.id)}">
+      <button class="box" type="button" data-toggle="${esc(it.id)}" aria-pressed="${done}" aria-label="${done ? 'Kész' : skipped ? 'Kihagyva' : 'Nincs kész'}: ${esc(it.text)}" ${editable ? '' : 'disabled'}>${done ? ICON.check : skipped ? ICON.minus : ''}</button>
       <div class="body">
         <button class="text-btn" type="button" data-toggle="${esc(it.id)}" ${editable ? '' : 'disabled'}><div class="text">${esc(it.text)}</div></button>
         <div class="meta">
           ${it.weekly ? '<span class="tag">Heti</span>' : ''}
+          ${it.required ? '<span class="badge req">Kötelező</span>' : ''}
+          ${it.photo ? '<span class="badge pho">Fotó kell</span>' : ''}
           ${who}
-          ${done ? `<span class="num">${hhmm(rec.at)}</span>` : ''}
+          ${done || skipped ? `<span class="num">${hhmm(rec.at)}</span>` : ''}
           ${editable ? `<button class="note-btn" type="button" data-note="${esc(it.id)}">${rec && rec.note ? 'megjegyzés szerkesztése' : 'megjegyzés'}</button>` : ''}
         </div>
+        ${skipped && rec.skipReason ? `<div class="reason">Kihagyva: ${esc(rec.skipReason)}</div>` : ''}
         ${rec && rec.note ? `<div class="note">${esc(rec.note)}</div>` : ''}
+        ${verdict}
       </div>
       <div class="side">
         ${rec && rec.photo
@@ -729,64 +858,74 @@ function renderCheck() {
     </div>`;
   }).join('');
 
-  const ownerBlock = perItem ? '' : `<div class="owner-row ${owner ? '' : 'empty'}">
-      <div>
-        <div class="eyebrow">A nap felelőse</div>
-        <div class="nm ${owner ? '' : 'none'}">${owner ? esc(owner) : 'Még nincs kiválasztva'}</div>
-      </div>
+  const ownerBlock = perItem || auditing ? '' : `<div class="owner-row ${owner ? '' : 'empty'}">
+      <div><div class="eyebrow">A nap felelőse</div><div class="nm ${owner ? '' : 'none'}">${owner ? esc(owner) : 'Még nincs kiválasztva'}</div></div>
       ${editable ? `<button class="btn sm ${owner ? '' : 'primary'}" type="button" data-owner>${owner ? 'Csere' : 'Kiválaszt'}</button>` : ''}
     </div>`;
-  const modeNote = perItem
-    ? '<p class="mode-note">Minden feladatnál külön szerepel, ki végezte el. Pipáláskor a saját neved kerül oda, de bármelyiknél átírható.</p>'
-    : '';
+
+  const auditBar = auditing
+    ? `<div class="audit-bar">
+        <span class="t">Szúrópróba</span>
+        <button class="btn sm ghost" type="button" data-audit-cancel>Mégse</button>
+        <button class="btn sm" type="button" data-audit-save>Mentés</button>
+      </div>`
+    : (state.isAdmin ? `<div class="audit-bar"><span class="t">Vezetői nézet</span><button class="btn sm" type="button" data-audit-start>${ICON.shield} Szúrópróba</button></div>` : '');
+
+  const past = state.audits.filter(a => a.date === date && a.templateId === tplId);
+  const pastHtml = state.isAdmin && past.length ? `<div class="section"><h3>Korábbi ellenőrzések</h3><div class="stack">${past.map(a => {
+    const bad = Object.entries(a.items || {}).filter(([, x]) => x.v === 'bad');
+    return `<div class="audit-rec">
+      <div class="hd"><b>${esc(a.by || '—')}</b><span class="small muted num">${shortDate(a.date)} ${hhmm(a.at)}</span></div>
+      <div class="small ${bad.length ? '' : 'muted'}" style="margin-top:4px;color:${bad.length ? 'var(--danger)' : ''}">${bad.length ? `${bad.length} kifogás` : 'Minden rendben volt'}</div>
+      ${bad.length ? `<ul>${bad.map(([id, x]) => { const d = defs.find(q => q.id === id); return `<li>${esc(d ? d.text : id)}${x.c ? ` — ${esc(x.c)}` : ''}</li>`; }).join('')}</ul>` : ''}
+      ${a.note ? `<div class="small" style="margin-top:6px">${esc(a.note)}</div>` : ''}
+    </div>`;
+  }).join('')}</div></div>` : '';
 
   const sigs = (shift && shift.signatures || []).map((sg, i) => `<div class="sig">
       <img src="${esc(sg.png)}" alt="Aláírás: ${esc(sg.name)}">
       <div><div class="n">${esc(sg.name)}</div><div class="small muted num">${hhmm(sg.at)}${editable ? ` · <button class="note-btn" type="button" data-delsig="${i}">törlés</button>` : ''}</div></div>
     </div>`).join('');
-  const sigHint = perItem
-    ? 'Aki dolgozott a műszakban, írja alá – több aláírás is lehet.'
-    : 'A nap felelőse írja alá, ha minden kész.';
+  const sigHint = perItem ? 'Aki dolgozott a műszakban, írja alá – több aláírás is lehet.' : 'A nap felelőse írja alá, ha minden kész.';
 
   return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
     <div class="check-head">
       <div class="eyebrow">${esc(tpl.section)} · ${DAY_NAMES[wd]}</div>
       <h1>${esc(tpl.name)}</h1>
-      <div class="meta"><span class="num">${longDate(date)}</span><span class="num"><b>${st.done}</b> / ${st.total} kész</span></div>
-      <div class="bar ${st.total && st.done === st.total ? 'full' : ''}" style="margin-top:10px"><i style="width:${st.total ? Math.round(100 * st.done / st.total) : 0}%"></i></div>
+      <div class="meta"><span class="num">${longDate(date)}</span><span class="num"><b>${st.done}</b> / ${st.total} kész${st.skipped ? ` · ${st.skipped} kihagyva` : ''}</span>${due ? `<span class="num ${st.late && !st.closed ? '' : 'muted'}" style="${st.late && !st.closed ? 'color:var(--danger);font-weight:600' : ''}">${st.late && !st.closed ? 'Késésben, határidő' : 'Határidő'}: ${esc(due)}</span>` : ''}</div>
+      <div class="bar ${st.open === 0 && st.total ? 'full' : ''}" style="margin-top:10px"><i style="width:${st.total ? Math.round(100 * (st.done + st.skipped) / st.total) : 0}%"></i></div>
     </div>
-    ${editable ? '' : '<div class="readonly-banner">Korábbi nap – csak megtekinthető. Módosításhoz vezetői belépés kell a Beállításokban.</div>'}
+    ${auditBar}
+    ${editable || auditing ? '' : '<div class="readonly-banner">Korábbi nap – csak megtekinthető.</div>'}
     ${ownerBlock}
-    ${modeNote}
+    ${perItem && editable ? '<p class="mode-note">Minden feladatnál külön szerepel, ki végezte el. Pipáláskor a saját neved kerül oda, de bármelyiknél átírható.</p>' : ''}
     <div class="items">${rows}</div>
-    ${st.closed ? `<div class="closed-banner">${ICON.check} Minden feladat kész, a lista alá van írva.</div>` : ''}
-    <div class="section">
+    ${st.closed ? `<div class="closed-banner">${ICON.check} Minden feladat lezárva, a lista alá van írva.</div>` : ''}
+    ${auditing ? '' : `<div class="section">
       <div class="row-between"><h3>Aláírás</h3>${editable ? `<button class="btn sm primary" type="button" data-sign>${ICON.pen} Aláírom</button>` : ''}</div>
       ${sigs ? `<div class="sigs">${sigs}</div>` : `<p class="muted small" style="margin:0">${sigHint} Ez helyettesíti a papír aláírását.</p>`}
-    </div>
-    ${st.total && st.done < st.total && editable ? `<p class="muted small" style="margin-top:14px">Még ${st.total - st.done} feladat hiányzik.</p>` : ''}`;
+      ${st.open > 0 && editable ? `<p class="muted small" style="margin-top:10px">Még ${st.open} feladat nincs lezárva – aláírni csak utána lehet.</p>` : ''}
+    </div>`}
+    ${pastHtml}`;
 }
-
 
 function renderHistory() {
   const byDate = {};
   state.history.forEach(s => { (byDate[s.date] = byDate[s.date] || {})[s.templateId] = s; });
   const today = ymd(new Date());
   const dates = Object.keys(byDate).filter(d => d !== today).sort().reverse();
-  if (!dates.length) return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="empty">Még nincs korábbi nap. A kitöltött listák itt jelennek meg, dátum szerint.</div>`;
+  if (!dates.length) return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="empty-state">Még nincs korábbi nap. A kitöltött listák itt jelennek meg, dátum szerint.</div>`;
   const tpls = templates();
   const days = dates.map(d => {
     const rows = tpls.map(tpl => {
       const s = byDate[d][tpl.id];
       const st = shiftStats(s, tpl, d);
-      let pill = !s ? '<span class="pill danger">Nem töltötték ki</span>'
-        : st.closed ? '<span class="pill done">Kész, aláírva</span>'
-        : st.done === st.total ? '<span class="pill warn">Nincs aláírva</span>'
-        : `<span class="pill warn num">${st.done}/${st.total}</span>`;
+      const info = STATUS[st.code];
+      const cls = st.code === 'closed' ? 'done' : st.code === 'none' ? 'danger' : 'warn';
       const who = peopleOf(s).join(', ');
       return `<button class="hist-row" type="button" data-open="${tpl.id}" data-date="${d}">
-        <div><div class="n">${esc(tpl.name)} <span class="muted">· ${esc(tpl.section)}</span></div>${who ? `<div class="s">${esc(who)}</div>` : ''}</div>
-        ${pill}
+        <div><div class="n">${esc(tpl.name)} <span class="muted">· ${esc(tpl.section)}</span></div>${who ? `<div class="s">${esc(who)}</div>` : ''}${st.skipped ? `<div class="s" style="color:var(--warn)">${st.skipped} feladat indoklással kihagyva</div>` : ''}</div>
+        <span class="pill ${cls}">${st.code === 'open' ? `${st.done}/${st.total}` : info.label}</span>
       </button>`;
     }).join('');
     return `<div class="hist-day"><div class="d"><b>${DAY_NAMES[weekdayOf(d)]}</b><span class="muted num">${longDate(d)}</span></div>${rows}</div>`;
@@ -794,29 +933,192 @@ function renderHistory() {
   return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="stack">${days}</div><p class="muted small" style="margin-top:16px">Az utolsó 45 nap látszik.</p>`;
 }
 
-function renderSettings() {
-  if (!isManager()) {
-    return `<h1 style="margin-bottom:14px">Beállítások</h1>
-      <div class="card stack">
-        <p style="margin:0">A dolgozók listáját, a feladatsablonokat és a PIN-t csak vezetői PIN-nel lehet módosítani.</p>
-        <div class="field"><label for="pinIn">Vezetői PIN</label><input type="password" id="pinIn" inputmode="numeric" autocomplete="off" placeholder="••••"></div>
-        <button class="btn primary block" type="button" data-pin-login>${ICON.lock} Belépés</button>
-      </div>`;
+/* ---------- Ellenőrzés (csak vezetőknek) ---------- */
+function shiftMap() {
+  const m = {};
+  state.history.forEach(s => { (m[s.date] = m[s.date] || {})[s.templateId] = s; });
+  const today = ymd(new Date());
+  m[today] = m[today] || {};
+  Object.values(state.todayShifts).forEach(s => { m[today][s.templateId] = s; });
+  return m;
+}
+function firstUseDate() {
+  let first = ymd(new Date());
+  state.history.forEach(s => { if (s.date < first) first = s.date; });
+  return first;
+}
+function problemList(days) {
+  const m = shiftMap();
+  const tpls = templates();
+  const today = ymd(new Date());
+  const from = firstUseDate();
+  const out = [];
+  for (let i = 0; i < days; i++) {
+    const d = daysAgo(i);
+    if (d < from) continue;
+    tpls.forEach(tpl => {
+      const s = (m[d] || {})[tpl.id];
+      const st = shiftStats(s, tpl, d);
+      if (st.code === 'none' && (d !== today || st.late)) out.push({ sev: 'bad', date: d, tplId: tpl.id, t: `${tpl.name} – nem töltötték ki`, s: `${DAY_NAMES[weekdayOf(d)]}, ${longDate(d)} · ${tpl.section}` });
+      else if (st.code === 'unsigned') out.push({ sev: 'warn', date: d, tplId: tpl.id, t: `${tpl.name} – nincs aláírva`, s: `${longDate(d)} · minden feladat lezárva, de hiányzik az aláírás` });
+      else if (st.code === 'open' && d !== today) out.push({ sev: 'bad', date: d, tplId: tpl.id, t: `${tpl.name} – ${st.open} feladat befejezetlen`, s: `${longDate(d)} · ${tpl.section}` });
+      else if (st.code === 'open' && st.late) out.push({ sev: 'warn', date: d, tplId: tpl.id, t: `${tpl.name} – késésben`, s: `Határidő: ${dueOf(tpl, s)} · még ${st.open} feladat` });
+      if (s && s.items) Object.entries(s.items).forEach(([id, r]) => {
+        if (r.skipped && !r.done) {
+          const def = defsOf(s, tpl, d).find(x => x.id === id);
+          out.push({ sev: 'warn', date: d, tplId: tpl.id, t: `Kihagyva: ${def ? def.text : id}`, s: `${longDate(d)} · ${r.by || '—'} · „${r.skipReason || 'nincs indok'}”` });
+        }
+      });
+    });
   }
+  state.audits.filter(a => a.date >= daysAgo(days - 1)).forEach(a => {
+    const bad = Object.entries(a.items || {}).filter(([, x]) => x.v === 'bad');
+    if (bad.length) out.push({ sev: 'bad', date: a.date, tplId: a.templateId, t: `Ellenőrzés: ${bad.length} kifogás`, s: `${longDate(a.date)} · ${a.templateName || ''} · ${a.by || ''}` });
+  });
+  return out;
+}
+function renderAudit() {
+  const tpls = templates();
+  const m = shiftMap();
+  const probs = problemList(8);
+  const today = ymd(new Date());
+
+  const alerts = probs.slice(0, 8).map(p => `<button class="alert ${p.sev === 'bad' ? 'bad' : ''}" type="button" data-open="${esc(p.tplId)}" data-date="${esc(p.date)}">
+      <span class="ic">${ICON.warn}</span>
+      <span><span class="t">${esc(p.t)}</span><span class="s">${esc(p.s)}</span></span>
+      <span class="go">›</span>
+    </button>`).join('');
+
+  const mFrom = firstUseDate();
+  const head = tpls.map(t => `<th>${esc(t.name.replace(' feladatok', '').replace('Esti záró', 'Záró'))}<br><span style="font-weight:400">${esc(t.section)}</span></th>`).join('');
+  const rows = [];
+  for (let i = 0; i < 14; i++) {
+    const d = daysAgo(i);
+    const cells = tpls.map(tpl => {
+      const s = (m[d] || {})[tpl.id];
+      const st = shiftStats(s, tpl, d);
+      if (d < mFrom && !st.touched) return '<td><button class="mx" type="button" data-open="' + tpl.id + '" data-date="' + d + '" title="A rendszer indulása előtt">·</button></td>';
+      const info = STATUS[st.code];
+      const short = { none: '—', open: `${st.done}/${st.total}`, unsigned: 'aláírás', closed: 'kész', late: 'késve' }[st.code];
+      const audited = state.audits.some(a => a.date === d && a.templateId === tpl.id);
+      return `<td><button class="mx ${info.cls}" type="button" data-open="${tpl.id}" data-date="${d}" title="${esc(info.label)}">${esc(short)}${audited ? '<span class="dotm"></span>' : ''}</button></td>`;
+    }).join('');
+    rows.push(`<tr><td class="dt">${i === 0 ? '<b>Ma</b>' : `<b>${DAY_SHORT[weekdayOf(d)]}</b> ${shortDate(d)}`}</td>${cells}</tr>`);
+  }
+
+  /* statisztika, 30 nap */
+  const stat = { lists: {}, skips: {}, people: {} };
+  tpls.forEach(t => { stat.lists[t.id] = { name: t.name, days: 0, closed: 0, late: 0 }; });
+  const statFrom = firstUseDate();
+  for (let i = 1; i <= 30; i++) {
+    const d = daysAgo(i);
+    if (d < statFrom) continue;
+    tpls.forEach(tpl => {
+      const s = (m[d] || {})[tpl.id];
+      const st = shiftStats(s, tpl, d);
+      const L = stat.lists[tpl.id]; L.days++;
+      if (st.closed) L.closed++;
+      if (st.late) L.late++;
+      if (s && s.items) Object.entries(s.items).forEach(([id, r]) => {
+        const who = r.by || '—';
+        stat.people[who] = stat.people[who] || { done: 0, skip: 0 };
+        if (r.done) stat.people[who].done++;
+        if (r.skipped && !r.done) {
+          stat.people[who].skip++;
+          const def = defsOf(s, tpl, d).find(x => x.id === id);
+          const key = def ? def.text : id;
+          stat.skips[key] = (stat.skips[key] || 0) + 1;
+        }
+      });
+    });
+  }
+  const listStats = tpls.map(t => {
+    const L = stat.lists[t.id];
+    const pct = L.days ? Math.round(100 * L.closed / L.days) : 0;
+    return `<div class="stat-row"><div><div class="n">${esc(L.name)} <span class="muted small">· ${esc(t.section)}</span></div><div class="minibar"><i style="width:${pct}%"></i></div><div class="small muted">${L.closed}/${L.days} nap lezárva${L.late ? ` · ${L.late} késés` : ''}</div></div><div class="v">${pct}%</div></div>`;
+  }).join('');
+  const topSkips = Object.entries(stat.skips).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([t, n]) => `<div class="stat-row"><div class="small">${esc(t)}</div><div class="v">${n}×</div></div>`).join('')
+    || '<p class="muted small" style="margin:6px 0 0">Nem maradt ki feladat az elmúlt 30 napban.</p>';
+  const peopleStats = Object.entries(stat.people).filter(([n]) => n !== '—').sort((a, b) => b[1].done - a[1].done)
+    .map(([n, v]) => `<div class="stat-row"><div><div class="n">${esc(n)}</div>${v.skip ? `<div class="small" style="color:var(--warn)">${v.skip} kihagyott feladat</div>` : ''}</div><div class="v">${v.done}</div></div>`).join('')
+    || '<p class="muted small" style="margin:6px 0 0">Még nincs adat.</p>';
+
+  return `<h1 style="margin-bottom:6px">Ellenőrzés</h1>
+    <p class="muted small" style="margin:0 0 14px">Csak a szerkesztési joggal megosztott vezetők látják ezt a fület.</p>
+
+    <h3 style="margin-bottom:8px">Figyelmet igényel · 8 nap</h3>
+    ${alerts ? `<div class="stack">${alerts}</div>${probs.length > 8 ? `<p class="muted small" style="margin-top:8px">+ ${probs.length - 8} további tétel.</p>` : ''}`
+      : `<div class="alert ok"><span class="ic" style="color:var(--done)">${ICON.check}</span><span><span class="t">Minden rendben</span><span class="s">Nincs befejezetlen, aláíratlan vagy kihagyott feladat.</span></span><span></span></div>`}
+
+    <div class="section">
+      <h3 style="margin-bottom:8px">Napi áttekintő · 14 nap</h3>
+      <div style="overflow-x:auto"><table class="matrix"><thead><tr><th class="dt">Nap</th>${head}</tr></thead><tbody>${rows.join('')}</tbody></table></div>
+      <div class="legend">
+        <span><i style="background:var(--done)"></i>kész, aláírva</span>
+        <span><i style="background:var(--warn)"></i>késve zárva</span>
+        <span><i style="background:var(--accent)"></i>nincs aláírva</span>
+        <span><i style="background:var(--accent-soft)"></i>folyamatban</span>
+        <span><i style="background:var(--danger-soft)"></i>nem töltötték ki</span>
+        <span>● = volt szúrópróba</span>
+      </div>
+      <p class="muted small" style="margin-top:8px">Koppints egy napra a részletekhez, ott indíthatsz szúrópróbát is.</p>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:8px">Szúrópróba most</h3>
+      <div class="stack">${tpls.map(t => `<button class="btn block" type="button" data-open="${t.id}" data-date="${today}" style="justify-content:space-between">${esc(t.name)} · ${esc(t.section)} <span class="muted">›</span></button>`).join('')}</div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:8px">Teljesítés · 30 nap</h3>
+      <div class="card">${listStats}</div>
+      <h3 style="margin:16px 0 8px">Leggyakrabban kihagyott feladatok</h3>
+      <div class="card">${topSkips}</div>
+      <h3 style="margin:16px 0 8px">Elvégzett feladatok személyenként</h3>
+      <div class="card">${peopleStats}</div>
+    </div>
+
+    <div class="section">
+      <h3 style="margin-bottom:8px">Export</h3>
+      <button class="btn block" type="button" data-export>${ICON.down2} Utolsó 45 nap letöltése (CSV)</button>
+      <p class="muted small" style="margin-top:8px">Táblázatban megnyitható, minden feladat, elvégző, időpont és indok soronként.</p>
+    </div>`;
+}
+
+function renderSettings() {
   const s = state.settings || {};
   const list = staff();
+  if (!state.isAdmin) {
+    return `<h1 style="margin-bottom:14px">Beállítások</h1>
+      <div class="card stack">
+        <h2>Te</h2>
+        <p style="margin:0">Jelenlegi név: <b>${esc(state.who || 'nincs kiválasztva')}</b></p>
+        <button class="btn" type="button" id="whoBtn2">Név módosítása</button>
+      </div>
+      <div class="card stack" style="margin-top:12px">
+        <h2>Csapat</h2>
+        <div class="chips">${list.map(n => `<span class="chip">${esc(n)}</span>`).join('') || '<span class="muted small">Még nincs felvéve senki.</span>'}</div>
+        <p class="muted small" style="margin:0">A névsort és a feladatlistákat a vezető szerkeszti.</p>
+      </div>`;
+  }
   const tpls = state.editTemplates || templates().map(t => JSON.parse(JSON.stringify(t)));
   if (!state.editTemplates) state.editTemplates = tpls;
   const tplHtml = tpls.map((tpl, ti) => `<div class="card" style="margin-top:12px">
       <div class="row-between" style="margin-bottom:6px"><div><div class="eyebrow">${esc(tpl.section)}</div><h2>${esc(tpl.name)}</h2></div><span class="pill num">${tpl.items.length} tétel</span></div>
-      <div class="chips" style="margin-bottom:10px">
+      <div class="chips" style="margin-bottom:8px">
         <button class="chip sm ${tpl.perItem ? '' : 'active'}" type="button" data-tpl-mode="${ti}:0">Egy felelős a listára</button>
         <button class="chip sm ${tpl.perItem ? 'active' : ''}" type="button" data-tpl-mode="${ti}:1">Feladatonként külön személy</button>
       </div>
+      <div class="field" style="margin-bottom:10px"><label for="due${ti}">Határidő (eddig kell lezárni)</label><input type="text" id="due${ti}" data-tpl-due="${ti}" value="${esc(tpl.dueBy || '')}" placeholder="pl. 23:59" inputmode="numeric" style="max-width:140px"></div>
       ${tpl.items.map((it, ii) => `<div class="tpl-item">
         <div>
           <textarea data-tpl-text="${ti}:${ii}" aria-label="Feladat szövege">${esc(it.text)}</textarea>
-          <div class="days"><span class="lbl">Heti (mely napokon):</span>${[1,2,3,4,5,6,7].map(d => `<button class="day ${it.weekly && it.weekly.includes(d) ? 'on' : ''}" type="button" data-tpl-day="${ti}:${ii}:${d}" aria-pressed="${!!(it.weekly && it.weekly.includes(d))}">${DAY_SHORT[d]}</button>`).join('')}<span class="lbl" style="margin-left:6px">${it.weekly && it.weekly.length ? '' : 'minden nap'}</span></div>
+          <div class="days"><span class="lbl">Heti:</span>${[1,2,3,4,5,6,7].map(d => `<button class="day ${it.weekly && it.weekly.includes(d) ? 'on' : ''}" type="button" data-tpl-day="${ti}:${ii}:${d}" aria-pressed="${!!(it.weekly && it.weekly.includes(d))}">${DAY_SHORT[d]}</button>`).join('')}<span class="lbl" style="margin-left:6px">${it.weekly && it.weekly.length ? '' : 'minden nap'}</span></div>
+          <div class="chips" style="margin-top:6px">
+            <button class="chip sm ${it.required ? 'active' : ''}" type="button" data-tpl-req="${ti}:${ii}">Kötelező</button>
+            <button class="chip sm ${it.photo ? 'active' : ''}" type="button" data-tpl-pho="${ti}:${ii}">Fotó kell</button>
+          </div>
         </div>
         <div class="ico-col">
           <button class="ico-btn" type="button" data-tpl-move="${ti}:${ii}:-1" aria-label="Feljebb" ${ii === 0 ? 'disabled' : ''}>${ICON.up}</button>
@@ -836,16 +1138,12 @@ function renderSettings() {
       <div class="chips">${list.map(n => `<span class="chip">${esc(n)} <button class="x" type="button" data-staff-del="${esc(n)}" aria-label="Törlés: ${esc(n)}">✕</button></span>`).join('') || '<span class="muted small">Még nincs senki felvéve.</span>'}</div>
       <div class="row-between"><input type="text" id="staffIn" placeholder="Név" aria-label="Új dolgozó neve"><button class="btn primary" type="button" data-staff-add>Hozzáad</button></div>
     </div>
-    <div class="card stack" style="margin-top:12px">
-      <h2>Vezetői PIN</h2>
-      <p class="muted small" style="margin:0">${s.pin ? 'A PIN be van állítva.' : 'Még nincs PIN – amíg nincs, bárki szerkesztheti a beállításokat.'}</p>
-      <div class="row-between"><input type="password" id="pinNew" inputmode="numeric" placeholder="Új PIN (4–8 számjegy)" aria-label="Új PIN"><button class="btn" type="button" data-pin-save>Mentés</button></div>
-      ${s.pin ? '<button class="btn ghost sm" type="button" data-pin-logout>Kilépés a vezetői módból</button>' : ''}
-    </div>
-    <div class="section"><h3>Feladatsablonok</h3><p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. A „Heti” napoknál jelöld, mely napokon jelenjen meg a feladat – ha egyet sem jelölsz, minden nap szerepel. A lista tetején állítod be, hogy egy felelős tölti-e ki az egészet (pult), vagy feladatonként külön név kerül rá (konyha).</p>${tplHtml}</div>
+    <div class="section"><h3>Feladatsablonok</h3>
+      <p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. <b>Kötelező</b>: nem lehet indoklással kihagyni. <b>Fotó kell</b>: csak fotóval pipálható ki.</p>
+      ${tplHtml}</div>
     <div class="card" style="margin-top:12px">
-      <div class="eyebrow">Tárolás</div>
-      <p class="small muted" style="margin:6px 0 0">${state.db.local ? 'Helyi mód: az adatok csak ezen az eszközön vannak.' : 'Közös adatbázis: minden eszközön ugyanaz látszik.'} Fotók: ${state.assets ? 'fájltárban (teljes méret)' : 'kicsinyítve az adatbázisban' }.</p>
+      <div class="eyebrow">Hozzáférés</div>
+      <p class="small muted" style="margin:6px 0 0">${state.db.local ? 'Helyi mód: az adatok csak ezen az eszközön vannak.' : 'Közös adatbázis. A dolgozóknak „megtekintheti” joggal oszd meg – így kitöltik a listákat, de az Ellenőrzés fület és a beállításokat nem érik el. A vezetőknek „szerkesztheti” joggal oszd meg.'} Fotók: ${state.assets ? 'fájltárban' : 'az adatbázisban, kicsinyítve'}.</p>
     </div>`;
 }
 
@@ -878,19 +1176,13 @@ function personModal(opts) {
       if (!names.length) setTimeout(() => $('#personIn', m).focus(), 50);
     });
 }
-
 function whoModal(then) {
-  personModal({
-    title: 'Ki vagy?', hint: 'A neved kerül az általad kipipált feladatok mellé.', current: state.who,
-    onPick: n => { state.who = n; ls.set('bp_who', n); render(); if (then) then(); },
-  });
+  personModal({ title: 'Ki vagy?', hint: 'A neved kerül az általad kipipált feladatok mellé.', current: state.who,
+    onPick: n => { state.who = n; ls.set('bp_who', n); render(); if (then) then(); } });
 }
-
 function ownerModal(then) {
-  const shift = state.openShift;
-  personModal({
-    title: 'A nap felelőse', hint: 'Ezen a listán egy ember dolgozik – az ő neve kerül minden kipipált feladat mellé.',
-    current: (shift && shift.owner) || state.who,
+  personModal({ title: 'A nap felelőse', hint: 'Ezen a listán egy ember dolgozik – az ő neve kerül minden kipipált feladat mellé.',
+    current: (state.openShift && state.openShift.owner) || state.who,
     onPick: async n => {
       const sh = await ensureShift(state.route.date, state.route.tplId);
       state.openShift = { ...(state.openShift || sh), owner: n };
@@ -898,25 +1190,18 @@ function ownerModal(then) {
       await patchShift(sh.id, { owner: n });
       if (!state.who) { state.who = n; ls.set('bp_who', n); render(); }
       if (then) then();
-    },
-  });
+    } });
 }
-
 function itemPersonModal(itemId) {
   const rec = (state.openShift && state.openShift.items && state.openShift.items[itemId]) || {};
-  const def = ((state.openShift && state.openShift.items_def) || []).find(i => i.id === itemId);
-  personModal({
-    title: 'Ki végezte el?', hint: def ? def.text : 'Válaszd ki, ki csinálta meg ezt a feladatot.',
-    current: rec.by || state.who,
-    onPick: n => writeItem(itemId, r => ({ ...r, done: true, by: n, at: r.at || new Date().toISOString() })),
+  const def = defsOf(state.openShift, templateById(state.route.tplId), state.route.date).find(i => i.id === itemId);
+  personModal({ title: 'Ki végezte el?', hint: def ? def.text : '', current: rec.by || state.who,
+    onPick: n => writeItem(itemId, r => ({ ...r, done: true, skipped: false, skipReason: null, by: n, at: r.at || new Date().toISOString() })),
     clearLabel: 'Mégsem kész – név törlése',
-    onClear: rec.by ? () => writeItem(itemId, r => ({ ...r, done: false, by: null, at: null })) : null,
-  });
+    onClear: rec.by ? () => writeItem(itemId, r => ({ ...r, done: false, skipped: false, skipReason: null, by: null, at: null })) : null });
 }
-
-
 function noteModal(itemId) {
-  const rec = state.openShift && state.openShift.items && state.openShift.items[itemId] || {};
+  const rec = (state.openShift && state.openShift.items && state.openShift.items[itemId]) || {};
   openModal(`<h2>Megjegyzés</h2>
     <textarea id="noteIn" placeholder="pl. elfogyott a WC-papír, rendelni kell">${esc(rec.note || '')}</textarea>
     <div class="row-between" style="margin-top:12px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="noteOk">Mentés</button></div>`,
@@ -924,23 +1209,21 @@ function noteModal(itemId) {
       m.querySelector('[data-close2]').addEventListener('click', closeModal);
       $('#noteOk', m).addEventListener('click', async () => {
         const v = $('#noteIn', m).value.trim();
-        const shift = await ensureShift(state.route.date, state.route.tplId);
-        await patchShift(shift.id, { items: { [itemId]: { ...(shift.items && shift.items[itemId] || { done: false }), note: v } } });
         closeModal();
+        await writeItem(itemId, r => ({ ...r, note: v }));
       });
       setTimeout(() => $('#noteIn', m).focus(), 50);
     });
 }
-
 function photoModal(itemId) {
   const rec = state.openShift && state.openShift.items && state.openShift.items[itemId];
   if (!rec || !rec.photo) return;
   const url = photoUrl(rec.photo);
-  const def = (state.openShift.items_def || []).find(i => i.id === itemId);
-  const editable = state.route.date === ymd(new Date()) || isManager();
+  const def = defsOf(state.openShift, templateById(state.route.tplId), state.route.date).find(i => i.id === itemId);
+  const editable = state.route.date === ymd(new Date()) || state.isAdmin;
   openModal(`<div class="lightbox">${url ? `<img src="${esc(url)}" alt="">` : '<p class="muted">Betöltés…</p>'}</div>
     <p class="small" style="margin:10px 0 0"><b>${esc(def ? def.text : '')}</b></p>
-    <p class="small muted" style="margin:2px 0 12px">${esc(rec.by || '')} · ${hhmm(rec.photoAt || rec.at)}</p>
+    <p class="small muted" style="margin:2px 0 12px">${esc(rec.photoBy || rec.by || '')} · ${hhmm(rec.photoAt || rec.at)}</p>
     <div class="row-between"><button class="btn ghost" type="button" data-close2>Bezár</button>${editable ? '<button class="btn danger" type="button" id="photoDel">Fotó törlése</button>' : ''}</div>`,
     m => {
       m.querySelector('[data-close2]').addEventListener('click', closeModal);
@@ -948,16 +1231,56 @@ function photoModal(itemId) {
       if (del) del.addEventListener('click', async () => {
         if (!confirm('Biztosan törlöd a fotót?')) return;
         await deletePhoto(rec.photo);
-        await patchShift(state.openShift.id, { items: { [itemId]: { ...rec, photo: null, photoAt: null } } });
         closeModal();
+        await writeItem(itemId, r => ({ ...r, photo: null, photoAt: null, photoBy: null }));
       });
     });
 }
-
+function skipModal(itemId) {
+  const def = defsOf(state.openShift, templateById(state.route.tplId), state.route.date).find(i => i.id === itemId);
+  openModal(`<h2>Miért maradt ki?</h2>
+    <p class="small" style="margin:0 0 4px"><b>${esc(def ? def.text : '')}</b></p>
+    <p class="muted small" style="margin:0 0 10px">Ez bekerül a vezetői ellenőrzésbe, ezért írj konkrét okot.</p>
+    <textarea id="skipIn" placeholder="pl. elromlott a fritőz, szervizt hívtunk"></textarea>
+    <div class="row-between" style="margin-top:12px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="skipOk">Kihagyom indoklással</button></div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      $('#skipOk', m).addEventListener('click', async () => {
+        const v = $('#skipIn', m).value.trim();
+        if (v.length < 4) { toast('Írd le röviden, miért maradt ki.'); return; }
+        const person = state.who || (state.openShift && state.openShift.owner) || '';
+        closeModal();
+        await writeItem(itemId, r => ({ ...r, done: false, skipped: true, skipReason: v, by: person, at: new Date().toISOString() }));
+      });
+      setTimeout(() => $('#skipIn', m).focus(), 50);
+    });
+}
+function blockedModal(open) {
+  const rows = open.map(it => `<div class="fix-item">
+      <div class="t">${esc(it.text)}</div>
+      ${it.required ? '<div class="small" style="color:var(--danger);margin-top:4px">Kötelező feladat – ezt el kell végezni, nem lehet kihagyni.</div>' : ''}
+      <div class="acts">
+        <button class="btn sm done" type="button" data-fixdone="${esc(it.id)}">Kész</button>
+        ${it.required ? '' : `<button class="btn sm" type="button" data-fixskip="${esc(it.id)}">Kihagyom + indok</button>`}
+      </div>
+    </div>`).join('');
+  openModal(`<h2>Még nem lehet aláírni</h2>
+    <p class="muted small" style="margin:0 0 12px">${open.length} feladat nincs lezárva. Mindegyiket jelöld késznek, vagy írd meg, miért maradt ki.</p>
+    <div class="fix-list">${rows}</div>
+    <button class="btn ghost block" type="button" data-close2 style="margin-top:14px">Bezár</button>`,
+    m => m.querySelector('[data-close2]').addEventListener('click', closeModal));
+}
 function signModal() {
+  const tpl = templateById(state.route.tplId);
+  const shift = state.openShift;
+  const defs = defsOf(shift, tpl, state.route.date);
+  const items = (shift && shift.items) || {};
+  const open = defs.filter(d => { const r = items[d.id]; return !(r && (r.done || r.skipped)); });
+  if (open.length) { blockedModal(open); return; }
+  const perItem = isPerItem(tpl, shift);
   const go = () => openModal(`<h2>Aláírás</h2>
     <p class="muted small" style="margin:0 0 10px">Írd alá ujjal vagy egérrel a mezőben.</p>
-    <div class="field"><label for="sigName">Név</label><input type="text" id="sigName" value="${esc(state.who)}"></div>
+    <div class="field"><label for="sigName">Név</label><input type="text" id="sigName" value="${esc(perItem ? state.who : (shift && shift.owner) || state.who)}"></div>
     <canvas class="sigpad" id="sigpad" style="margin-top:10px" aria-label="Aláírás mező"></canvas>
     <div class="row-between" style="margin-top:12px">
       <button class="btn ghost sm" type="button" id="sigClear">Törlés</button>
@@ -967,9 +1290,10 @@ function signModal() {
       m.querySelector('[data-close2]').addEventListener('click', closeModal);
       const c = $('#sigpad', m);
       const dpr = window.devicePixelRatio || 1;
-      const fit = () => { const r = c.getBoundingClientRect(); c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); const x = c.getContext('2d'); x.scale(dpr, dpr); x.lineWidth = 2.5; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#111'; };
-      fit();
+      const rct = c.getBoundingClientRect();
+      c.width = Math.round(rct.width * dpr); c.height = Math.round(rct.height * dpr);
       const ctx = c.getContext('2d');
+      ctx.scale(dpr, dpr); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#111';
       let drawing = false, strokes = 0, last = null;
       const pos = e => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
       c.addEventListener('pointerdown', e => { drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(last.x + 0.1, last.y); ctx.stroke(); strokes++; });
@@ -981,58 +1305,100 @@ function signModal() {
         const name = $('#sigName', m).value.trim();
         if (!name) { toast('Add meg a neved.'); return; }
         if (!strokes) { toast('Írd alá a mezőben.'); return; }
-        // kisebb PNG: 360px széles másolat
         const out = document.createElement('canvas'); out.width = 360; out.height = Math.round(360 * c.height / c.width);
         const ox = out.getContext('2d'); ox.fillStyle = '#fff'; ox.fillRect(0, 0, out.width, out.height); ox.drawImage(c, 0, 0, out.width, out.height);
         const png = out.toDataURL('image/png');
-        const shift = await ensureShift(state.route.date, state.route.tplId);
-        const sigs = [...(shift.signatures || []), { name, at: new Date().toISOString(), png }];
-        await patchShift(shift.id, { signatures: sigs });
+        const sh = await ensureShift(state.route.date, state.route.tplId);
+        const sigs = [...(sh.signatures || []), { name, at: new Date().toISOString(), png }];
+        const patch = { signatures: sigs };
+        if (!sh.closedAt) patch.closedAt = new Date().toISOString();
+        await patchShift(sh.id, patch);
         if (!state.who) { state.who = name; ls.set('bp_who', name); }
         closeModal(); toast('Aláírva. Köszi!');
       });
     });
-  if (!state.who) whoModal(go); else go();
+  if (!state.who && perItem) whoModal(go); else go();
+}
+function verdictModal(itemId) {
+  const v = state.audit.verdicts[itemId] || {};
+  openModal(`<h2>Kifogás</h2>
+    <p class="muted small" style="margin:0 0 10px">Mi a baj? Ez csak a vezetői ellenőrzésben látszik.</p>
+    <textarea id="vIn" placeholder="pl. a rostlap alja zsíros maradt">${esc(v.c || '')}</textarea>
+    <div class="row-between" style="margin-top:12px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="vOk">Mentés</button></div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      $('#vOk', m).addEventListener('click', () => {
+        state.audit.verdicts[itemId] = { v: 'bad', c: $('#vIn', m).value.trim() };
+        closeModal(); render();
+      });
+      setTimeout(() => $('#vIn', m).focus(), 50);
+    });
+}
+function auditSaveModal() {
+  const vs = Object.values(state.audit.verdicts);
+  const bad = vs.filter(x => x.v === 'bad').length;
+  openModal(`<h2>Ellenőrzés mentése</h2>
+    <p class="small" style="margin:0 0 4px">${vs.length} feladat ellenőrizve, ebből <b>${bad} kifogás</b>.</p>
+    <div class="field" style="margin-top:10px"><label for="auName">Ellenőrizte</label><input type="text" id="auName" value="${esc(state.who)}"></div>
+    <div class="field" style="margin-top:10px"><label for="auNote">Összegző megjegyzés (nem kötelező)</label><textarea id="auNote" placeholder="pl. összességében rendben, a konyhai padlót átbeszéltük"></textarea></div>
+    <div class="row-between" style="margin-top:12px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="auOk">Mentés</button></div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      $('#auOk', m).addEventListener('click', async () => {
+        const by = $('#auName', m).value.trim();
+        if (!by) { toast('Add meg a neved.'); return; }
+        const tpl = templateById(state.route.tplId);
+        const rec = {
+          date: state.route.date, templateId: state.route.tplId, templateName: tpl.name, section: tpl.section,
+          by, at: new Date().toISOString(), items: state.audit.verdicts, note: $('#auNote', m).value.trim(),
+          issues: Object.values(state.audit.verdicts).filter(x => x.v === 'bad').length,
+        };
+        try {
+          await state.db.doc('audits/' + state.route.date + '_' + state.route.tplId + '_' + Date.now()).set(rec);
+          if (!state.who) { state.who = by; ls.set('bp_who', by); }
+          state.audit = null; closeModal(); render(); toast('Ellenőrzés mentve.');
+        } catch (e) { console.warn(e); toast('Nem sikerült menteni az ellenőrzést.'); }
+      });
+    });
 }
 
-/* ---------- Események ---------- */
-async function writeItem(itemId, patchFn) {
-  const shift = await ensureShift(state.route.date, state.route.tplId);
-  const rec = (shift.items && shift.items[itemId]) || {};
-  const next = patchFn(rec);
-  state.openShift = state.openShift || shift;
-  state.openShift.items = { ...(state.openShift.items || {}), [itemId]: next };
-  render();
-  await patchShift(shift.id, { items: { [itemId]: next } });
-}
-
-async function toggleItem(itemId) {
+/* ---------- Műveletek ---------- */
+function photoRequiredMissing(itemId) {
   const tpl = templateById(state.route.tplId);
-  if (isPerItem(tpl, state.openShift)) {
-    if (!state.who) { whoModal(() => toggleItem(itemId)); return; }
-    return writeItem(itemId, rec => rec.done
-      ? { ...rec, done: false, by: null, at: null }
-      : { ...rec, done: true, by: state.who, at: new Date().toISOString() });
-  }
-  const owner = state.openShift && state.openShift.owner;
-  if (!owner) { ownerModal(() => toggleItem(itemId)); return; }
-  return writeItem(itemId, rec => rec.done
-    ? { ...rec, done: false, by: null, at: null }
-    : { ...rec, done: true, by: owner, at: new Date().toISOString() });
+  const def = defsOf(state.openShift, tpl, state.route.date).find(i => i.id === itemId);
+  if (!def || !def.photo) return false;
+  const rec = state.openShift && state.openShift.items && state.openShift.items[itemId];
+  if (rec && rec.done) return false;
+  return !(rec && rec.photo);
 }
-
-
+async function toggleItem(itemId) {
+  if (photoRequiredMissing(itemId)) {
+    const inp = document.querySelector(`[data-cam="${CSS.escape(itemId)}"]`);
+    toast('Ehhez a feladathoz fotó kell.');
+    if (inp) inp.click();
+    return;
+  }
+  const tpl = templateById(state.route.tplId);
+  const perItem = isPerItem(tpl, state.openShift);
+  if (perItem && !state.who) { whoModal(() => toggleItem(itemId)); return; }
+  if (!perItem) {
+    const owner = state.openShift && state.openShift.owner;
+    if (!owner) { ownerModal(() => toggleItem(itemId)); return; }
+  }
+  const person = perItem ? state.who : (state.openShift && state.openShift.owner);
+  return writeItem(itemId, rec => (rec.done || rec.skipped)
+    ? { ...rec, done: false, skipped: false, skipReason: null, by: null, at: null }
+    : { ...rec, done: true, skipped: false, skipReason: null, by: person, at: new Date().toISOString() });
+}
 async function onPhoto(itemId, file) {
   if (!file) return;
-  if (!state.who) { whoModal(() => {}); }
   const lbl = document.querySelector(`[data-camlabel="${CSS.escape(itemId)}"]`);
   if (lbl) lbl.classList.add('busy');
   toast('Fotó feltöltése…');
   try {
     const shift = await ensureShift(state.route.date, state.route.tplId);
     const ref = await storePhoto(file, shift.id, itemId);
-    const rec = shift.items && shift.items[itemId] || { done: false };
-    await patchShift(shift.id, { items: { [itemId]: { ...rec, photo: ref, photoAt: new Date().toISOString(), photoBy: state.who || rec.by || null } } });
+    await writeItem(itemId, rec => ({ ...rec, photo: ref, photoAt: new Date().toISOString(), photoBy: state.who || rec.by || null }));
     toast('Fotó mentve.');
   } catch (e) {
     console.warn(e);
@@ -1040,24 +1406,46 @@ async function onPhoto(itemId, file) {
     if (lbl) lbl.classList.remove('busy');
   }
 }
-
 function go(route) {
   if (route.tab === 'check') {
-    route.from = state.route.tab === 'history' || (state.route.tab === 'check' && state.route.from === 'history') ? 'history' : 'today';
+    const from = state.route.tab === 'check' ? state.route.from : state.route.tab;
+    route.from = from === 'history' || from === 'audit' ? from : 'today';
     subscribeOpenShift(shiftId(route.date, route.tplId));
   } else if (state.unsub.open) { state.unsub.open(); state.unsub.open = null; state.openShift = null; }
   if (route.tab !== 'settings') state.editTemplates = null;
+  if (route.tab !== 'check') state.audit = null;
   state.route = route;
   window.scrollTo({ top: 0 });
   render();
 }
+async function exportCsv() {
+  const rows = [['Dátum', 'Nap', 'Lista', 'Terület', 'Feladat', 'Állapot', 'Elvégző', 'Időpont', 'Indok / megjegyzés', 'Fotó']];
+  const all = [...state.history].sort((a, b) => (a.date < b.date ? 1 : -1));
+  all.forEach(s => {
+    const tpl = templateById(s.templateId);
+    defsOf(s, tpl, s.date).forEach(d => {
+      const r = (s.items || {})[d.id] || {};
+      rows.push([s.date, DAY_NAMES[weekdayOf(s.date)], s.templateName || tpl.name, s.section || tpl.section, d.text,
+        r.done ? 'kész' : r.skipped ? 'kihagyva' : 'nincs kész', r.by || s.owner || '', r.at ? hhmm(r.at) : '',
+        r.skipReason || r.note || '', r.photo ? 'van' : '']);
+    });
+    (s.signatures || []).forEach(sg => rows.push([s.date, DAY_NAMES[weekdayOf(s.date)], s.templateName || tpl.name, s.section || tpl.section, '— ALÁÍRÁS —', 'aláírva', sg.name, hhmm(sg.at), '', '']));
+  });
+  const csv = '﻿' + rows.map(r => r.map(c => `"${String(c == null ? '' : c).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  let dl = state.downloads;
+  if (!dl) { try { dl = state.downloads = await window.claude.use('downloads'); } catch (e) { dl = null; } }
+  if (!dl) { toast('A letöltés ebben a nézetben nem érhető el.'); return; }
+  try { await dl.save({ filename: `burgerprof-feladatok-${ymd(new Date())}.csv`, data: csv }); }
+  catch (e) { if (e && e.code !== 'declined') toast('Nem sikerült a letöltés.'); }
+}
 
+/* ---------- Események ---------- */
 document.addEventListener('click', async e => {
   const t = e.target.closest('button, [data-open]');
   if (!t) return;
   const d = t.dataset;
   if (t.classList.contains('tab')) { go({ tab: d.tab }); return; }
-  if (t.id === 'whoBtn') { whoModal(); return; }
+  if (t.id === 'whoBtn' || t.id === 'whoBtn2') { whoModal(); return; }
   if (d.open) { go({ tab: 'check', date: d.date, tplId: d.open }); return; }
   if ('back' in d) { go({ tab: state.route.from || 'today' }); return; }
   if (d.toggle) { toggleItem(d.toggle); return; }
@@ -1066,23 +1454,27 @@ document.addEventListener('click', async e => {
   if (d.note) { noteModal(d.note); return; }
   if (d.photo) { photoModal(d.photo); return; }
   if ('sign' in d) { signModal(); return; }
+  if (d.fixdone) { closeModal(); toggleItem(d.fixdone); return; }
+  if (d.fixskip) { closeModal(); skipModal(d.fixskip); return; }
   if (d.delsig != null) {
     if (!confirm('Törlöd ezt az aláírást?')) return;
     const sigs = [...(state.openShift.signatures || [])]; sigs.splice(Number(d.delsig), 1);
-    await patchShift(state.openShift.id, { signatures: sigs }); return;
+    await patchShift(state.openShift.id, { signatures: sigs, closedAt: sigs.length ? state.openShift.closedAt : null }); return;
   }
-  /* Beállítások */
-  if ('pinLogin' in d) {
-    const v = $('#pinIn').value.trim();
-    if (state.settings && v === String(state.settings.pin)) { ss.set('bp_mgr', '1'); render(); } else toast('Hibás PIN.');
-    return;
+  /* ellenőrzés */
+  if ('auditStart' in d) { state.audit = { verdicts: {}, note: '' }; render(); return; }
+  if ('auditCancel' in d) { state.audit = null; render(); return; }
+  if ('auditSave' in d) {
+    if (!Object.keys(state.audit.verdicts).length) { toast('Jelölj legalább egy feladatot.'); return; }
+    auditSaveModal(); return;
   }
-  if ('pinLogout' in d) { ss.set('bp_mgr', '0'); render(); return; }
-  if ('pinSave' in d) {
-    const v = $('#pinNew').value.trim();
-    if (!/^\d{4,8}$/.test(v)) { toast('A PIN 4–8 számjegy legyen.'); return; }
-    await saveSettings({ pin: v }); ss.set('bp_mgr', '1'); toast('PIN mentve.'); return;
+  if (d.verdict) {
+    const [id, v] = d.verdict.split(':');
+    if (v === 'bad') { verdictModal(id); return; }
+    state.audit.verdicts[id] = { v: 'ok', c: '' }; render(); return;
   }
+  if ('export' in d) { exportCsv(); return; }
+  /* beállítások */
   if ('staffAdd' in d) {
     const v = $('#staffIn').value.trim();
     if (!v) return;
@@ -1090,44 +1482,46 @@ document.addEventListener('click', async e => {
     await saveSettings({ staff: [...staff(), v] }); return;
   }
   if (d.staffDel) { if (!confirm(`Törlöd: ${d.staffDel}?`)) return; await saveSettings({ staff: staff().filter(n => n !== d.staffDel) }); return; }
-  if (d.tplMode) {
-    const [ti, v] = d.tplMode.split(':').map(Number);
-    syncTplTexts();
-    state.editTemplates[ti].perItem = !!v; render(); return;
-  }
+  if (d.tplMode) { const [ti, v] = d.tplMode.split(':').map(Number); syncTplInputs(); state.editTemplates[ti].perItem = !!v; render(); return; }
+  if (d.tplReq) { const [ti, ii] = d.tplReq.split(':').map(Number); syncTplInputs(); const it = state.editTemplates[ti].items[ii]; it.required = !it.required; render(); return; }
+  if (d.tplPho) { const [ti, ii] = d.tplPho.split(':').map(Number); syncTplInputs(); const it = state.editTemplates[ti].items[ii]; it.photo = !it.photo; render(); return; }
   if (d.tplDay) {
     const [ti, ii, day] = d.tplDay.split(':').map(Number);
-    syncTplTexts();
+    syncTplInputs();
     const it = state.editTemplates[ti].items[ii];
     const w = new Set(it.weekly || []); w.has(day) ? w.delete(day) : w.add(day);
     it.weekly = [...w].sort(); render(); return;
   }
   if (d.tplMove) {
     const [ti, ii, dir] = d.tplMove.split(':').map(Number);
-    syncTplTexts();
+    syncTplInputs();
     const arr = state.editTemplates[ti].items; const j = ii + dir;
     if (j < 0 || j >= arr.length) return;
     [arr[ii], arr[j]] = [arr[j], arr[ii]]; render(); return;
   }
   if (d.tplDel) {
     const [ti, ii] = d.tplDel.split(':').map(Number);
-    syncTplTexts();
+    syncTplInputs();
     if (!confirm('Törlöd ezt a feladatot a sablonból?')) return;
     state.editTemplates[ti].items.splice(ii, 1); render(); return;
   }
   if (d.tplAdd != null) {
-    syncTplTexts();
-    const tpl = state.editTemplates[Number(d.tplAdd)];
-    tpl.items.push({ id: 'x' + uid().slice(0, 8), text: '', weekly: [] }); render();
+    syncTplInputs();
+    state.editTemplates[Number(d.tplAdd)].items.push({ id: 'x' + uid().slice(0, 8), text: '', weekly: [] }); render();
     const areas = document.querySelectorAll(`[data-tpl-text^="${d.tplAdd}:"]`); const last = areas[areas.length - 1]; if (last) last.focus();
     return;
   }
   if (d.tplSave != null) {
-    syncTplTexts();
+    syncTplInputs();
     const tpl = state.editTemplates[Number(d.tplSave)];
     tpl.items = tpl.items.filter(it => it.text.trim());
-    const body = { name: tpl.name, section: tpl.section, order: tpl.order, perItem: !!tpl.perItem, items: tpl.items.map(it => ({ id: it.id, text: it.text.trim(), weekly: it.weekly && it.weekly.length ? it.weekly : [] })), updatedAt: new Date().toISOString() };
-    try { await state.db.doc('templates/' + tpl.id).set(body); toast('Sablon mentve.'); } catch (err) { console.warn(err); toast('Nem sikerült menteni.'); }
+    const body = {
+      name: tpl.name, section: tpl.section, order: tpl.order, perItem: !!tpl.perItem, dueBy: (tpl.dueBy || '').trim(),
+      items: tpl.items.map(it => ({ id: it.id, text: it.text.trim(), weekly: it.weekly && it.weekly.length ? it.weekly : [], required: !!it.required, photo: !!it.photo })),
+      updatedAt: new Date().toISOString(),
+    };
+    try { await state.db.doc('templates/' + tpl.id).set(body); toast('Sablon mentve.'); }
+    catch (err) { console.warn(err); toast(err && err.code === 'invalid_argument' ? 'Ehhez vezetői (szerkesztési) hozzáférés kell.' : 'Nem sikerült menteni.'); }
     return;
   }
 });
@@ -1136,23 +1530,23 @@ document.addEventListener('change', e => {
   if (inp.dataset && inp.dataset.cam) { const f = inp.files && inp.files[0]; inp.value = ''; onPhoto(inp.dataset.cam, f); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-function syncTplTexts() {
-  document.querySelectorAll('[data-tpl-text]').forEach(a => { const [ti, ii] = a.dataset.tplText.split(':').map(Number); const it = state.editTemplates && state.editTemplates[ti] && state.editTemplates[ti].items[ii]; if (it) it.text = a.value; });
+function syncTplInputs() {
+  if (!state.editTemplates) return;
+  document.querySelectorAll('[data-tpl-text]').forEach(a => { const [ti, ii] = a.dataset.tplText.split(':').map(Number); const it = state.editTemplates[ti] && state.editTemplates[ti].items[ii]; if (it) it.text = a.value; });
+  document.querySelectorAll('[data-tpl-due]').forEach(a => { const ti = Number(a.dataset.tplDue); if (state.editTemplates[ti]) state.editTemplates[ti].dueBy = a.value; });
 }
 async function saveSettings(patch) {
   const ref = state.db.doc('settings/app');
   try {
     const cur = await ref.get();
-    await ref.set({ ...(cur.exists ? cur.data() : { pin: '', staff: [] }), ...patch, updatedAt: new Date().toISOString() });
-  } catch (err) { console.warn(err); toast('Nem sikerült menteni.'); }
+    await ref.set({ ...(cur.exists ? cur.data() : { staff: [] }), ...patch, updatedAt: new Date().toISOString() });
+  } catch (err) { console.warn(err); toast(err && err.code === 'invalid_argument' ? 'Ehhez vezetői (szerkesztési) hozzáférés kell.' : 'Nem sikerült menteni.'); }
 }
 
-/* Éjfél után frissüljön a „Ma” */
 setInterval(() => { const t = ymd(new Date()); if (t !== state._day) { state._day = t; subscribeToday(); render(); } }, 60000);
-state._day = ymd(new Date());
 
-/* Indítás */
 render();
 initStore();
 })();
+
 </script>
