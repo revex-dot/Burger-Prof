@@ -32,6 +32,15 @@ v1.0) helyett.
   14 napos napi áttekintő mátrix, szúrópróba (feladatonként rendben/kifogás
   + megjegyzés, `audits/` alá mentve), 30 napos teljesítési statisztika,
   CSV export.
+* **Receptek** – kereshető, kategóriákra bontott receptkártyák: hozzávalók
+  adagszorzóval (½× / 1× / 2× / 4×), számozott lépések, allergének, fotó.
+  Vezető hozhat létre, szerkeszthet és törölhet. A kezdeti négy recept
+  „Minta” jelöléssel van feltöltve, át kell írni a sajátjukra.
+* **Játékos visszajelzés** – minden kipipált feladat egy réteg a burgeren
+  (alsó buci → húspogácsa → sajt → húspogácsa → saláta → felső buci), a
+  hiányzó rétegek halványan látszanak. Rezgés és pattanó animáció pipáláskor,
+  szöveges mérföldkövek 25/50/75/100 %-nál, konfettis ünneplés aláíráskor,
+  napi sorozat (🔥 X nap zsinórban), mai csapatsáv és heti toplista.
 * **Beállítások (csak vezetőknek)** – dolgozók névsora, sablonok szerkesztése
   (szöveg, sorrend, heti napok, kötelező, fotó kell, határidő, aláírási mód).
 
@@ -53,7 +62,7 @@ szabályai:
 | útvonal | olvasás | írás |
 |---|---|---|
 | `` (gyökér: `shifts`, `photos`) | interact | interact |
-| `templates`, `settings` | interact | admin |
+| `templates`, `recipes`, `settings` | interact | admin |
 | `audits`, `admin` | admin | admin |
 
 A dolgozók „megtekintheti” (interact) joggal kapják a linket: kitöltik a

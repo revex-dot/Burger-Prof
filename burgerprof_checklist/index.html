@@ -85,9 +85,10 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tabs .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
-  .tabs.admin .wrap { grid-template-columns: repeat(4, 1fr); }
-  .tab { font-size: 15px; }
-  .tabs.admin .tab { font-size: 13px; letter-spacing: .04em; }
+  .tabs.admin .wrap { grid-template-columns: repeat(5, 1fr); }
+  .tab { font-size: 14px; }
+  .tabs.admin .tab { font-size: 11px; letter-spacing: .02em; }
+  .tabs.admin .tab svg { width: 22px; height: 22px; }
   .tab {
     background: none; border: 0; padding: 10px 4px 8px; color: var(--ink-3);
     font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase;
@@ -315,6 +316,64 @@
   .fix-item .t { font-weight: 600; line-height: 1.3; }
   .fix-item .acts { display: flex; gap: 8px; margin-top: 8px; }
 
+  /* ---- burger haladásjelző, ünneplés, csapat ---- */
+  .burger { display: block; }
+  @keyframes layerIn { 0% { transform: translateY(-14px) scale(.85); opacity: 0; } 60% { transform: translateY(2px) scale(1.04); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+  .burger .new { animation: layerIn .4s cubic-bezier(.2,.9,.3,1.2) both; transform-origin: 50% 100%; }
+  @keyframes boxPop { 0% { transform: scale(1); } 40% { transform: scale(1.22); } 100% { transform: scale(1); } }
+  .item .box.pop { animation: boxPop .32s ease-out; }
+
+  .celebrate { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(23,23,26,.82); }
+  .celebrate canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .cel-card { position: relative; background: var(--surface); border-radius: 18px; padding: 24px 20px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+  .cel-card .burger { margin: 0 auto 10px; }
+  .cel-card h2 { font-size: 34px; letter-spacing: .01em; }
+  .cel-card .who2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; text-transform: uppercase; color: var(--accent-ink); background: var(--accent); display: inline-block; padding: 3px 12px; border-radius: 999px; margin-top: 8px; }
+  .cel-card p { margin: 10px 0 0; color: var(--ink-2); }
+  .cel-card .streak { font-family: var(--font-display); font-weight: 700; font-size: 17px; text-transform: uppercase; color: var(--warn); margin-top: 8px; }
+
+  .team { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .mate { flex: none; width: 76px; text-align: center; }
+  .mate .av { width: 46px; height: 46px; border-radius: 50%; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 17px; background: var(--surface-2); color: var(--ink-2); border: 2px solid transparent; }
+  .mate.me .av { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); }
+  .mate.active .av { background: var(--done-soft); color: var(--done); }
+  .mate .nm2 { font-size: 11px; line-height: 1.2; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mate .cnt { font-family: var(--font-display); font-weight: 700; font-size: 13px; }
+
+  .lb-row { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; }
+  .lb-row .pos { font-family: var(--font-display); font-weight: 700; color: var(--ink-3); text-align: center; }
+  .lb-row.me { background: var(--accent-soft); border-radius: 8px; padding: 7px 8px; margin: 0 -8px; }
+  .lb-row .nm3 { font-weight: 600; }
+  .lb-row .v2 { font-family: var(--font-display); font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .lb-bar { height: 4px; border-radius: 2px; background: var(--surface-2); margin-top: 4px; overflow: hidden; }
+  .lb-bar i { display: block; height: 100%; background: var(--accent); }
+
+  /* ---- receptek ---- */
+  .rec-grid { display: flex; flex-direction: column; gap: 8px; }
+  .rec-card { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
+  .rec-card .ph { width: 64px; height: 64px; border-radius: 8px; background: var(--surface-2); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 24px; }
+  .rec-card .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .rec-card .nm4 { font-family: var(--font-display); font-weight: 700; font-size: 19px; text-transform: uppercase; letter-spacing: .01em; line-height: 1.1; }
+  .rec-card .mt { font-size: 13px; color: var(--ink-2); margin-top: 3px; }
+  .rec-hero { width: 100%; aspect-ratio: 16/10; max-width: 100%; object-fit: cover; border-radius: var(--radius); background: var(--surface-2); margin-bottom: 12px; }
+  .scaler { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 10px 0 14px; }
+  .scaler .sbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; min-height: 40px; padding: 6px 14px; font-weight: 700; }
+  .scaler .sbtn.on { background: var(--ink); border-color: var(--ink); color: #F3EFE7; }
+  .ing { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .ing:last-child { border-bottom: 0; }
+  .ing .q { font-family: var(--font-display); font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .steps { counter-reset: st; display: flex; flex-direction: column; gap: 10px; }
+  .step { display: grid; grid-template-columns: 28px 1fr; gap: 10px; }
+  .step .n2 { counter-increment: st; font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--accent-ink); background: var(--accent); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+  .step .n2::before { content: counter(st); }
+  .alg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .alg span { font-size: 12px; font-weight: 600; background: var(--danger-soft); color: var(--danger); border-radius: 999px; padding: 3px 10px; }
+  .sample-tag { display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; background: var(--warn-soft); color: var(--warn); padding: 2px 7px; border-radius: 4px; }
+  .ing-edit { display: grid; grid-template-columns: 1fr 66px 56px 36px; gap: 6px; margin-bottom: 6px; }
+  .ing-edit input { min-height: 40px; padding: 8px; }
+  .search { width: 100%; margin-bottom: 10px; }
+  .is-hidden { display: none !important; }
+
 </style>
 
 <header class="top">
@@ -330,13 +389,16 @@
     <button class="tab active" data-tab="today" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Ma
     </button>
+    <button class="tab" data-tab="recipes" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7"/><path d="M9 11h5"/></svg>Receptek
+    </button>
     <button class="tab" data-tab="history" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Előzmények
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Napló
     </button>
     <button class="tab" data-tab="audit" type="button" id="tabAudit" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Ellenőrzés
     </button>
-    <button class="tab" data-tab="settings" type="button">
+    <button class="tab" data-tab="settings" type="button" id="tabSettings" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Beállítások
     </button>
   </div>
@@ -518,6 +580,7 @@ const state = {
   route: { tab: 'today' },
   todayShifts: {}, openShift: null, history: [], audits: [],
   unsub: {}, photoCache: {}, editTemplates: null,
+  recipes: null, recipeCat: '', scale: 1, editRecipe: null, _layers: {},
   audit: null,           // { verdicts: {itemId:{v,c}}, note }
   _day: ymd(new Date()),
 };
@@ -591,6 +654,7 @@ async function initStore() {
   await checkAdmin();
   subscribeBase();
   subscribeToday();
+  subscribeHistory();
   render();
 }
 async function checkAdmin() {
@@ -613,6 +677,10 @@ function subscribeBase() {
     state.templates = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
   }, err => console.warn('templates', err));
+  state.unsub.recipes = db.collection('recipes').onSnapshot(snap => {
+    state.recipes = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('recipes', err));
   state.unsub.settings = db.doc('settings/app').onSnapshot(snap => {
     state.settings = snap.exists ? snap.data() : null;
     render();
@@ -703,7 +771,7 @@ function downscale(file, maxPx, quality) {
 }
 const blobToDataUrl = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
 
-async function storePhoto(file, shiftIdStr, itemId) {
+async function storePhoto(file, meta) {
   const assets = await getAssets();
   if (assets) {
     try {
@@ -718,7 +786,7 @@ async function storePhoto(file, shiftIdStr, itemId) {
   const small = await downscale(file, 720, 0.7);
   const dataUrl = await blobToDataUrl(small);
   const ref = state.db.collection('photos').doc();
-  await ref.set({ shiftId: shiftIdStr, itemId, dataUrl, at: new Date().toISOString() });
+  await ref.set({ ...(meta || {}), dataUrl, at: new Date().toISOString() });
   return { doc: ref.id };
 }
 function photoUrl(ref) {
@@ -747,16 +815,28 @@ function render() {
   $('#whoName').textContent = state.who || 'Ki vagy?';
   $('#whoBtn').classList.toggle('empty', !state.who);
   $('#tabAudit').hidden = !state.isAdmin;
+  $('#tabSettings').hidden = !state.isAdmin;
   $('#tabs').classList.toggle('admin', state.isAdmin);
-  const active = state.route.tab === 'check' ? (state.route.from || 'today') : state.route.tab;
+  const t0 = state.route.tab;
+  const active = t0 === 'check' ? (state.route.from || 'today') : (t0 === 'recipe' || t0 === 'recipeEdit') ? 'recipes' : t0;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === active));
   const v = $('#view');
   const r = state.route;
   if (r.tab === 'today') v.innerHTML = renderToday();
   else if (r.tab === 'check') v.innerHTML = renderCheck();
-  else if (r.tab === 'history') { subscribeHistory(); v.innerHTML = renderHistory(); }
-  else if (r.tab === 'audit') { subscribeHistory(); subscribeAudits(); v.innerHTML = renderAudit(); }
+  else if (r.tab === 'history') v.innerHTML = renderHistory();
+  else if (r.tab === 'audit') { subscribeAudits(); v.innerHTML = renderAudit(); }
   else if (r.tab === 'settings') v.innerHTML = renderSettings();
+  else if (r.tab === 'recipe') v.innerHTML = renderRecipe();
+  else if (r.tab === 'recipeEdit') v.innerHTML = renderRecipeEdit();
+  else if (r.tab === 'recipes') {
+    v.innerHTML = renderRecipes();
+    const si = $('#recSearch');
+    if (si) si.addEventListener('input', () => {
+      const q = si.value.trim().toLowerCase();
+      document.querySelectorAll('#recGrid .rec-card').forEach(c => c.classList.toggle('is-hidden', !!q && !c.dataset.search.includes(q)));
+    });
+  }
 }
 
 function ringSvg(done, total, code) {
@@ -788,19 +868,24 @@ function renderToday() {
     else if (st.open === 0 && st.total) pill = '<span class="pill warn">Aláírás hiányzik</span>';
     else if (st.touched) pill = `<span class="pill partial">Folyamatban – még ${st.open}</span>`;
     else pill = `<span class="pill">Még nem kezdték el${due ? ` · ${esc(due)}-ig` : ''}</span>`;
+    const pct = st.total ? (st.done + st.skipped) / st.total : 0;
+    const strk = streakOf(tpl.id);
     return `<button class="list-card ${cls}" type="button" data-open="${tpl.id}" data-date="${today}">
       <div>
         <div class="eyebrow">${esc(tpl.section)}</div>
         <div class="name">${esc(tpl.name)}</div>
-        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${people.length ? ` · ${esc(people.join(', '))}` : ''}${st.skipped ? ` · ${st.skipped} kihagyva` : ''}</div>
+        <div class="sub">${st.done + st.skipped}/${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${people.length ? ` · ${esc(people.join(', '))}` : ''}</div>
         <div style="margin-top:8px">${pill}</div>
+        ${strk >= 3 ? `<div class="small" style="margin-top:6px;color:var(--warn);font-weight:600">🔥 ${strk} nap zsinórban lezárva</div>` : ''}
       </div>
-      <div class="prog">${ringSvg(st.done + st.skipped, st.total, st.code)}</div>
+      <div class="prog">${burgerSvg(pct, 68)}</div>
     </button>`;
   }).join('');
   return `<div class="today-head"><h1>Ma</h1><div class="date">${DAY_NAMES[wd]} · ${longDate(today)}</div></div>
     <div class="stack">${cards}</div>
-    <p class="muted small" style="margin-top:18px">Pipáld ki a kész feladatokat, fotózz, ahol kérik, a végén írd alá. Aláírni csak akkor lehet, ha minden feladat kész – amit nem sikerült megcsinálni, azt indoklással kell lezárni.</p>`;
+    ${renderTeamStrip()}
+    ${renderLeaderboard()}
+    <p class="muted small" style="margin-top:18px">Minden kipipált feladat egy réteg a burgeren. Ha az egész lista kész és alá van írva, összeáll a burger.</p>`;
 }
 
 function renderCheck() {
@@ -816,6 +901,11 @@ function renderCheck() {
   const wd = weekdayOf(date);
   const owner = (shift && shift.owner) || '';
   const due = dueOf(tpl, shift);
+  const pct = st.total ? (st.done + st.skipped) / st.total : 0;
+  const lay = layerOf(pct);
+  const prevLay = state._layers['c_' + tplId];
+  const newLayer = prevLay != null && lay > prevLay ? lay - 1 : null;
+  state._layers['c_' + tplId] = lay;
 
   const rows = defs.map(it => {
     const rec = shift && shift.items ? shift.items[it.id] : null;
@@ -890,9 +980,14 @@ function renderCheck() {
 
   return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
     <div class="check-head">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="flex:1;min-width:0">
       <div class="eyebrow">${esc(tpl.section)} · ${DAY_NAMES[wd]}</div>
       <h1>${esc(tpl.name)}</h1>
-      <div class="meta"><span class="num">${longDate(date)}</span><span class="num"><b>${st.done}</b> / ${st.total} kész${st.skipped ? ` · ${st.skipped} kihagyva` : ''}</span>${due ? `<span class="num ${st.late && !st.closed ? '' : 'muted'}" style="${st.late && !st.closed ? 'color:var(--danger);font-weight:600' : ''}">${st.late && !st.closed ? 'Késésben, határidő' : 'Határidő'}: ${esc(due)}</span>` : ''}</div>
+      </div>
+      <div style="flex:none">${burgerSvg(pct, 76, newLayer)}</div>
+      </div>
+      <div class="meta" style="margin-top:6px"><span class="num">${longDate(date)}</span><span class="num"><b>${st.done}</b> / ${st.total} kész${st.skipped ? ` · ${st.skipped} kihagyva` : ''}</span>${due ? `<span class="num ${st.late && !st.closed ? '' : 'muted'}" style="${st.late && !st.closed ? 'color:var(--danger);font-weight:600' : ''}">${st.late && !st.closed ? 'Késésben, határidő' : 'Határidő'}: ${esc(due)}</span>` : ''}</div>
       <div class="bar ${st.open === 0 && st.total ? 'full' : ''}" style="margin-top:10px"><i style="width:${st.total ? Math.round(100 * (st.done + st.skipped) / st.total) : 0}%"></i></div>
     </div>
     ${auditBar}
@@ -1314,7 +1409,11 @@ function signModal() {
         if (!sh.closedAt) patch.closedAt = new Date().toISOString();
         await patchShift(sh.id, patch);
         if (!state.who) { state.who = name; ls.set('bp_who', name); }
-        closeModal(); toast('Aláírva. Köszi!');
+        closeModal();
+        const tplC = templateById(state.route.tplId);
+        const strkC = streakOf(state.route.tplId);
+        celebrate({ title: 'Megvan!', who: name, streak: strkC >= 2 ? strkC : 0,
+          text: `${tplC.name} · ${tplC.section} lezárva és aláírva. Semmi nem maradt nyitva.` });
       });
     });
   if (!state.who && perItem) whoModal(go); else go();
@@ -1386,9 +1485,13 @@ async function toggleItem(itemId) {
     if (!owner) { ownerModal(() => toggleItem(itemId)); return; }
   }
   const person = perItem ? state.who : (state.openShift && state.openShift.owner);
-  return writeItem(itemId, rec => (rec.done || rec.skipped)
+  const before = shiftStats(state.openShift, tpl, state.route.date);
+  await writeItem(itemId, rec => (rec.done || rec.skipped)
     ? { ...rec, done: false, skipped: false, skipReason: null, by: null, at: null }
     : { ...rec, done: true, skipped: false, skipReason: null, by: person, at: new Date().toISOString() });
+  const after = shiftStats(state.openShift, tpl, state.route.date);
+  const b = before.done + before.skipped, a = after.done + after.skipped;
+  if (a > b) { popBox(itemId); tickFeedback(b, a, after.total); }
 }
 async function onPhoto(itemId, file) {
   if (!file) return;
@@ -1397,7 +1500,7 @@ async function onPhoto(itemId, file) {
   toast('Fotó feltöltése…');
   try {
     const shift = await ensureShift(state.route.date, state.route.tplId);
-    const ref = await storePhoto(file, shift.id, itemId);
+    const ref = await storePhoto(file, { shiftId: shift.id, itemId });
     await writeItem(itemId, rec => ({ ...rec, photo: ref, photoAt: new Date().toISOString(), photoBy: state.who || rec.by || null }));
     toast('Fotó mentve.');
   } catch (e) {
@@ -1414,6 +1517,8 @@ function go(route) {
   } else if (state.unsub.open) { state.unsub.open(); state.unsub.open = null; state.openShift = null; }
   if (route.tab !== 'settings') state.editTemplates = null;
   if (route.tab !== 'check') state.audit = null;
+  if (route.tab !== 'recipeEdit') state.editRecipe = null;
+  if (route.tab !== 'recipe') state.scale = 1;
   state.route = route;
   window.scrollTo({ top: 0 });
   render();
@@ -1437,6 +1542,302 @@ async function exportCsv() {
   if (!dl) { toast('A letöltés ebben a nézetben nem érhető el.'); return; }
   try { await dl.save({ filename: `burgerprof-feladatok-${ymd(new Date())}.csv`, data: csv }); }
   catch (e) { if (e && e.code !== 'declined') toast('Nem sikerült a letöltés.'); }
+}
+
+/* ============================================================
+   Receptek
+   ============================================================ */
+const ALLERGENS = ['glutén', 'tej', 'tojás', 'szója', 'mustár', 'szezám', 'hal', 'diófélék', 'zeller', 'kén-dioxid'];
+const RECIPE_CATS = ['Húsok', 'Szószok', 'Feltétek', 'Előkészítés', 'Technológia'];
+const DEFAULT_RECIPES = [
+  { id: 'r_smash', order: 1, sample: true, name: 'Smash patty', cat: 'Húsok', yieldQty: 1, yieldUnit: 'burger',
+    ingredients: [{ n: 'Marha darált (20% zsír)', q: 160, u: 'g' }, { n: 'Só', q: 1.5, u: 'g' }, { n: 'Bors', q: 0.5, u: 'g' }],
+    steps: ['A húst 2 × 80 g gombócra porciózd, ne gyúrd át.', 'Forró rostlapra tedd, 15 mp után lapítsd le spatulával kb. 1 cm-re.', 'Sózd, borsozd a tetejét. 90 mp, amíg a széle ropogós barna.', 'Fordítsd meg, azonnal tedd rá a sajtot, 45 mp.'],
+    allergens: [], note: 'MINTA recept – írd át a saját technológiátokra.' },
+  { id: 'r_sauce', order: 2, sample: true, name: 'Burger Prof szósz', cat: 'Szószok', yieldQty: 1000, yieldUnit: 'g',
+    ingredients: [{ n: 'Majonéz', q: 600, u: 'g' }, { n: 'Ketchup', q: 200, u: 'g' }, { n: 'Dijoni mustár', q: 60, u: 'g' }, { n: 'Savanyú uborka, apróra vágva', q: 100, u: 'g' }, { n: 'Hagymapor', q: 10, u: 'g' }, { n: 'Füstölt paprika', q: 8, u: 'g' }],
+    steps: ['Mindent robotgépbe, 30 mp.', 'Kóstold, sózd, ha kell.', 'Címkézd dátummal, hűtőben 5 napig áll el.'],
+    allergens: ['tojás', 'mustár'], note: 'MINTA recept – írd át a saját arányaitokra.' },
+  { id: 'r_onion', order: 3, sample: true, name: 'Pirított hagyma', cat: 'Feltétek', yieldQty: 500, yieldUnit: 'g',
+    ingredients: [{ n: 'Vöröshagyma, vékonyra szeletelve', q: 800, u: 'g' }, { n: 'Napraforgó olaj', q: 40, u: 'ml' }, { n: 'Só', q: 6, u: 'g' }],
+    steps: ['Közepes lángon, olajon indítsd, sózd meg azonnal.', 'Lassan, 20–25 perc alatt karamellizáld, kevergetve.', 'Lehűtve, zárt dobozban, dátumozva tárold.'],
+    allergens: [], note: 'MINTA recept.' },
+  { id: 'r_bun', order: 4, sample: true, name: 'Buci pirítás', cat: 'Technológia', yieldQty: 1, yieldUnit: 'burger',
+    ingredients: [{ n: 'Brioche buci', q: 1, u: 'db' }, { n: 'Vaj', q: 5, u: 'g' }],
+    steps: ['Vágd ketté, a vágott felületet vékonyan vajazd meg.', 'Bucipirítóra tedd lefelé, 25–30 mp.', 'Aranybarna, de nem száraz – ha reccsen, túl sok.'],
+    allergens: ['glutén', 'tej', 'tojás'], note: 'MINTA – állítsd be a saját gépetekhez az időt.' },
+];
+
+function recipes() {
+  const r = state.recipes && state.recipes.length ? state.recipes : DEFAULT_RECIPES;
+  return [...r].sort((a, b) => (a.order || 0) - (b.order || 0) || String(a.name).localeCompare(String(b.name), 'hu'));
+}
+function recipeById(id) { return recipes().find(r => r.id === id); }
+function fmtQty(n) {
+  if (n == null || isNaN(n)) return '';
+  const v = Number(n);
+  if (v >= 100) return String(Math.round(v));
+  if (v >= 10) return String(Math.round(v * 10) / 10);
+  return String(Math.round(v * 100) / 100);
+}
+
+/* ============================================================
+   Burger haladásjelző + ünneplés
+   ============================================================ */
+function burgerSvg(pct, size, newLayer) {
+  const L = [0.2, 0.4, 0.6, 0.8, 1];
+  const on = i => pct >= L[i] - 1e-9;
+  /* a még hiányzó rétegek halványan látszanak, hogy a burger alakja végig olvasható legyen */
+  const lay = (i, inner) => on(i)
+    ? `<g${newLayer === i ? ' class="new"' : ''}>${inner}</g>`
+    : `<g opacity=".14">${inner.replace(/fill="#[0-9A-Fa-f]{3,6}"/g, 'fill="currentColor"')}</g>`;
+  let drip = 'M13 43 H87 V49 ';
+  for (let x = 87; x > 14; x -= 9.25) drip += `L${(x - 4.6).toFixed(1)} 55.5 L${(x - 9.25).toFixed(1)} 49 `;
+  drip += 'Z';
+  const p = [
+    '<path d="M14 62 h72 a6 6 0 0 1 0 12 h-72 a6 6 0 0 1 0 -12 z" fill="#D69A4E"/>',
+    lay(0, '<rect x="10" y="50" width="80" height="12" rx="6" fill="#4A2C14"/>'),
+    lay(1, `<path d="${drip}" fill="#F2B705"/>`),
+    lay(2, '<rect x="10" y="33" width="80" height="12" rx="6" fill="#4A2C14"/>'),
+    lay(3, '<path d="M12 34 V30 q9.5 -8 19 0 t19 0 t19 0 t19 0 V34 Z" fill="#8FBF52"/>'),
+    lay(4, '<path d="M8 31 a42 25 0 0 1 84 0 z" fill="#E2A45B"/>'
+         + '<ellipse cx="36" cy="18" rx="3.4" ry="2.1" fill="#FBEBC8" transform="rotate(-18 36 18)"/>'
+         + '<ellipse cx="52" cy="13" rx="3.4" ry="2.1" fill="#FBEBC8"/>'
+         + '<ellipse cx="68" cy="19" rx="3.4" ry="2.1" fill="#FBEBC8" transform="rotate(16 68 19)"/>'
+         + '<ellipse cx="26" cy="26" rx="3" ry="1.9" fill="#FBEBC8" transform="rotate(-26 26 26)"/>'
+         + '<ellipse cx="76" cy="27" rx="3" ry="1.9" fill="#FBEBC8" transform="rotate(24 76 27)"/>'),
+  ];
+  return `<svg class="burger" width="${size}" height="${Math.round(size * 0.8)}" viewBox="0 0 100 80" style="color:var(--ink-3)" aria-hidden="true">${p.join('')}</svg>`;
+}
+function layerOf(pct) { return pct >= 1 ? 5 : Math.floor(pct / 0.2); }
+
+function confettiOn(canvas) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr; ctx.scale(dpr, dpr);
+  const colors = ['#F2B705', '#FFFFFF', '#1F8A4C', '#D69A4E', '#C8321E'];
+  const parts = Array.from({ length: 90 }, () => ({
+    x: W / 2 + (Math.random() - 0.5) * W * 0.5, y: H * 0.45 + (Math.random() - 0.5) * 60,
+    vx: (Math.random() - 0.5) * 9, vy: -6 - Math.random() * 9,
+    w: 5 + Math.random() * 6, h: 3 + Math.random() * 5,
+    r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.4,
+    col: colors[(Math.random() * colors.length) | 0],
+  }));
+  let t = 0;
+  (function frame() {
+    t++;
+    ctx.clearRect(0, 0, W, H);
+    parts.forEach(q => {
+      q.vy += 0.32; q.x += q.vx; q.y += q.vy; q.r += q.vr; q.vx *= 0.99;
+      ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.r);
+      ctx.globalAlpha = Math.max(0, 1 - t / 150);
+      ctx.fillStyle = q.col; ctx.fillRect(-q.w / 2, -q.h / 2, q.w, q.h);
+      ctx.restore();
+    });
+    if (t < 150 && document.body.contains(canvas)) requestAnimationFrame(frame);
+  })();
+}
+function celebrate(opts) {
+  const root = $('#modalRoot');
+  root.innerHTML = `<div class="celebrate" data-close>
+      <canvas id="confetti"></canvas>
+      <div class="cel-card">
+        ${burgerSvg(1, 150, 4)}
+        <h2>${esc(opts.title)}</h2>
+        ${opts.who ? `<div class="who2">${esc(opts.who)}</div>` : ''}
+        <p>${esc(opts.text)}</p>
+        ${opts.streak ? `<div class="streak">🔥 ${opts.streak}. nap zsinórban</div>` : ''}
+        <button class="btn primary block" type="button" data-close2 style="margin-top:16px">Szuper</button>
+      </div>
+    </div>`;
+  const bg = root.querySelector('.celebrate');
+  bg.addEventListener('click', closeModal);
+  root.querySelector('.cel-card').addEventListener('click', e => e.stopPropagation());
+  root.querySelector('[data-close2]').addEventListener('click', closeModal);
+  confettiOn($('#confetti'));
+  if (navigator.vibrate) { try { navigator.vibrate([18, 60, 18, 60, 40]); } catch (e) {} }
+}
+const MILESTONES = [
+  { at: 0.25, msg: 'Negyede kész – beindult a gépezet 🔥' },
+  { at: 0.5, msg: 'Félúton! Felkerült a sajt 🧀' },
+  { at: 0.75, msg: 'Háromnegyed – már csak pár tétel' },
+  { at: 1, msg: 'Minden feladat kész! Jöhet az aláírás ✍️' },
+];
+function tickFeedback(before, after, total) {
+  if (!total || after <= before) return;
+  if (navigator.vibrate) { try { navigator.vibrate(14); } catch (e) {} }
+  const p0 = before / total, p1 = after / total;
+  const ms = MILESTONES.find(x => p0 < x.at && p1 >= x.at);
+  if (ms) toast(ms.msg);
+}
+function popBox(itemId) {
+  const el = document.querySelector(`.item[data-item="${CSS.escape(itemId)}"] .box`);
+  if (el) { el.classList.add('pop'); setTimeout(() => el.classList.remove('pop'), 340); }
+}
+
+/* ---------- Sorozat és csapat ---------- */
+function streakOf(tplId) {
+  const m = shiftMap();
+  const tpl = templateById(tplId);
+  let n = 0;
+  for (let i = 0; i < 60; i++) {
+    const d = daysAgo(i);
+    const st = shiftStats((m[d] || {})[tplId], tpl, d);
+    if (i === 0 && !st.closed) continue;
+    if (st.closed) n++; else break;
+  }
+  return n;
+}
+function initialsOf(name) {
+  const w = String(name).trim().split(/\s+/);
+  return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : String(name).slice(0, 2)).toUpperCase();
+}
+function countsFor(dates) {
+  const m = shiftMap();
+  const out = {};
+  dates.forEach(d => Object.values(m[d] || {}).forEach(s => {
+    Object.values(s.items || {}).forEach(r => { if (r.done && r.by) out[r.by] = (out[r.by] || 0) + 1; });
+  }));
+  return out;
+}
+function weekDates() { return Array.from({ length: 7 }, (_, i) => daysAgo(i)); }
+
+function renderTeamStrip() {
+  const today = countsFor([ymd(new Date())]);
+  const names = staff().length ? staff() : Object.keys(today);
+  if (!names.length) return '';
+  const mates = names.map(n => {
+    const c = today[n] || 0;
+    return `<div class="mate ${n === state.who ? 'me' : c ? 'active' : ''}">
+      <div class="av">${esc(initialsOf(n))}</div>
+      <div class="cnt">${c}</div>
+      <div class="nm2" title="${esc(n)}">${esc(n.split(' ')[0])}</div>
+    </div>`;
+  }).join('');
+  return `<div class="section"><h3 style="margin-bottom:8px">Ma a csapatból</h3><div class="team">${mates}</div></div>`;
+}
+function renderLeaderboard() {
+  const c = countsFor(weekDates());
+  const rows = Object.entries(c).sort((a, b) => b[1] - a[1]);
+  if (!rows.length) return '';
+  const max = rows[0][1] || 1;
+  return `<div class="section"><h3 style="margin-bottom:6px">A hét csapata · 7 nap</h3>
+    <div class="card">${rows.map(([n, v], i) => `<div class="lb-row ${n === state.who ? 'me' : ''}">
+        <div class="pos">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</div>
+        <div><div class="nm3">${esc(n)}</div><div class="lb-bar"><i style="width:${Math.round(100 * v / max)}%"></i></div></div>
+        <div class="v2">${v}</div>
+      </div>`).join('')}</div>
+    <p class="muted small" style="margin-top:8px">Elvégzett feladatok száma az elmúlt 7 napban.</p></div>`;
+}
+
+/* ---------- Receptek nézetek ---------- */
+function renderRecipes() {
+  const all = recipes();
+  const cat = state.recipeCat || '';
+  const list = all.filter(r => !cat || r.cat === cat);
+  const cards = list.map(r => {
+    const url = r.photo ? photoUrl(r.photo) : null;
+    return `<button class="rec-card" type="button" data-recipe="${esc(r.id)}" data-search="${esc((r.name + ' ' + (r.cat || '') + ' ' + (r.ingredients || []).map(i => i.n).join(' ')).toLowerCase())}">
+      <div class="ph">${url ? `<img src="${esc(url)}" alt="">` : '🍔'}</div>
+      <div>
+        <div class="nm4">${esc(r.name)}</div>
+        <div class="mt">${esc(r.cat || '')}${r.yieldQty ? ` · ${fmtQty(r.yieldQty)} ${esc(r.yieldUnit || '')}` : ''}${(r.allergens || []).length ? ` · ${r.allergens.length} allergén` : ''}</div>
+        ${r.sample ? '<div style="margin-top:4px"><span class="sample-tag">Minta</span></div>' : ''}
+      </div>
+    </button>`;
+  }).join('');
+  return `<div class="row-between" style="margin-bottom:10px"><h1>Receptek</h1>${state.isAdmin ? '<button class="btn sm primary" type="button" data-recipe-new>+ Új</button>' : ''}</div>
+    <input type="text" class="search" id="recSearch" placeholder="Keresés név vagy hozzávaló szerint" aria-label="Keresés a receptek között">
+    <div class="chips" style="margin-bottom:12px">
+      <button class="chip sm ${cat ? '' : 'active'}" type="button" data-reccat="">Mind</button>
+      ${RECIPE_CATS.map(c => `<button class="chip sm ${cat === c ? 'active' : ''}" type="button" data-reccat="${esc(c)}">${esc(c)}</button>`).join('')}
+    </div>
+    <div class="rec-grid" id="recGrid">${cards || '<div class="empty-state">Ebben a kategóriában még nincs recept.</div>'}</div>
+    ${state.isAdmin ? '<p class="muted small" style="margin-top:14px">A „Minta” jelölésű recepteket írd át a sajátotokra, vagy töröld őket.</p>' : ''}`;
+}
+function renderRecipe() {
+  const r = recipeById(state.route.id);
+  if (!r) return '<div class="empty-state">Ez a recept már nincs meg.</div>';
+  const sc = state.scale || 1;
+  const url = r.photo ? photoUrl(r.photo) : null;
+  const ings = (r.ingredients || []).map(i => `<div class="ing"><div>${esc(i.n)}</div><div class="q">${fmtQty((Number(i.q) || 0) * sc)} ${esc(i.u || '')}</div></div>`).join('');
+  const steps = (r.steps || []).map(st => `<div class="step"><div class="n2"></div><div>${esc(st)}</div></div>`).join('');
+  return `<button class="back" type="button" data-back>${ICON.back} Receptek</button>
+    ${url ? `<img class="rec-hero" src="${esc(url)}" alt="">` : ''}
+    <div class="eyebrow">${esc(r.cat || '')}</div>
+    <h1>${esc(r.name)}</h1>
+    ${r.sample ? '<div style="margin-top:6px"><span class="sample-tag">Minta – írd át a sajátotokra</span></div>' : ''}
+    ${(r.allergens || []).length ? `<div class="alg" style="margin-top:10px">${r.allergens.map(a => `<span>${esc(a)}</span>`).join('')}</div>` : ''}
+    <div class="scaler">
+      <span class="small muted">Adag:</span>
+      ${[0.5, 1, 2, 4].map(x => `<button class="sbtn ${sc === x ? 'on' : ''}" type="button" data-scale="${x}">${x === 0.5 ? '½×' : x + '×'}</button>`).join('')}
+      <span class="num" style="font-weight:600">${fmtQty((Number(r.yieldQty) || 0) * sc)} ${esc(r.yieldUnit || '')}</span>
+    </div>
+    <h3 style="margin-bottom:4px">Hozzávalók</h3>
+    <div class="card" style="padding:4px 14px">${ings || '<p class="muted small">Nincs megadva.</p>'}</div>
+    <div class="section"><h3 style="margin-bottom:10px">Elkészítés</h3><div class="steps">${steps || '<p class="muted small" style="margin:0">Nincs megadva.</p>'}</div></div>
+    ${r.note ? `<div class="section"><h3 style="margin-bottom:6px">Megjegyzés</h3><p class="muted" style="margin:0">${esc(r.note)}</p></div>` : ''}
+    ${state.isAdmin ? `<div class="section"><button class="btn block" type="button" data-recipe-edit="${esc(r.id)}">${ICON.pen} Szerkesztés</button></div>` : ''}`;
+}
+function renderRecipeEdit() {
+  const r = state.editRecipe;
+  if (!r) return '';
+  return `<button class="back" type="button" data-recipe-cancel>${ICON.back} Mégse</button>
+    <h1 style="margin-bottom:14px">${r._new ? 'Új recept' : 'Recept szerkesztése'}</h1>
+    <div class="card stack">
+      <div class="field"><label for="reName">Név</label><input type="text" id="reName" value="${esc(r.name || '')}" placeholder="pl. Burger Prof szósz"></div>
+      <div class="field"><label>Kategória</label><div class="chips">${RECIPE_CATS.map(c => `<button class="chip sm ${r.cat === c ? 'active' : ''}" type="button" data-recat="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
+      <div class="row-between">
+        <div class="field" style="flex:1"><label for="reQty">Adag mennyisége</label><input type="text" id="reQty" inputmode="decimal" value="${esc(r.yieldQty == null ? '' : r.yieldQty)}"></div>
+        <div class="field" style="flex:1"><label for="reUnit">Egység</label><input type="text" id="reUnit" value="${esc(r.yieldUnit || '')}" placeholder="g / db / burger"></div>
+      </div>
+    </div>
+    <div class="section"><h3 style="margin-bottom:8px">Hozzávalók</h3>
+      <div class="card">
+        ${(r.ingredients || []).map((i, ii) => `<div class="ing-edit">
+          <input type="text" data-ing="${ii}:n" value="${esc(i.n || '')}" placeholder="Hozzávaló" aria-label="Hozzávaló neve">
+          <input type="text" data-ing="${ii}:q" value="${esc(i.q == null ? '' : i.q)}" inputmode="decimal" placeholder="mennyi" aria-label="Mennyiség">
+          <input type="text" data-ing="${ii}:u" value="${esc(i.u || '')}" placeholder="g" aria-label="Egység">
+          <button class="ico-btn" type="button" data-ing-del="${ii}" aria-label="Sor törlése">${ICON.trash}</button>
+        </div>`).join('')}
+        <button class="btn sm" type="button" data-ing-add>+ Sor</button>
+      </div>
+    </div>
+    <div class="section"><h3 style="margin-bottom:8px">Elkészítés</h3>
+      <div class="card"><div class="field"><label for="reSteps">Soronként egy lépés</label><textarea id="reSteps" style="min-height:150px">${esc((r.steps || []).join('\n'))}</textarea></div></div>
+    </div>
+    <div class="section"><h3 style="margin-bottom:8px">Allergének</h3>
+      <div class="chips">${ALLERGENS.map(a => `<button class="chip sm ${(r.allergens || []).includes(a) ? 'active' : ''}" type="button" data-realg="${esc(a)}">${esc(a)}</button>`).join('')}</div>
+    </div>
+    <div class="section"><h3 style="margin-bottom:8px">Fotó és megjegyzés</h3>
+      <div class="card stack">
+        <label class="btn" style="justify-content:center">${ICON.camera} ${r.photo ? 'Fotó cseréje' : 'Fotó hozzáadása'}<input type="file" accept="image/*" hidden id="rePhoto"></label>
+        <div class="field"><label for="reNote">Megjegyzés</label><textarea id="reNote" placeholder="pl. hűtőben 5 napig áll el">${esc(r.note || '')}</textarea></div>
+      </div>
+    </div>
+    <div class="section stack">
+      <button class="btn primary block" type="button" data-recipe-save>Mentés</button>
+      ${r._new ? '' : '<button class="btn danger block" type="button" data-recipe-del>Recept törlése</button>'}
+    </div>`;
+}
+function syncRecipeInputs() {
+  const r = state.editRecipe;
+  if (!r) return;
+  const g = id => { const e = document.getElementById(id); return e ? e.value : undefined; };
+  if (g('reName') !== undefined) r.name = g('reName');
+  if (g('reQty') !== undefined) r.yieldQty = parseFloat(String(g('reQty')).replace(',', '.'));
+  if (g('reUnit') !== undefined) r.yieldUnit = g('reUnit');
+  if (g('reSteps') !== undefined) r.steps = g('reSteps').split('\n').map(x => x.trim()).filter(Boolean);
+  if (g('reNote') !== undefined) r.note = g('reNote');
+  document.querySelectorAll('[data-ing]').forEach(el => {
+    const [ii, f] = el.dataset.ing.split(':');
+    const row = r.ingredients[Number(ii)];
+    if (!row) return;
+    if (f === 'q') row.q = parseFloat(String(el.value).replace(',', '.'));
+    else row[f] = el.value;
+  });
 }
 
 /* ---------- Események ---------- */
@@ -1474,6 +1875,49 @@ document.addEventListener('click', async e => {
     state.audit.verdicts[id] = { v: 'ok', c: '' }; render(); return;
   }
   if ('export' in d) { exportCsv(); return; }
+  /* receptek */
+  if (d.recipe) { go({ tab: 'recipe', id: d.recipe }); return; }
+  if (d.reccat != null && 'reccat' in d) { state.recipeCat = d.reccat; render(); return; }
+  if (d.scale) { state.scale = Number(d.scale); render(); return; }
+  if ('recipeNew' in d) {
+    state.editRecipe = { _new: true, id: 'r_' + uid().slice(0, 8), name: '', cat: RECIPE_CATS[0], yieldQty: 1, yieldUnit: 'adag', ingredients: [{ n: '', q: null, u: '' }], steps: [], allergens: [], note: '', order: 100 };
+    go({ tab: 'recipeEdit' }); return;
+  }
+  if (d.recipeEdit) {
+    const r = recipeById(d.recipeEdit);
+    state.editRecipe = JSON.parse(JSON.stringify({ ...r, ingredients: r.ingredients || [], steps: r.steps || [], allergens: r.allergens || [] }));
+    go({ tab: 'recipeEdit' }); return;
+  }
+  if ('recipeCancel' in d) { const id = state.editRecipe && !state.editRecipe._new ? state.editRecipe.id : null; state.editRecipe = null; go(id ? { tab: 'recipe', id } : { tab: 'recipes' }); return; }
+  if (d.recat) { syncRecipeInputs(); state.editRecipe.cat = d.recat; render(); return; }
+  if (d.realg) {
+    syncRecipeInputs();
+    const a = new Set(state.editRecipe.allergens || []);
+    a.has(d.realg) ? a.delete(d.realg) : a.add(d.realg);
+    state.editRecipe.allergens = [...a]; render(); return;
+  }
+  if ('ingAdd' in d) { syncRecipeInputs(); state.editRecipe.ingredients.push({ n: '', q: null, u: '' }); render(); return; }
+  if (d.ingDel != null && 'ingDel' in d) { syncRecipeInputs(); state.editRecipe.ingredients.splice(Number(d.ingDel), 1); render(); return; }
+  if ('recipeSave' in d) {
+    syncRecipeInputs();
+    const r = state.editRecipe;
+    if (!r.name || !r.name.trim()) { toast('Adj nevet a receptnek.'); return; }
+    const body = {
+      name: r.name.trim(), cat: r.cat || '', yieldQty: isNaN(r.yieldQty) ? null : r.yieldQty, yieldUnit: (r.yieldUnit || '').trim(),
+      ingredients: (r.ingredients || []).filter(i => i.n && i.n.trim()).map(i => ({ n: i.n.trim(), q: isNaN(i.q) ? null : i.q, u: (i.u || '').trim() })),
+      steps: r.steps || [], allergens: r.allergens || [], note: (r.note || '').trim(),
+      order: r.order || 100, photo: r.photo || null, sample: false, updatedAt: new Date().toISOString(),
+    };
+    try { await state.db.doc('recipes/' + r.id).set(body); const id = r.id; state.editRecipe = null; go({ tab: 'recipe', id }); toast('Recept mentve.'); }
+    catch (err) { console.warn(err); toast(err && err.code === 'invalid_argument' ? 'Ehhez vezetői hozzáférés kell.' : 'Nem sikerült menteni.'); }
+    return;
+  }
+  if ('recipeDel' in d) {
+    if (!confirm('Biztosan törlöd ezt a receptet?')) return;
+    try { await state.db.doc('recipes/' + state.editRecipe.id).delete(); state.editRecipe = null; go({ tab: 'recipes' }); toast('Recept törölve.'); }
+    catch (err) { toast('Nem sikerült törölni.'); }
+    return;
+  }
   /* beállítások */
   if ('staffAdd' in d) {
     const v = $('#staffIn').value.trim();
@@ -1528,6 +1972,13 @@ document.addEventListener('click', async e => {
 document.addEventListener('change', e => {
   const inp = e.target;
   if (inp.dataset && inp.dataset.cam) { const f = inp.files && inp.files[0]; inp.value = ''; onPhoto(inp.dataset.cam, f); }
+  if (inp.id === 'rePhoto') {
+    const f = inp.files && inp.files[0]; inp.value = '';
+    if (!f || !state.editRecipe) return;
+    syncRecipeInputs(); toast('Fotó feltöltése…');
+    storePhoto(f, { recipeId: state.editRecipe.id }).then(ref => { state.editRecipe.photo = ref; render(); toast('Fotó hozzáadva.'); })
+      .catch(() => toast('Nem sikerült a fotó mentése.'));
+  }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 function syncTplInputs() {
