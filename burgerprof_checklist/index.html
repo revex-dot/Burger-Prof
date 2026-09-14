@@ -1,0 +1,1039 @@
+<title>BurgerProf Feladatlista</title>
+<meta name="description" content="Napi nyitó és záró feladatlisták a Burger Prof csapatának: pipálás, fotó, aláírás.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #F4F3EF;
+    --surface: #FFFFFF;
+    --surface-2: #ECEAE4;
+    --line: #DAD7CF;
+    --ink: #17171A;
+    --ink-2: #5C5A55;
+    --ink-3: #8E8B84;
+    --accent: #F2B705;
+    --accent-ink: #1B1500;
+    --accent-soft: #FBEBB5;
+    --done: #1F8A4C;
+    --done-soft: #DDF2E5;
+    --warn: #B7791F;
+    --warn-soft: #FBEFD6;
+    --danger: #C8321E;
+    --danger-soft: #F8DDD8;
+    --shadow: 0 1px 2px rgba(23,23,26,.06), 0 6px 20px rgba(23,23,26,.06);
+    --radius: 10px;
+    --font-display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+    --font-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141311; --surface: #1F1D1A; --surface-2: #2A2724; --line: #3A3631;
+      --ink: #F3EFE7; --ink-2: #BDB7AC; --ink-3: #85807A;
+      --accent: #F2B705; --accent-ink: #1B1500; --accent-soft: #4A3A06;
+      --done: #4FCB80; --done-soft: #17392A; --warn: #E3A43A; --warn-soft: #3E2E12;
+      --danger: #F0705C; --danger-soft: #4A1F19;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141311; --surface: #1F1D1A; --surface-2: #2A2724; --line: #3A3631;
+    --ink: #F3EFE7; --ink-2: #BDB7AC; --ink-3: #85807A;
+    --accent: #F2B705; --accent-ink: #1B1500; --accent-soft: #4A3A06;
+    --done: #4FCB80; --done-soft: #17392A; --warn: #E3A43A; --warn-soft: #3E2E12;
+    --danger: #F0705C; --danger-soft: #4A1F19;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.4;
+    padding-block: 0 84px; padding-inline: 0;
+    min-height: 100vh;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding-inline: 16px; }
+
+  /* Header */
+  .top {
+    position: sticky; top: 0; z-index: 20; background: var(--ink); color: #F3EFE7;
+  }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; }
+  .brand { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: .04em; text-transform: uppercase; }
+  .brand small { font-weight: 600; color: var(--accent); margin-left: 8px; letter-spacing: .08em; font-size: 14px; }
+  .who {
+    border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); color: #F3EFE7;
+    border-radius: 999px; padding: 6px 12px 6px 10px; display: flex; align-items: center; gap: 8px;
+    font-weight: 600; max-width: 55%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .who.empty { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .who .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+  .who.empty .dot { background: var(--accent-ink); }
+
+  /* Tabs */
+  .tabs {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tabs .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .tab {
+    background: none; border: 0; padding: 10px 4px 8px; color: var(--ink-3);
+    font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .tab svg { width: 24px; height: 24px; }
+  .tab.active { color: var(--ink); }
+  .tab.active svg { color: var(--accent); }
+
+  /* Generic */
+  main { padding-block: 16px; }
+  h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .02em; margin: 0; text-wrap: balance; line-height: 1.05; }
+  h1 { font-size: 32px; font-weight: 800; }
+  h2 { font-size: 22px; font-weight: 700; }
+  h3 { font-size: 17px; font-weight: 700; color: var(--ink-2); letter-spacing: .08em; }
+  .eyebrow { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .muted { color: var(--ink-2); }
+  .small { font-size: 14px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: var(--radius); padding: 12px 16px; font-weight: 600; min-height: 46px;
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.done { background: var(--done); border-color: var(--done); color: #fff; }
+  .btn.danger { color: var(--danger); border-color: var(--danger-soft); background: var(--danger-soft); }
+  .btn.ghost { background: transparent; }
+  .btn.block { width: 100%; }
+  .btn.sm { padding: 8px 12px; min-height: 36px; font-size: 14px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-weight: 600; font-size: 14px; color: var(--ink-2); }
+  input[type=text], input[type=password], input[type=date], textarea {
+    width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius);
+    padding: 11px 12px; min-height: 46px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+
+  /* Home cards */
+  .today-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .today-head .date { font-family: var(--font-display); font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); }
+  .list-card {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+    width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px 14px 14px 16px; box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .list-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--line); }
+  .list-card.state-partial::before { background: var(--accent); }
+  .list-card.state-done::before { background: var(--done); }
+  .list-card .name { font-family: var(--font-display); font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: .02em; }
+  .list-card .sub { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+  .list-card .prog { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .ring { width: 52px; height: 52px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+  .pill.done { background: var(--done-soft); color: var(--done); }
+  .pill.partial { background: var(--accent-soft); color: var(--accent-ink); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.danger { background: var(--danger-soft); color: var(--danger); }
+  .bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+  .bar.full i { background: var(--done); }
+
+  /* Checklist */
+  .back { background: none; border: 0; padding: 4px 0; color: var(--ink-2); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+  .back svg { width: 20px; height: 20px; }
+  .check-head { margin-bottom: 14px; }
+  .check-head .meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; color: var(--ink-2); margin-top: 6px; }
+  .items { display: flex; flex-direction: column; gap: 8px; }
+  .item {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: start; padding: 10px 10px 10px 8px;
+  }
+  .item.done { background: var(--done-soft); border-color: transparent; }
+  .item .box {
+    width: 44px; height: 44px; border-radius: 8px; border: 2px solid var(--line); background: var(--surface);
+    display: flex; align-items: center; justify-content: center; padding: 0; flex: none;
+  }
+  .item.done .box { background: var(--done); border-color: var(--done); color: #fff; }
+  .item .box svg { width: 26px; height: 26px; }
+  .item .body { min-width: 0; padding-top: 2px; }
+  .item .text { font-weight: 500; line-height: 1.3; }
+  .item.done .text { color: var(--ink-2); }
+  .item .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin-top: 4px; font-size: 13px; color: var(--ink-2); }
+  .item .meta b { color: var(--ink); font-weight: 600; }
+  .tag { font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent-ink); }
+  .item .side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .cam {
+    width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    display: flex; align-items: center; justify-content: center; color: var(--ink-2); padding: 0;
+  }
+  .cam svg { width: 22px; height: 22px; }
+  .cam.busy { opacity: .5; }
+  .thumb { width: 44px; height: 44px; border-radius: 8px; border: 0; padding: 0; overflow: hidden; background: var(--surface-2); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .note-btn { background: none; border: 0; color: var(--ink-3); font-size: 13px; padding: 0; text-decoration: underline; }
+  .item .note { margin-top: 4px; font-size: 14px; color: var(--ink-2); font-style: italic; }
+  .item .text-btn { background: none; border: 0; padding: 0; text-align: left; width: 100%; color: inherit; }
+
+  .section { margin-top: 24px; }
+  .section h3 { margin-bottom: 10px; }
+  .sigs { display: flex; flex-direction: column; gap: 8px; }
+  .sig { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
+  .sig img { height: 48px; width: 120px; object-fit: contain; background: #fff; border-radius: 6px; }
+  .sig .n { font-weight: 600; }
+  .closed-banner { background: var(--done); color: #fff; border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; gap: 10px; font-weight: 600; margin-top: 14px; }
+  .closed-banner svg { width: 22px; height: 22px; flex: none; }
+  .readonly-banner { background: var(--warn-soft); color: var(--warn); border-radius: var(--radius); padding: 10px 14px; font-weight: 600; margin-bottom: 12px; font-size: 14px; }
+
+  /* History */
+  .hist-day { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .hist-day .d { padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; }
+  .hist-day .d b { font-family: var(--font-display); font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+  .hist-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; width: 100%; padding: 10px 14px; background: none; border: 0; border-bottom: 1px solid var(--line); text-align: left; }
+  .hist-row:last-child { border-bottom: 0; }
+  .hist-row .n { font-weight: 600; }
+  .hist-row .s { font-size: 13px; color: var(--ink-2); }
+
+  /* Settings */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 10px 16px; font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .chip .x { color: var(--ink-3); font-weight: 400; }
+  .tpl-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .tpl-item:last-of-type { border-bottom: 0; }
+  .tpl-item textarea { min-height: 44px; padding: 8px 10px; }
+  .days { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .days .lbl { font-size: 12px; color: var(--ink-3); margin-right: 4px; }
+  .day { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); font-size: 12px; font-weight: 700; padding: 0; color: var(--ink-3); }
+  .day.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .ico-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+  .ico-btn svg { width: 18px; height: 18px; }
+  .ico-col { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 50; display: flex; align-items: flex-end; justify-content: center; padding: 0; }
+  .modal { background: var(--surface); color: var(--ink); width: 100%; max-width: 640px; border-radius: 16px 16px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 92vh; overflow: auto; }
+  @media (min-width: 700px) { .modal-bg { align-items: center; padding: 16px; } .modal { border-radius: 16px; } }
+  .modal h2 { margin-bottom: 12px; }
+  .sigpad { width: 100%; height: 180px; border: 2px dashed var(--line); border-radius: var(--radius); background: #fff; touch-action: none; display: block; }
+  .lightbox img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: var(--radius); background: #000; }
+
+  .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: #F3EFE7; padding: 10px 16px; border-radius: 999px; font-weight: 600; z-index: 60; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; }
+  .banner { background: var(--warn-soft); color: var(--warn); font-size: 14px; font-weight: 600; padding: 8px 16px; text-align: center; }
+  .empty { color: var(--ink-3); text-align: center; padding: 32px 16px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media print {
+    .top, .tabs, .cam, .back, .btn, .modal-bg, .toast { display: none !important; }
+    body { background: #fff; color: #000; padding: 0; }
+    .item { break-inside: avoid; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">BurgerProf<small>Feladatlista</small></div>
+    <button class="who empty" id="whoBtn" type="button"><span class="dot"></span><span id="whoName">Ki vagy?</span></button>
+  </div>
+</header>
+<div id="banner" hidden class="banner"></div>
+<main class="wrap" id="view"></main>
+<nav class="tabs" aria-label="Fő navigáció">
+  <div class="wrap">
+    <button class="tab active" data-tab="today" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Ma
+    </button>
+    <button class="tab" data-tab="history" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Előzmények
+    </button>
+    <button class="tab" data-tab="settings" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Beállítások
+    </button>
+  </div>
+</nav>
+<div id="modalRoot"></div>
+
+<script>
+/* ============================================================
+   BurgerProf Feladatlista
+   - Adatok: claude db (közös, valós idejű) — ha nem elérhető, localStorage
+   - Fotók: claude assets (ha szerkesztési jog van) — különben kicsinyítve a db-be
+   ============================================================ */
+(function () {
+'use strict';
+
+/* ---------- Alap sablonok (a nyomtatott listák v3.0 / v1.0 alapján) ---------- */
+const DEFAULT_TEMPLATES = [
+  { id: 'morning_counter', order: 1, name: 'Reggeli feladatok', section: 'Pult', items: [
+    { id: 'm01', text: 'Gépek be: hűtő lámpa, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti logó, terminálok (Wolt / Foodora / bankkártya + akku)' },
+    { id: 'm02', text: 'Napi nyitás + váltópénz és nyitó összeg leszámolása; gépekbe papír + tartalék a közelben' },
+    { id: 'm03', text: 'Zene lejátszólista elindítása' },
+    { id: 'm04', text: 'Benti asztalok letörlése' },
+    { id: 'm05', text: 'Felsepregetés, felmosás' },
+    { id: 'm06', text: 'Pókhálózás vendégtérben és mosdókban' },
+    { id: 'm07', text: 'Napernyők nyitása' },
+    { id: 'm08', text: 'Növények öntözése' },
+    { id: 'm09', text: 'Kinti asztalok, székek letörlése' },
+    { id: 'm10', text: 'Hamutartók check / mosás' },
+    { id: 'm11', text: 'Terasz szemetes külsőleg takarítása' },
+    { id: 'm12', text: 'Terasz és bejárat: szemét szedés, lépcső söprése, kültéri pókhálózás' },
+    { id: 'm13', text: 'Kellékek: sóadagoló, szalvétaadagoló, kézfertőtlenítő, villa — feltöltés és letörlés' },
+    { id: 'm14', text: 'Elviteles: szatyor, szalvéta bekészítés' },
+    { id: 'm15', text: 'Mosdókagyló, szappantartó vízkőoldás; szappan töltés' },
+    { id: 'm16', text: 'Tükör, kézszárító: foltmentesre törlés, portalanítás' },
+    { id: 'm17', text: 'Szemetesek check, ürítés, külső törlés' },
+    { id: 'm18', text: 'WC-papír töltés' },
+    { id: 'm19', text: 'WC vízkőoldás, WC-olaj' },
+    { id: 'm20', text: 'Mosdó padlójának takarítása' },
+    { id: 'm21', text: 'Ablaktisztítás', weekly: [1, 5] },
+    { id: 'm22', text: 'Boxok, asztalok elhúzása', weekly: [2, 4, 6, 7] },
+  ]},
+  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', items: [
+    { id: 'e01', text: 'Benti asztalok letörlése' },
+    { id: 'e02', text: 'Székek felpakolása az asztalokra' },
+    { id: 'e03', text: 'Padló felsepregetés' },
+    { id: 'e04', text: 'Szalvétaadagoló, sóadagoló behozása' },
+    { id: 'e05', text: 'Napernyők behúzása' },
+    { id: 'e06', text: 'Hamutartók check' },
+    { id: 'e07', text: 'Kukák ürítése, új zsák belerakása' },
+    { id: 'e08', text: 'Kassza körül rendben hagyva' },
+    { id: 'e09', text: 'Üdítők betöltése a hűtőbe (reggelre hideg legyen)' },
+    { id: 'e10', text: 'Fagyi utántöltése' },
+    { id: 'e11', text: 'Töltésre helyezés: banki terminál, kültéri lámpák, aksis eszközök' },
+    { id: 'e12', text: 'WC-k átnézve, rendben' },
+    { id: 'e13', text: 'Gépek ki: hűtő világítás, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti és kültéri logó' },
+    { id: 'e14', text: 'Napi zárás: készpénz leszámolása + papírok + boríték a kasszába (dátum, összeg, aláírás)' },
+    { id: 'e15', text: 'Világítás lekapcsolva, ajtó bezárva' },
+  ]},
+  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', items: [
+    { id: 'k01', text: 'Dohányzó teljes rendezése' },
+    { id: 'k02', text: 'Padló teljes tisztítása' },
+    { id: 'k03', text: 'Konyhai kuka kívülről takarítva, zsák kiürítése és új zsák belerakása' },
+    { id: 'k04', text: 'Mosogatás, mosogató üresre pakolása, fertőtlenítése, tisztára törlése' },
+    { id: 'k05', text: 'Összeszerelő hűtő takarítása kívül, belül' },
+    { id: 'k06', text: 'Kézmosó eltakarítása' },
+    { id: 'k07', text: 'Bucipirító és az alatta lévő asztal eltakarítása' },
+    { id: 'k08', text: 'Középső asztal teljes tisztítása és rendezése (alsó szint is)' },
+    { id: 'k09', text: 'Fritu takarítása kívülről' },
+    { id: 'k10', text: 'Grilles hűtő takarítása kívül, belül' },
+    { id: 'k11', text: 'Teljes rostlap takarítás' },
+    { id: 'k12', text: 'Olajos edény kiürítve, elmosva' },
+    { id: 'k13', text: 'Elszívó 1 rács tisztára mosva' },
+    { id: 'k14', text: 'Rostlap alatt takarítás', weekly: [1] },
+    { id: 'k15', text: 'Fritu alatt takarítás', weekly: [1] },
+    { id: 'k16', text: 'Hűtők mögött takarítás', weekly: [1] },
+    { id: 'k17', text: 'Csempe takarítás', weekly: [2, 5] },
+    { id: 'k18', text: 'Fritu csere', weekly: [2, 6] },
+    { id: 'k19', text: 'Konyhai kuka belülről', weekly: [3] },
+    { id: 'k20', text: 'Reggeli tennivaló lista kitöltése' },
+  ]},
+];
+const DAY_NAMES = ['', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'];
+const DAY_SHORT = ['', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V'];
+const MONTHS = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december'];
+
+/* ---------- Segédek ---------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const weekdayOf = s => ((parseYmd(s).getDay() + 6) % 7) + 1; // 1=Hétfő … 7=Vasárnap
+const hhmm = iso => { const d = new Date(iso); return isNaN(d) ? '' : `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const longDate = s => { const d = parseYmd(s); return `${d.getFullYear()}. ${MONTHS[d.getMonth()]} ${d.getDate()}.`; };
+const shortDate = s => { const d = parseYmd(s); return `${MONTHS[d.getMonth()].slice(0, 3)}. ${d.getDate()}.`; };
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+const ls = {
+  get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+const ss = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
+};
+
+let toastTimer;
+function toast(msg) {
+  let t = $('.toast');
+  if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.remove(), 2600);
+}
+
+const ICON = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+};
+
+/* ---------- Helyi tároló, ami a db felületét utánozza (ha nincs közös adatbázis) ---------- */
+function makeLocalStore() {
+  const KEY = 'bp_local_db';
+  const data = ls.get(KEY, {});
+  const listeners = new Set();
+  const save = () => { ls.set(KEY, data); listeners.forEach(fn => { try { fn(); } catch (e) {} }); };
+  const snapOf = (path) => ({ id: path.split('/').pop(), exists: path in data, data: () => (path in data ? JSON.parse(JSON.stringify(data[path])) : undefined), metadata: { fromCache: false, hasPendingWrites: false } });
+  const deepMerge = (a, b) => { for (const k of Object.keys(b)) { if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) deepMerge(a[k], b[k]); else a[k] = b[k]; } return a; };
+  const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+  function docRef(path) {
+    return {
+      id: path.split('/').pop(), path,
+      async get() { return snapOf(path); },
+      async set(body) { data[path] = JSON.parse(JSON.stringify(body)); save(); },
+      async update(body) { if (!(path in data)) throw { code: 'invalid_argument', message: 'missing' }; deepMerge(data[path], JSON.parse(JSON.stringify(body))); save(); },
+      async delete() { delete data[path]; save(); },
+      onSnapshot(next) { const fn = () => next(snapOf(path)); listeners.add(fn); setTimeout(fn, 0); return () => listeners.delete(fn); },
+      collection(sub) { return colRef(path + '/' + sub); },
+    };
+  }
+  function colRef(path, q) {
+    q = q || { where: [], orderBy: null, limit: 0 };
+    const run = () => {
+      const depth = path.split('/').length + 1;
+      let docs = Object.keys(data).filter(p => p.startsWith(path + '/') && p.split('/').length === depth).map(p => ({ p, d: data[p] }));
+      for (const [f, op, v] of q.where) docs = docs.filter(({ d }) => { const x = d[f]; return op === '==' ? x === v : op === '!=' ? x !== v : op === '<' ? x < v : op === '<=' ? x <= v : op === '>' ? x > v : op === '>=' ? x >= v : op === 'in' ? v.includes(x) : true; });
+      if (q.orderBy) { const [f, dir] = q.orderBy; docs.sort((a, b) => cmp(a.d[f], b.d[f]) * (dir === 'desc' ? -1 : 1)); } else docs.sort((a, b) => cmp(a.p, b.p));
+      if (q.limit) docs = docs.slice(0, q.limit);
+      const arr = docs.map(({ p }) => snapOf(p));
+      return { docs: arr, size: arr.length, empty: !arr.length, docChanges: () => [], metadata: { fromCache: false, hasPendingWrites: false } };
+    };
+    return {
+      path,
+      where(f, op, v) { return colRef(path, { ...q, where: [...q.where, [f, op, v]] }); },
+      orderBy(f, dir) { return colRef(path, { ...q, orderBy: [f, dir || 'asc'] }); },
+      limit(n) { return colRef(path, { ...q, limit: n }); },
+      async get() { return run(); },
+      onSnapshot(next) { const fn = () => next(run()); listeners.add(fn); setTimeout(fn, 0); return () => listeners.delete(fn); },
+      doc(id) { return docRef(path + '/' + (id || uid())); },
+      async add(body) { const r = docRef(path + '/' + uid()); await r.set(body); return r; },
+    };
+  }
+  return { doc: docRef, collection: colRef, local: true };
+}
+
+/* ---------- Alkalmazás állapot ---------- */
+const state = {
+  db: null, assets: null, assetsChecked: false,
+  templates: null,          // db-ből; null → alapértelmezett
+  settings: null,           // { pin, staff }
+  who: ls.get('bp_who', ''),
+  route: { tab: 'today' },  // {tab:'today'} | {tab:'check', date, tplId} | {tab:'history'} | {tab:'settings'}
+  todayShifts: {},          // tplId -> shift doc (mai)
+  openShift: null,          // a megnyitott lista dokumentuma
+  history: [],              // shift docs (utolsó 45 nap)
+  unsub: {},
+  photoCache: {},
+  editTemplates: null,      // beállításokban szerkesztés alatt
+};
+
+function templates() {
+  const t = state.templates && state.templates.length ? state.templates : DEFAULT_TEMPLATES;
+  return [...t].sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+function templateById(id) { return templates().find(t => t.id === id) || DEFAULT_TEMPLATES.find(t => t.id === id); }
+function staff() { return (state.settings && Array.isArray(state.settings.staff)) ? state.settings.staff : []; }
+function itemsForDay(tpl, dateStr) {
+  const wd = weekdayOf(dateStr);
+  return (tpl.items || []).filter(it => !it.weekly || !it.weekly.length || it.weekly.includes(wd));
+}
+function shiftId(dateStr, tplId) { return `${dateStr}_${tplId}`; }
+function isManager() { return ss.get('bp_mgr') === '1' || !(state.settings && state.settings.pin); }
+
+/* Egy lista állapota: {total, done, signed, closed} */
+function shiftStats(shift, tpl, dateStr) {
+  const items = shift && shift.items_def ? shift.items_def : itemsForDay(tpl, dateStr);
+  const total = items.length;
+  const done = items.filter(it => shift && shift.items && shift.items[it.id] && shift.items[it.id].done).length;
+  const signed = !!(shift && shift.signatures && shift.signatures.length);
+  return { total, done, signed, closed: total > 0 && done === total && signed };
+}
+
+/* ---------- Adatréteg ---------- */
+async function initStore() {
+  let db = null;
+  try { if (window.claude && typeof window.claude.use === 'function') db = await window.claude.use('db'); } catch (e) { db = null; }
+  state.db = db || makeLocalStore();
+  if (!db) showBanner('Csak ezen az eszközön mentődik (nincs közös adatbázis). Nyisd meg a claude.ai-n megosztott linkről a közös használathoz.');
+  subscribeBase();
+  subscribeToday();
+  render();
+  // fotótár – csak akkor kérjük, ha kell (első fotónál)
+}
+async function getAssets() {
+  if (state.assetsChecked) return state.assets;
+  state.assetsChecked = true;
+  try { if (window.claude && typeof window.claude.use === 'function') state.assets = await window.claude.use('assets'); } catch (e) { state.assets = null; }
+  return state.assets;
+}
+function showBanner(msg) { const b = $('#banner'); b.textContent = msg; b.hidden = false; }
+
+function subscribeBase() {
+  const db = state.db;
+  state.unsub.tpl = db.collection('templates').onSnapshot(snap => {
+    state.templates = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('templates', err));
+  state.unsub.settings = db.doc('settings/app').onSnapshot(snap => {
+    state.settings = snap.exists ? snap.data() : null;
+    render();
+  }, err => console.warn('settings', err));
+}
+function subscribeToday() {
+  const today = ymd(new Date());
+  if (state.unsub.today) state.unsub.today();
+  state.unsub.today = state.db.collection('shifts').where('date', '==', today).onSnapshot(snap => {
+    state.todayShifts = {};
+    snap.docs.forEach(d => { if (d.exists) { const x = d.data(); state.todayShifts[x.templateId] = { id: d.id, ...x }; } });
+    render();
+  }, err => console.warn('today', err));
+}
+function subscribeOpenShift(id) {
+  if (state.unsub.open) state.unsub.open();
+  state.openShift = null;
+  state.unsub.open = state.db.doc('shifts/' + id).onSnapshot(snap => {
+    state.openShift = snap.exists ? { id: snap.id, ...snap.data() } : null;
+    render();
+  }, err => console.warn('open', err));
+}
+function subscribeHistory() {
+  if (state.unsub.hist) return;
+  const from = new Date(); from.setDate(from.getDate() - 45);
+  state.unsub.hist = state.db.collection('shifts').where('date', '>=', ymd(from)).orderBy('date', 'desc').limit(400).onSnapshot(snap => {
+    state.history = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('history', err));
+}
+
+/* A napi dokumentum létrehozása az első interakciónál (a sablon aznapi tételeit lemásolva) */
+async function ensureShift(dateStr, tplId) {
+  const id = shiftId(dateStr, tplId);
+  const ref = state.db.doc('shifts/' + id);
+  const snap = await ref.get();
+  if (snap.exists) return { id, ...snap.data() };
+  const tpl = templateById(tplId);
+  const body = {
+    date: dateStr, templateId: tplId, templateName: tpl.name, section: tpl.section,
+    weekday: weekdayOf(dateStr),
+    items_def: itemsForDay(tpl, dateStr).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) })),
+    items: {}, signatures: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  };
+  await ref.set(body);
+  return { id, ...body };
+}
+async function patchShift(id, patch) {
+  try {
+    await state.db.doc('shifts/' + id).update({ ...patch, updatedAt: new Date().toISOString() });
+  } catch (e) {
+    console.warn(e);
+    toast(e && e.code === 'quota_exceeded' ? 'Megtelt az adatbázis – szólj a vezetőnek.' : 'Nem sikerült menteni, próbáld újra.');
+  }
+}
+
+/* ---------- Fotók ---------- */
+function downscale(file, maxPx, quality) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve(b) : reject(new Error('blob')), 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img')); };
+    img.src = url;
+  });
+}
+const blobToDataUrl = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+
+async function storePhoto(file, shiftIdStr, itemId) {
+  const assets = await getAssets();
+  if (assets) {
+    try {
+      const blob = await downscale(file, 1400, 0.82);
+      const r = await assets.upload(blob, { type: 'image/jpeg' });
+      return { asset: r.id };
+    } catch (e) {
+      console.warn('asset upload failed, falling back', e);
+      if (e && (e.code === 'not_granted' || e.code === 'capability_disabled')) state.assets = null;
+    }
+  }
+  const small = await downscale(file, 720, 0.7);
+  const dataUrl = await blobToDataUrl(small);
+  const ref = state.db.collection('photos').doc();
+  await ref.set({ shiftId: shiftIdStr, itemId, dataUrl, at: new Date().toISOString() });
+  return { doc: ref.id };
+}
+function photoUrl(ref) {
+  if (!ref) return null;
+  if (ref.asset) return '/_blob/' + ref.asset;
+  if (ref.doc) {
+    if (state.photoCache[ref.doc]) return state.photoCache[ref.doc];
+    if (!state.photoCache['__p_' + ref.doc]) {
+      state.photoCache['__p_' + ref.doc] = true;
+      state.db.doc('photos/' + ref.doc).get().then(s => { if (s.exists) { state.photoCache[ref.doc] = s.data().dataUrl; render(); } });
+    }
+    return null;
+  }
+  return null;
+}
+async function deletePhoto(ref) {
+  if (!ref) return;
+  try {
+    if (ref.asset) { const a = await getAssets(); if (a) await a.delete(ref.asset); }
+    if (ref.doc) await state.db.doc('photos/' + ref.doc).delete();
+  } catch (e) { console.warn(e); }
+}
+
+/* ---------- Render ---------- */
+function render() {
+  const whoBtn = $('#whoBtn');
+  $('#whoName').textContent = state.who || 'Ki vagy?';
+  whoBtn.classList.toggle('empty', !state.who);
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === (state.route.tab === 'check' ? state.route.from || 'today' : state.route.tab)));
+  const v = $('#view');
+  const r = state.route;
+  if (r.tab === 'today') v.innerHTML = renderToday();
+  else if (r.tab === 'check') v.innerHTML = renderCheck();
+  else if (r.tab === 'history') { subscribeHistory(); v.innerHTML = renderHistory(); }
+  else if (r.tab === 'settings') v.innerHTML = renderSettings();
+}
+
+function ringSvg(done, total) {
+  const pct = total ? done / total : 0;
+  const r = 20, c = 2 * Math.PI * r;
+  const color = total && done === total ? 'var(--done)' : 'var(--accent)';
+  return `<svg class="ring" viewBox="0 0 52 52" aria-hidden="true">
+    <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="6"/>
+    <circle cx="26" cy="26" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - pct)}" transform="rotate(-90 26 26)"/>
+    <text x="26" y="30" text-anchor="middle" font-family="var(--font-display)" font-weight="700" font-size="14" fill="var(--ink)">${done}/${total}</text>
+  </svg>`;
+}
+
+function renderToday() {
+  const today = ymd(new Date());
+  const wd = weekdayOf(today);
+  const cards = templates().map(tpl => {
+    const shift = state.todayShifts[tpl.id];
+    const st = shiftStats(shift, tpl, today);
+    const cls = st.closed ? 'state-done' : (st.done > 0 || st.signed) ? 'state-partial' : '';
+    const weekly = itemsForDay(tpl, today).filter(i => i.weekly && i.weekly.length).length;
+    let pill;
+    if (st.closed) pill = '<span class="pill done">Lezárva, aláírva</span>';
+    else if (st.done === st.total && st.total) pill = '<span class="pill warn">Aláírás hiányzik</span>';
+    else if (st.done > 0) pill = '<span class="pill partial">Folyamatban</span>';
+    else pill = '<span class="pill">Még nem kezdték el</span>';
+    return `<button class="list-card ${cls}" type="button" data-open="${tpl.id}" data-date="${today}">
+      <div>
+        <div class="eyebrow">${esc(tpl.section)}</div>
+        <div class="name">${esc(tpl.name)}</div>
+        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${shift && shift.signatures && shift.signatures.length ? ` · aláírta: ${esc(shift.signatures.map(s => s.name).join(', '))}` : ''}</div>
+        <div style="margin-top:8px">${pill}</div>
+      </div>
+      <div class="prog">${ringSvg(st.done, st.total)}</div>
+    </button>`;
+  }).join('');
+  return `<div class="today-head"><h1>Ma</h1><div class="date">${DAY_NAMES[wd]} · ${longDate(today)}</div></div>
+    <div class="stack">${cards}</div>
+    <p class="muted small" style="margin-top:18px">Válaszd ki a listát, pipáld ki a kész feladatokat, fotózz, ha kell, a végén írd alá. Minden mentés azonnal látszik a többieknél is.</p>`;
+}
+
+function renderCheck() {
+  const { date, tplId } = state.route;
+  const tpl = templateById(tplId);
+  const shift = state.openShift;
+  const items = shift && shift.items_def ? shift.items_def : itemsForDay(tpl, date).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) }));
+  const st = shiftStats(shift, tpl, date);
+  const today = ymd(new Date());
+  const editable = date === today || isManager();
+  const wd = weekdayOf(date);
+  const rows = items.map(it => {
+    const rec = shift && shift.items ? shift.items[it.id] : null;
+    const done = !!(rec && rec.done);
+    const url = rec && rec.photo ? photoUrl(rec.photo) : null;
+    return `<div class="item ${done ? 'done' : ''}" data-item="${esc(it.id)}">
+      <button class="box" type="button" data-toggle="${esc(it.id)}" aria-pressed="${done}" aria-label="${done ? 'Kész' : 'Nincs kész'}: ${esc(it.text)}" ${editable ? '' : 'disabled'}>${done ? ICON.check : ''}</button>
+      <div class="body">
+        <button class="text-btn" type="button" data-toggle="${esc(it.id)}" ${editable ? '' : 'disabled'}><div class="text">${esc(it.text)}</div></button>
+        <div class="meta">
+          ${it.weekly ? '<span class="tag">Heti</span>' : ''}
+          ${done ? `<span><b>${esc(rec.by || '—')}</b> · <span class="num">${hhmm(rec.at)}</span></span>` : ''}
+          ${editable ? `<button class="note-btn" type="button" data-note="${esc(it.id)}">${rec && rec.note ? 'megjegyzés szerkesztése' : 'megjegyzés'}</button>` : ''}
+        </div>
+        ${rec && rec.note ? `<div class="note">${esc(rec.note)}</div>` : ''}
+      </div>
+      <div class="side">
+        ${rec && rec.photo
+          ? `<button class="thumb" type="button" data-photo="${esc(it.id)}" aria-label="Fotó megnyitása">${url ? `<img src="${esc(url)}" alt="">` : ''}</button>`
+          : (editable ? `<label class="cam" data-camlabel="${esc(it.id)}" aria-label="Fotó készítése">${ICON.camera}<input type="file" accept="image/*" capture="environment" hidden data-cam="${esc(it.id)}"></label>` : '')}
+      </div>
+    </div>`;
+  }).join('');
+  const sigs = (shift && shift.signatures || []).map((s, i) => `<div class="sig">
+      <img src="${esc(s.png)}" alt="Aláírás: ${esc(s.name)}">
+      <div><div class="n">${esc(s.name)}</div><div class="small muted num">${hhmm(s.at)}${editable ? ` · <button class="note-btn" type="button" data-delsig="${i}">törlés</button>` : ''}</div></div>
+    </div>`).join('');
+  return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
+    <div class="check-head">
+      <div class="eyebrow">${esc(tpl.section)} · ${DAY_NAMES[wd]}</div>
+      <h1>${esc(tpl.name)}</h1>
+      <div class="meta"><span class="num">${longDate(date)}</span><span class="num"><b>${st.done}</b> / ${st.total} kész</span></div>
+      <div class="bar ${st.total && st.done === st.total ? 'full' : ''}" style="margin-top:10px"><i style="width:${st.total ? Math.round(100 * st.done / st.total) : 0}%"></i></div>
+    </div>
+    ${editable ? '' : '<div class="readonly-banner">Korábbi nap – csak megtekinthető. Módosításhoz vezetői belépés kell a Beállításokban.</div>'}
+    <div class="items">${rows}</div>
+    ${st.closed ? `<div class="closed-banner">${ICON.check} Minden feladat kész, a lista alá van írva.</div>` : ''}
+    <div class="section">
+      <div class="row-between"><h3>Aláírás</h3>${editable ? `<button class="btn sm primary" type="button" data-sign>${ICON.pen} Aláírom</button>` : ''}</div>
+      ${sigs ? `<div class="sigs">${sigs}</div>` : '<p class="muted small" style="margin:0">Még senki nem írta alá. Ha minden kész, írd alá – ez helyettesíti a papírt.</p>'}
+    </div>
+    ${st.total && st.done < st.total && editable ? `<p class="muted small" style="margin-top:14px">Még ${st.total - st.done} feladat hiányzik.</p>` : ''}`;
+}
+
+function renderHistory() {
+  const byDate = {};
+  state.history.forEach(s => { (byDate[s.date] = byDate[s.date] || {})[s.templateId] = s; });
+  const today = ymd(new Date());
+  const dates = Object.keys(byDate).filter(d => d !== today).sort().reverse();
+  if (!dates.length) return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="empty">Még nincs korábbi nap. A kitöltött listák itt jelennek meg, dátum szerint.</div>`;
+  const tpls = templates();
+  const days = dates.map(d => {
+    const rows = tpls.map(tpl => {
+      const s = byDate[d][tpl.id];
+      const st = shiftStats(s, tpl, d);
+      let pill = !s ? '<span class="pill danger">Nem töltötték ki</span>'
+        : st.closed ? '<span class="pill done">Kész, aláírva</span>'
+        : st.done === st.total ? '<span class="pill warn">Nincs aláírva</span>'
+        : `<span class="pill warn num">${st.done}/${st.total}</span>`;
+      const who = s && s.signatures && s.signatures.length ? s.signatures.map(x => x.name).join(', ') : (s && s.items ? [...new Set(Object.values(s.items).filter(x => x.done && x.by).map(x => x.by))].join(', ') : '');
+      return `<button class="hist-row" type="button" data-open="${tpl.id}" data-date="${d}">
+        <div><div class="n">${esc(tpl.name)} <span class="muted">· ${esc(tpl.section)}</span></div>${who ? `<div class="s">${esc(who)}</div>` : ''}</div>
+        ${pill}
+      </button>`;
+    }).join('');
+    return `<div class="hist-day"><div class="d"><b>${DAY_NAMES[weekdayOf(d)]}</b><span class="muted num">${longDate(d)}</span></div>${rows}</div>`;
+  }).join('');
+  return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="stack">${days}</div><p class="muted small" style="margin-top:16px">Az utolsó 45 nap látszik.</p>`;
+}
+
+function renderSettings() {
+  if (!isManager()) {
+    return `<h1 style="margin-bottom:14px">Beállítások</h1>
+      <div class="card stack">
+        <p style="margin:0">A dolgozók listáját, a feladatsablonokat és a PIN-t csak vezetői PIN-nel lehet módosítani.</p>
+        <div class="field"><label for="pinIn">Vezetői PIN</label><input type="password" id="pinIn" inputmode="numeric" autocomplete="off" placeholder="••••"></div>
+        <button class="btn primary block" type="button" data-pin-login>${ICON.lock} Belépés</button>
+      </div>`;
+  }
+  const s = state.settings || {};
+  const list = staff();
+  const tpls = state.editTemplates || templates().map(t => JSON.parse(JSON.stringify(t)));
+  if (!state.editTemplates) state.editTemplates = tpls;
+  const tplHtml = tpls.map((tpl, ti) => `<div class="card" style="margin-top:12px">
+      <div class="row-between" style="margin-bottom:6px"><div><div class="eyebrow">${esc(tpl.section)}</div><h2>${esc(tpl.name)}</h2></div><span class="pill num">${tpl.items.length} tétel</span></div>
+      ${tpl.items.map((it, ii) => `<div class="tpl-item">
+        <div>
+          <textarea data-tpl-text="${ti}:${ii}" aria-label="Feladat szövege">${esc(it.text)}</textarea>
+          <div class="days"><span class="lbl">Heti (mely napokon):</span>${[1,2,3,4,5,6,7].map(d => `<button class="day ${it.weekly && it.weekly.includes(d) ? 'on' : ''}" type="button" data-tpl-day="${ti}:${ii}:${d}" aria-pressed="${!!(it.weekly && it.weekly.includes(d))}">${DAY_SHORT[d]}</button>`).join('')}<span class="lbl" style="margin-left:6px">${it.weekly && it.weekly.length ? '' : 'minden nap'}</span></div>
+        </div>
+        <div class="ico-col">
+          <button class="ico-btn" type="button" data-tpl-move="${ti}:${ii}:-1" aria-label="Feljebb" ${ii === 0 ? 'disabled' : ''}>${ICON.up}</button>
+          <button class="ico-btn" type="button" data-tpl-move="${ti}:${ii}:1" aria-label="Lejjebb" ${ii === tpl.items.length - 1 ? 'disabled' : ''}>${ICON.down}</button>
+          <button class="ico-btn" type="button" data-tpl-del="${ti}:${ii}" aria-label="Törlés">${ICON.trash}</button>
+        </div>
+      </div>`).join('')}
+      <div class="row-between" style="margin-top:10px">
+        <button class="btn sm" type="button" data-tpl-add="${ti}">+ Új feladat</button>
+        <button class="btn sm primary" type="button" data-tpl-save="${ti}">Mentés</button>
+      </div>
+    </div>`).join('');
+  return `<h1 style="margin-bottom:14px">Beállítások</h1>
+    <div class="card stack">
+      <h2>Dolgozók</h2>
+      <p class="muted small" style="margin:0">Ezek közül választ mindenki a jobb felső „Ki vagy?” gombnál.</p>
+      <div class="chips">${list.map(n => `<span class="chip">${esc(n)} <button class="x" type="button" data-staff-del="${esc(n)}" aria-label="Törlés: ${esc(n)}">✕</button></span>`).join('') || '<span class="muted small">Még nincs senki felvéve.</span>'}</div>
+      <div class="row-between"><input type="text" id="staffIn" placeholder="Név" aria-label="Új dolgozó neve"><button class="btn primary" type="button" data-staff-add>Hozzáad</button></div>
+    </div>
+    <div class="card stack" style="margin-top:12px">
+      <h2>Vezetői PIN</h2>
+      <p class="muted small" style="margin:0">${s.pin ? 'A PIN be van állítva.' : 'Még nincs PIN – amíg nincs, bárki szerkesztheti a beállításokat.'}</p>
+      <div class="row-between"><input type="password" id="pinNew" inputmode="numeric" placeholder="Új PIN (4–8 számjegy)" aria-label="Új PIN"><button class="btn" type="button" data-pin-save>Mentés</button></div>
+      ${s.pin ? '<button class="btn ghost sm" type="button" data-pin-logout>Kilépés a vezetői módból</button>' : ''}
+    </div>
+    <div class="section"><h3>Feladatsablonok</h3><p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. A „Heti” napoknál jelöld, mely napokon jelenjen meg a feladat – ha egyet sem jelölsz, minden nap szerepel.</p>${tplHtml}</div>
+    <div class="card" style="margin-top:12px">
+      <div class="eyebrow">Tárolás</div>
+      <p class="small muted" style="margin:6px 0 0">${state.db.local ? 'Helyi mód: az adatok csak ezen az eszközön vannak.' : 'Közös adatbázis: minden eszközön ugyanaz látszik.'} Fotók: ${state.assets ? 'fájltárban (teljes méret)' : 'kicsinyítve az adatbázisban' }.</p>
+    </div>`;
+}
+
+/* ---------- Modalok ---------- */
+function openModal(html, onMount) {
+  const root = $('#modalRoot');
+  root.innerHTML = `<div class="modal-bg" data-close><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  root.querySelector('.modal').addEventListener('click', e => e.stopPropagation());
+  root.querySelector('[data-close]').addEventListener('click', closeModal);
+  if (onMount) onMount(root.querySelector('.modal'));
+}
+function closeModal() { $('#modalRoot').innerHTML = ''; }
+
+function whoModal(then) {
+  const names = staff();
+  openModal(`<h2>Ki vagy?</h2>
+    <p class="muted small" style="margin:0 0 12px">A neved kerül a kipipált feladatok mellé.</p>
+    <div class="chips" id="whoChips">${names.map(n => `<button class="chip ${n === state.who ? 'active' : ''}" type="button" data-who="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+    <div class="field" style="margin-top:14px"><label for="whoIn">${names.length ? 'Vagy írd be a neved' : 'Írd be a neved'}</label><div class="row-between"><input type="text" id="whoIn" autocomplete="off" placeholder="Név"><button class="btn primary" type="button" id="whoOk">Kész</button></div></div>`,
+    m => {
+      const pick = n => { state.who = n.trim(); ls.set('bp_who', state.who); closeModal(); render(); if (then && state.who) then(); };
+      m.querySelectorAll('[data-who]').forEach(b => b.addEventListener('click', () => pick(b.dataset.who)));
+      const ok = () => { const v = $('#whoIn', m).value.trim(); if (v) pick(v); };
+      $('#whoOk', m).addEventListener('click', ok);
+      $('#whoIn', m).addEventListener('keydown', e => { if (e.key === 'Enter') ok(); });
+      if (!names.length) setTimeout(() => $('#whoIn', m).focus(), 50);
+    });
+}
+
+function noteModal(itemId) {
+  const rec = state.openShift && state.openShift.items && state.openShift.items[itemId] || {};
+  openModal(`<h2>Megjegyzés</h2>
+    <textarea id="noteIn" placeholder="pl. elfogyott a WC-papír, rendelni kell">${esc(rec.note || '')}</textarea>
+    <div class="row-between" style="margin-top:12px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="noteOk">Mentés</button></div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      $('#noteOk', m).addEventListener('click', async () => {
+        const v = $('#noteIn', m).value.trim();
+        const shift = await ensureShift(state.route.date, state.route.tplId);
+        await patchShift(shift.id, { items: { [itemId]: { ...(shift.items && shift.items[itemId] || { done: false }), note: v } } });
+        closeModal();
+      });
+      setTimeout(() => $('#noteIn', m).focus(), 50);
+    });
+}
+
+function photoModal(itemId) {
+  const rec = state.openShift && state.openShift.items && state.openShift.items[itemId];
+  if (!rec || !rec.photo) return;
+  const url = photoUrl(rec.photo);
+  const def = (state.openShift.items_def || []).find(i => i.id === itemId);
+  const editable = state.route.date === ymd(new Date()) || isManager();
+  openModal(`<div class="lightbox">${url ? `<img src="${esc(url)}" alt="">` : '<p class="muted">Betöltés…</p>'}</div>
+    <p class="small" style="margin:10px 0 0"><b>${esc(def ? def.text : '')}</b></p>
+    <p class="small muted" style="margin:2px 0 12px">${esc(rec.by || '')} · ${hhmm(rec.photoAt || rec.at)}</p>
+    <div class="row-between"><button class="btn ghost" type="button" data-close2>Bezár</button>${editable ? '<button class="btn danger" type="button" id="photoDel">Fotó törlése</button>' : ''}</div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      const del = $('#photoDel', m);
+      if (del) del.addEventListener('click', async () => {
+        if (!confirm('Biztosan törlöd a fotót?')) return;
+        await deletePhoto(rec.photo);
+        await patchShift(state.openShift.id, { items: { [itemId]: { ...rec, photo: null, photoAt: null } } });
+        closeModal();
+      });
+    });
+}
+
+function signModal() {
+  const go = () => openModal(`<h2>Aláírás</h2>
+    <p class="muted small" style="margin:0 0 10px">Írd alá ujjal vagy egérrel a mezőben.</p>
+    <div class="field"><label for="sigName">Név</label><input type="text" id="sigName" value="${esc(state.who)}"></div>
+    <canvas class="sigpad" id="sigpad" style="margin-top:10px" aria-label="Aláírás mező"></canvas>
+    <div class="row-between" style="margin-top:12px">
+      <button class="btn ghost sm" type="button" id="sigClear">Törlés</button>
+      <div style="display:flex;gap:8px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="sigOk">${ICON.pen} Aláírom</button></div>
+    </div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      const c = $('#sigpad', m);
+      const dpr = window.devicePixelRatio || 1;
+      const fit = () => { const r = c.getBoundingClientRect(); c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); const x = c.getContext('2d'); x.scale(dpr, dpr); x.lineWidth = 2.5; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#111'; };
+      fit();
+      const ctx = c.getContext('2d');
+      let drawing = false, strokes = 0, last = null;
+      const pos = e => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+      c.addEventListener('pointerdown', e => { drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(last.x + 0.1, last.y); ctx.stroke(); strokes++; });
+      c.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; });
+      const stop = () => { drawing = false; };
+      c.addEventListener('pointerup', stop); c.addEventListener('pointercancel', stop);
+      $('#sigClear', m).addEventListener('click', () => { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, c.width, c.height); ctx.restore(); strokes = 0; });
+      $('#sigOk', m).addEventListener('click', async () => {
+        const name = $('#sigName', m).value.trim();
+        if (!name) { toast('Add meg a neved.'); return; }
+        if (!strokes) { toast('Írd alá a mezőben.'); return; }
+        // kisebb PNG: 360px széles másolat
+        const out = document.createElement('canvas'); out.width = 360; out.height = Math.round(360 * c.height / c.width);
+        const ox = out.getContext('2d'); ox.fillStyle = '#fff'; ox.fillRect(0, 0, out.width, out.height); ox.drawImage(c, 0, 0, out.width, out.height);
+        const png = out.toDataURL('image/png');
+        const shift = await ensureShift(state.route.date, state.route.tplId);
+        const sigs = [...(shift.signatures || []), { name, at: new Date().toISOString(), png }];
+        await patchShift(shift.id, { signatures: sigs });
+        if (!state.who) { state.who = name; ls.set('bp_who', name); }
+        closeModal(); toast('Aláírva. Köszi!');
+      });
+    });
+  if (!state.who) whoModal(go); else go();
+}
+
+/* ---------- Események ---------- */
+async function toggleItem(itemId) {
+  if (!state.who) { whoModal(() => toggleItem(itemId)); return; }
+  const shift = await ensureShift(state.route.date, state.route.tplId);
+  const rec = shift.items && shift.items[itemId] || {};
+  const patch = rec.done
+    ? { ...rec, done: false, by: null, at: null }
+    : { ...rec, done: true, by: state.who, at: new Date().toISOString() };
+  // optimista frissítés
+  state.openShift = state.openShift || shift;
+  state.openShift.items = { ...(state.openShift.items || {}), [itemId]: patch };
+  render();
+  await patchShift(shift.id, { items: { [itemId]: patch } });
+}
+
+async function onPhoto(itemId, file) {
+  if (!file) return;
+  if (!state.who) { whoModal(() => {}); }
+  const lbl = document.querySelector(`[data-camlabel="${CSS.escape(itemId)}"]`);
+  if (lbl) lbl.classList.add('busy');
+  toast('Fotó feltöltése…');
+  try {
+    const shift = await ensureShift(state.route.date, state.route.tplId);
+    const ref = await storePhoto(file, shift.id, itemId);
+    const rec = shift.items && shift.items[itemId] || { done: false };
+    await patchShift(shift.id, { items: { [itemId]: { ...rec, photo: ref, photoAt: new Date().toISOString(), photoBy: state.who || rec.by || null } } });
+    toast('Fotó mentve.');
+  } catch (e) {
+    console.warn(e);
+    toast(e && e.code === 'too_large' ? 'Túl nagy a kép.' : 'Nem sikerült a fotó mentése.');
+    if (lbl) lbl.classList.remove('busy');
+  }
+}
+
+function go(route) {
+  if (route.tab === 'check') {
+    route.from = state.route.tab === 'history' || (state.route.tab === 'check' && state.route.from === 'history') ? 'history' : 'today';
+    subscribeOpenShift(shiftId(route.date, route.tplId));
+  } else if (state.unsub.open) { state.unsub.open(); state.unsub.open = null; state.openShift = null; }
+  if (route.tab !== 'settings') state.editTemplates = null;
+  state.route = route;
+  window.scrollTo({ top: 0 });
+  render();
+}
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('button, [data-open]');
+  if (!t) return;
+  const d = t.dataset;
+  if (t.classList.contains('tab')) { go({ tab: d.tab }); return; }
+  if (t.id === 'whoBtn') { whoModal(); return; }
+  if (d.open) { go({ tab: 'check', date: d.date, tplId: d.open }); return; }
+  if ('back' in d) { go({ tab: state.route.from || 'today' }); return; }
+  if (d.toggle) { toggleItem(d.toggle); return; }
+  if (d.note) { noteModal(d.note); return; }
+  if (d.photo) { photoModal(d.photo); return; }
+  if ('sign' in d) { signModal(); return; }
+  if (d.delsig != null) {
+    if (!confirm('Törlöd ezt az aláírást?')) return;
+    const sigs = [...(state.openShift.signatures || [])]; sigs.splice(Number(d.delsig), 1);
+    await patchShift(state.openShift.id, { signatures: sigs }); return;
+  }
+  /* Beállítások */
+  if ('pinLogin' in d) {
+    const v = $('#pinIn').value.trim();
+    if (state.settings && v === String(state.settings.pin)) { ss.set('bp_mgr', '1'); render(); } else toast('Hibás PIN.');
+    return;
+  }
+  if ('pinLogout' in d) { ss.set('bp_mgr', '0'); render(); return; }
+  if ('pinSave' in d) {
+    const v = $('#pinNew').value.trim();
+    if (!/^\d{4,8}$/.test(v)) { toast('A PIN 4–8 számjegy legyen.'); return; }
+    await saveSettings({ pin: v }); ss.set('bp_mgr', '1'); toast('PIN mentve.'); return;
+  }
+  if ('staffAdd' in d) {
+    const v = $('#staffIn').value.trim();
+    if (!v) return;
+    if (staff().includes(v)) { toast('Ez a név már szerepel.'); return; }
+    await saveSettings({ staff: [...staff(), v] }); return;
+  }
+  if (d.staffDel) { if (!confirm(`Törlöd: ${d.staffDel}?`)) return; await saveSettings({ staff: staff().filter(n => n !== d.staffDel) }); return; }
+  if (d.tplDay) {
+    const [ti, ii, day] = d.tplDay.split(':').map(Number);
+    syncTplTexts();
+    const it = state.editTemplates[ti].items[ii];
+    const w = new Set(it.weekly || []); w.has(day) ? w.delete(day) : w.add(day);
+    it.weekly = [...w].sort(); render(); return;
+  }
+  if (d.tplMove) {
+    const [ti, ii, dir] = d.tplMove.split(':').map(Number);
+    syncTplTexts();
+    const arr = state.editTemplates[ti].items; const j = ii + dir;
+    if (j < 0 || j >= arr.length) return;
+    [arr[ii], arr[j]] = [arr[j], arr[ii]]; render(); return;
+  }
+  if (d.tplDel) {
+    const [ti, ii] = d.tplDel.split(':').map(Number);
+    syncTplTexts();
+    if (!confirm('Törlöd ezt a feladatot a sablonból?')) return;
+    state.editTemplates[ti].items.splice(ii, 1); render(); return;
+  }
+  if (d.tplAdd != null) {
+    syncTplTexts();
+    const tpl = state.editTemplates[Number(d.tplAdd)];
+    tpl.items.push({ id: 'x' + uid().slice(0, 8), text: '', weekly: [] }); render();
+    const areas = document.querySelectorAll(`[data-tpl-text^="${d.tplAdd}:"]`); const last = areas[areas.length - 1]; if (last) last.focus();
+    return;
+  }
+  if (d.tplSave != null) {
+    syncTplTexts();
+    const tpl = state.editTemplates[Number(d.tplSave)];
+    tpl.items = tpl.items.filter(it => it.text.trim());
+    const body = { name: tpl.name, section: tpl.section, order: tpl.order, items: tpl.items.map(it => ({ id: it.id, text: it.text.trim(), weekly: it.weekly && it.weekly.length ? it.weekly : [] })), updatedAt: new Date().toISOString() };
+    try { await state.db.doc('templates/' + tpl.id).set(body); toast('Sablon mentve.'); } catch (err) { console.warn(err); toast('Nem sikerült menteni.'); }
+    return;
+  }
+});
+document.addEventListener('change', e => {
+  const inp = e.target;
+  if (inp.dataset && inp.dataset.cam) { const f = inp.files && inp.files[0]; inp.value = ''; onPhoto(inp.dataset.cam, f); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function syncTplTexts() {
+  document.querySelectorAll('[data-tpl-text]').forEach(a => { const [ti, ii] = a.dataset.tplText.split(':').map(Number); const it = state.editTemplates && state.editTemplates[ti] && state.editTemplates[ti].items[ii]; if (it) it.text = a.value; });
+}
+async function saveSettings(patch) {
+  const ref = state.db.doc('settings/app');
+  try {
+    const cur = await ref.get();
+    await ref.set({ ...(cur.exists ? cur.data() : { pin: '', staff: [] }), ...patch, updatedAt: new Date().toISOString() });
+  } catch (err) { console.warn(err); toast('Nem sikerült menteni.'); }
+}
+
+/* Éjfél után frissüljön a „Ma” */
+setInterval(() => { const t = ymd(new Date()); if (t !== state._day) { state._day = t; subscribeToday(); render(); } }, 60000);
+state._day = ymd(new Date());
+
+/* Indítás */
+render();
+initStore();
+})();
+</script>

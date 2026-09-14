@@ -1,0 +1,39 @@
+# BurgerProf Feladatlista
+
+Egyfájlos webes felület a Burger Prof napi nyitó / záró feladatlistáihoz, a
+nyomtatott ellenőrző lapok (Reggeli Pult v3.0, Esti Pult v3.0, Konyha esti záró
+v1.0) helyett.
+
+## Mit tud
+
+* **Ma** – a három lista (Reggeli feladatok · Pult, Esti feladatok · Pult,
+  Esti záró feladatok · Konyha) aznapi állapota, körgyűrűs haladással.
+* **Lista** – nagy, ujjal pipálható tételek; a kipipáló neve és az időpont
+  automatikusan rögzül. Tételenként fotó (telefon kamerából), megjegyzés.
+  A heti feladatok csak a megadott napokon jelennek meg (a PDF-ek szerint).
+* **Aláírás** – rajzolt aláírás + név a lista végén, ez váltja a papír
+  aláírását. Ha minden kész és alá van írva, a lista „Lezárva”.
+* **Előzmények** – az utolsó 45 nap, naponként a három lista státusza
+  (kész / nincs aláírva / részben / nem töltötték ki), megnyitva a fotókkal
+  és aláírásokkal. Korábbi napot csak vezető módosíthat.
+* **Beállítások (vezetői PIN)** – dolgozók névsora, a sablonok szerkesztése
+  (szöveg, sorrend, heti napok, új tétel, törlés), PIN.
+
+## Hogyan fut
+
+A fájl a claude.ai Artifact futtatókörnyezetére épül:
+
+* `db` képesség – közös, valós idejű adatbázis (`templates/*`, `settings/app`,
+  `shifts/<dátum>_<lista>`, `photos/*`).
+* `assets` képesség – fotók tárolása teljes méretben (csak szerkesztési joggal
+  megosztott nézőknek; enélkül a fotó kicsinyítve az adatbázisba kerül).
+
+Ha a fájlt önállóan, `window.claude` nélkül nyitod meg, ugyanaz a felület
+`localStorage`-ba ment – csak azon az egy eszközön látszik.
+
+## Közzététel / frissítés
+
+A `index.html`-t az Artifact eszközzel kell közzétenni
+`capabilities: {db: {}, assets: {}}` beállítással. Az alap sablonok a fájlban
+is benne vannak (`DEFAULT_TEMPLATES`), de a közös adatbázisba is be vannak
+töltve, hogy a Beállításokban szerkeszthetők legyenek.
