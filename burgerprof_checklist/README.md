@@ -8,9 +8,16 @@ v1.0) helyett.
 
 * **Ma** – a három lista (Reggeli feladatok · Pult, Esti feladatok · Pult,
   Esti záró feladatok · Konyha) aznapi állapota, körgyűrűs haladással.
-* **Lista** – nagy, ujjal pipálható tételek; a kipipáló neve és az időpont
+* **Lista** – nagy, ujjal pipálható tételek; az elvégző neve és az időpont
   automatikusan rögzül. Tételenként fotó (telefon kamerából), megjegyzés.
   A heti feladatok csak a megadott napokon jelennek meg (a PDF-ek szerint).
+* **Két aláírási mód** (sablononként állítható, `perItem` mező):
+  * *Egy felelős a listára* (pult) – a lista tetején egy „A nap felelőse” név,
+    minden pipa az övé, a tételeknél csak az időpont látszik.
+  * *Feladatonként külön személy* (konyha) – minden sorban külön névmező.
+    Pipáláskor az aktuális felhasználó neve kerül oda, de bármelyik soron
+    átírható, és üres névmezőre koppintva egyszerre lehet személyt választani
+    és késznek jelölni.
 * **Aláírás** – rajzolt aláírás + név a lista végén, ez váltja a papír
   aláírását. Ha minden kész és alá van írva, a lista „Lezárva”.
 * **Előzmények** – az utolsó 45 nap, naponként a három lista státusza

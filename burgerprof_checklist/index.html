@@ -187,6 +187,17 @@
   .item .note { margin-top: 4px; font-size: 14px; color: var(--ink-2); font-style: italic; }
   .item .text-btn { background: none; border: 0; padding: 0; text-align: left; width: 100%; color: inherit; }
 
+  .who-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600; color: var(--ink); max-width: 100%; }
+  .who-chip.empty { background: transparent; border-style: dashed; border-color: var(--accent); color: var(--warn); font-weight: 500; }
+  .who-chip svg { width: 13px; height: 13px; opacity: .55; flex: none; }
+  .who-chip:disabled { opacity: 1; }
+  .owner-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; }
+  .owner-row.empty { border: 1px dashed var(--accent); background: var(--accent-soft); }
+  .owner-row .nm { font-family: var(--font-display); font-weight: 700; font-size: 21px; text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
+  .owner-row .nm.none { font-family: var(--font-body); font-size: 15px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--ink-2); }
+  .mode-note { font-size: 13px; color: var(--ink-2); margin: -4px 0 12px; }
+  .chip.sm { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+
   .section { margin-top: 24px; }
   .section h3 { margin-bottom: 10px; }
   .sigs { display: flex; flex-direction: column; gap: 8px; }
@@ -277,7 +288,7 @@
 
 /* ---------- Alap sablonok (a nyomtatott listák v3.0 / v1.0 alapján) ---------- */
 const DEFAULT_TEMPLATES = [
-  { id: 'morning_counter', order: 1, name: 'Reggeli feladatok', section: 'Pult', items: [
+  { id: 'morning_counter', order: 1, name: 'Reggeli feladatok', section: 'Pult', perItem: false, items: [
     { id: 'm01', text: 'Gépek be: hűtő lámpa, R-Keeper monitor, menütábla, kávégép, fagyigép, TV, klíma, benti logó, terminálok (Wolt / Foodora / bankkártya + akku)' },
     { id: 'm02', text: 'Napi nyitás + váltópénz és nyitó összeg leszámolása; gépekbe papír + tartalék a közelben' },
     { id: 'm03', text: 'Zene lejátszólista elindítása' },
@@ -301,7 +312,7 @@ const DEFAULT_TEMPLATES = [
     { id: 'm21', text: 'Ablaktisztítás', weekly: [1, 5] },
     { id: 'm22', text: 'Boxok, asztalok elhúzása', weekly: [2, 4, 6, 7] },
   ]},
-  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', items: [
+  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', perItem: false, items: [
     { id: 'e01', text: 'Benti asztalok letörlése' },
     { id: 'e02', text: 'Székek felpakolása az asztalokra' },
     { id: 'e03', text: 'Padló felsepregetés' },
@@ -318,7 +329,7 @@ const DEFAULT_TEMPLATES = [
     { id: 'e14', text: 'Napi zárás: készpénz leszámolása + papírok + boríték a kasszába (dátum, összeg, aláírás)' },
     { id: 'e15', text: 'Világítás lekapcsolva, ajtó bezárva' },
   ]},
-  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', items: [
+  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', perItem: true, items: [
     { id: 'k01', text: 'Dohányzó teljes rendezése' },
     { id: 'k02', text: 'Padló teljes tisztítása' },
     { id: 'k03', text: 'Konyhai kuka kívülről takarítva, zsák kiürítése és új zsák belerakása' },
@@ -456,6 +467,19 @@ function itemsForDay(tpl, dateStr) {
   return (tpl.items || []).filter(it => !it.weekly || !it.weekly.length || it.weekly.includes(wd));
 }
 function shiftId(dateStr, tplId) { return `${dateStr}_${tplId}`; }
+/* true → feladatonként külön elvégző személy (konyha); false → egy felelős az egész listára (pult) */
+function isPerItem(tpl, shift) {
+  if (shift && typeof shift.perItem === 'boolean') return shift.perItem;
+  return !!(tpl && tpl.perItem);
+}
+function peopleOf(shift) {
+  if (!shift) return [];
+  const set = new Set();
+  if (shift.owner) set.add(shift.owner);
+  Object.values(shift.items || {}).forEach(r => { if (r && r.done && r.by) set.add(r.by); });
+  (shift.signatures || []).forEach(x => set.add(x.name));
+  return [...set];
+}
 function isManager() { return ss.get('bp_mgr') === '1' || !(state.settings && state.settings.pin); }
 
 /* Egy lista állapota: {total, done, signed, closed} */
@@ -532,7 +556,7 @@ async function ensureShift(dateStr, tplId) {
   const tpl = templateById(tplId);
   const body = {
     date: dateStr, templateId: tplId, templateName: tpl.name, section: tpl.section,
-    weekday: weekdayOf(dateStr),
+    weekday: weekdayOf(dateStr), perItem: !!tpl.perItem, owner: null,
     items_def: itemsForDay(tpl, dateStr).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) })),
     items: {}, signatures: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   };
@@ -640,6 +664,7 @@ function renderToday() {
     const st = shiftStats(shift, tpl, today);
     const cls = st.closed ? 'state-done' : (st.done > 0 || st.signed) ? 'state-partial' : '';
     const weekly = itemsForDay(tpl, today).filter(i => i.weekly && i.weekly.length).length;
+    const people = peopleOf(shift);
     let pill;
     if (st.closed) pill = '<span class="pill done">Lezárva, aláírva</span>';
     else if (st.done === st.total && st.total) pill = '<span class="pill warn">Aláírás hiányzik</span>';
@@ -649,7 +674,7 @@ function renderToday() {
       <div>
         <div class="eyebrow">${esc(tpl.section)}</div>
         <div class="name">${esc(tpl.name)}</div>
-        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${shift && shift.signatures && shift.signatures.length ? ` · aláírta: ${esc(shift.signatures.map(s => s.name).join(', '))}` : ''}</div>
+        <div class="sub">${st.total} feladat${weekly ? ` · ${weekly} heti` : ''}${people.length ? ` · ${esc(people.join(', '))}` : ''}</div>
         <div style="margin-top:8px">${pill}</div>
       </div>
       <div class="prog">${ringSvg(st.done, st.total)}</div>
@@ -664,22 +689,34 @@ function renderCheck() {
   const { date, tplId } = state.route;
   const tpl = templateById(tplId);
   const shift = state.openShift;
+  const perItem = isPerItem(tpl, shift);
   const items = shift && shift.items_def ? shift.items_def : itemsForDay(tpl, date).map(it => ({ id: it.id, text: it.text, weekly: !!(it.weekly && it.weekly.length) }));
   const st = shiftStats(shift, tpl, date);
   const today = ymd(new Date());
   const editable = date === today || isManager();
   const wd = weekdayOf(date);
+  const owner = (shift && shift.owner) || '';
+
   const rows = items.map(it => {
     const rec = shift && shift.items ? shift.items[it.id] : null;
     const done = !!(rec && rec.done);
     const url = rec && rec.photo ? photoUrl(rec.photo) : null;
+    let who = '';
+    if (perItem) {
+      if (done || (rec && rec.by)) {
+        who = `<button class="who-chip" type="button" data-person="${esc(it.id)}" ${editable ? '' : 'disabled'} aria-label="Elvégző személy módosítása">${esc(rec.by || '—')}${editable ? ICON.pen : ''}</button>`;
+      } else if (editable) {
+        who = `<button class="who-chip empty" type="button" data-person="${esc(it.id)}">+ Elvégző személy</button>`;
+      }
+    }
     return `<div class="item ${done ? 'done' : ''}" data-item="${esc(it.id)}">
       <button class="box" type="button" data-toggle="${esc(it.id)}" aria-pressed="${done}" aria-label="${done ? 'Kész' : 'Nincs kész'}: ${esc(it.text)}" ${editable ? '' : 'disabled'}>${done ? ICON.check : ''}</button>
       <div class="body">
         <button class="text-btn" type="button" data-toggle="${esc(it.id)}" ${editable ? '' : 'disabled'}><div class="text">${esc(it.text)}</div></button>
         <div class="meta">
           ${it.weekly ? '<span class="tag">Heti</span>' : ''}
-          ${done ? `<span><b>${esc(rec.by || '—')}</b> · <span class="num">${hhmm(rec.at)}</span></span>` : ''}
+          ${who}
+          ${done ? `<span class="num">${hhmm(rec.at)}</span>` : ''}
           ${editable ? `<button class="note-btn" type="button" data-note="${esc(it.id)}">${rec && rec.note ? 'megjegyzés szerkesztése' : 'megjegyzés'}</button>` : ''}
         </div>
         ${rec && rec.note ? `<div class="note">${esc(rec.note)}</div>` : ''}
@@ -691,10 +728,26 @@ function renderCheck() {
       </div>
     </div>`;
   }).join('');
-  const sigs = (shift && shift.signatures || []).map((s, i) => `<div class="sig">
-      <img src="${esc(s.png)}" alt="Aláírás: ${esc(s.name)}">
-      <div><div class="n">${esc(s.name)}</div><div class="small muted num">${hhmm(s.at)}${editable ? ` · <button class="note-btn" type="button" data-delsig="${i}">törlés</button>` : ''}</div></div>
+
+  const ownerBlock = perItem ? '' : `<div class="owner-row ${owner ? '' : 'empty'}">
+      <div>
+        <div class="eyebrow">A nap felelőse</div>
+        <div class="nm ${owner ? '' : 'none'}">${owner ? esc(owner) : 'Még nincs kiválasztva'}</div>
+      </div>
+      ${editable ? `<button class="btn sm ${owner ? '' : 'primary'}" type="button" data-owner>${owner ? 'Csere' : 'Kiválaszt'}</button>` : ''}
+    </div>`;
+  const modeNote = perItem
+    ? '<p class="mode-note">Minden feladatnál külön szerepel, ki végezte el. Pipáláskor a saját neved kerül oda, de bármelyiknél átírható.</p>'
+    : '';
+
+  const sigs = (shift && shift.signatures || []).map((sg, i) => `<div class="sig">
+      <img src="${esc(sg.png)}" alt="Aláírás: ${esc(sg.name)}">
+      <div><div class="n">${esc(sg.name)}</div><div class="small muted num">${hhmm(sg.at)}${editable ? ` · <button class="note-btn" type="button" data-delsig="${i}">törlés</button>` : ''}</div></div>
     </div>`).join('');
+  const sigHint = perItem
+    ? 'Aki dolgozott a műszakban, írja alá – több aláírás is lehet.'
+    : 'A nap felelőse írja alá, ha minden kész.';
+
   return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
     <div class="check-head">
       <div class="eyebrow">${esc(tpl.section)} · ${DAY_NAMES[wd]}</div>
@@ -703,14 +756,17 @@ function renderCheck() {
       <div class="bar ${st.total && st.done === st.total ? 'full' : ''}" style="margin-top:10px"><i style="width:${st.total ? Math.round(100 * st.done / st.total) : 0}%"></i></div>
     </div>
     ${editable ? '' : '<div class="readonly-banner">Korábbi nap – csak megtekinthető. Módosításhoz vezetői belépés kell a Beállításokban.</div>'}
+    ${ownerBlock}
+    ${modeNote}
     <div class="items">${rows}</div>
     ${st.closed ? `<div class="closed-banner">${ICON.check} Minden feladat kész, a lista alá van írva.</div>` : ''}
     <div class="section">
       <div class="row-between"><h3>Aláírás</h3>${editable ? `<button class="btn sm primary" type="button" data-sign>${ICON.pen} Aláírom</button>` : ''}</div>
-      ${sigs ? `<div class="sigs">${sigs}</div>` : '<p class="muted small" style="margin:0">Még senki nem írta alá. Ha minden kész, írd alá – ez helyettesíti a papírt.</p>'}
+      ${sigs ? `<div class="sigs">${sigs}</div>` : `<p class="muted small" style="margin:0">${sigHint} Ez helyettesíti a papír aláírását.</p>`}
     </div>
     ${st.total && st.done < st.total && editable ? `<p class="muted small" style="margin-top:14px">Még ${st.total - st.done} feladat hiányzik.</p>` : ''}`;
 }
+
 
 function renderHistory() {
   const byDate = {};
@@ -727,7 +783,7 @@ function renderHistory() {
         : st.closed ? '<span class="pill done">Kész, aláírva</span>'
         : st.done === st.total ? '<span class="pill warn">Nincs aláírva</span>'
         : `<span class="pill warn num">${st.done}/${st.total}</span>`;
-      const who = s && s.signatures && s.signatures.length ? s.signatures.map(x => x.name).join(', ') : (s && s.items ? [...new Set(Object.values(s.items).filter(x => x.done && x.by).map(x => x.by))].join(', ') : '');
+      const who = peopleOf(s).join(', ');
       return `<button class="hist-row" type="button" data-open="${tpl.id}" data-date="${d}">
         <div><div class="n">${esc(tpl.name)} <span class="muted">· ${esc(tpl.section)}</span></div>${who ? `<div class="s">${esc(who)}</div>` : ''}</div>
         ${pill}
@@ -753,6 +809,10 @@ function renderSettings() {
   if (!state.editTemplates) state.editTemplates = tpls;
   const tplHtml = tpls.map((tpl, ti) => `<div class="card" style="margin-top:12px">
       <div class="row-between" style="margin-bottom:6px"><div><div class="eyebrow">${esc(tpl.section)}</div><h2>${esc(tpl.name)}</h2></div><span class="pill num">${tpl.items.length} tétel</span></div>
+      <div class="chips" style="margin-bottom:10px">
+        <button class="chip sm ${tpl.perItem ? '' : 'active'}" type="button" data-tpl-mode="${ti}:0">Egy felelős a listára</button>
+        <button class="chip sm ${tpl.perItem ? 'active' : ''}" type="button" data-tpl-mode="${ti}:1">Feladatonként külön személy</button>
+      </div>
       ${tpl.items.map((it, ii) => `<div class="tpl-item">
         <div>
           <textarea data-tpl-text="${ti}:${ii}" aria-label="Feladat szövege">${esc(it.text)}</textarea>
@@ -782,7 +842,7 @@ function renderSettings() {
       <div class="row-between"><input type="password" id="pinNew" inputmode="numeric" placeholder="Új PIN (4–8 számjegy)" aria-label="Új PIN"><button class="btn" type="button" data-pin-save>Mentés</button></div>
       ${s.pin ? '<button class="btn ghost sm" type="button" data-pin-logout>Kilépés a vezetői módból</button>' : ''}
     </div>
-    <div class="section"><h3>Feladatsablonok</h3><p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. A „Heti” napoknál jelöld, mely napokon jelenjen meg a feladat – ha egyet sem jelölsz, minden nap szerepel.</p>${tplHtml}</div>
+    <div class="section"><h3>Feladatsablonok</h3><p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. A „Heti” napoknál jelöld, mely napokon jelenjen meg a feladat – ha egyet sem jelölsz, minden nap szerepel. A lista tetején állítod be, hogy egy felelős tölti-e ki az egészet (pult), vagy feladatonként külön név kerül rá (konyha).</p>${tplHtml}</div>
     <div class="card" style="margin-top:12px">
       <div class="eyebrow">Tárolás</div>
       <p class="small muted" style="margin:6px 0 0">${state.db.local ? 'Helyi mód: az adatok csak ezen az eszközön vannak.' : 'Közös adatbázis: minden eszközön ugyanaz látszik.'} Fotók: ${state.assets ? 'fájltárban (teljes méret)' : 'kicsinyítve az adatbázisban' }.</p>
@@ -799,21 +859,61 @@ function openModal(html, onMount) {
 }
 function closeModal() { $('#modalRoot').innerHTML = ''; }
 
-function whoModal(then) {
+function personModal(opts) {
   const names = staff();
-  openModal(`<h2>Ki vagy?</h2>
-    <p class="muted small" style="margin:0 0 12px">A neved kerül a kipipált feladatok mellé.</p>
-    <div class="chips" id="whoChips">${names.map(n => `<button class="chip ${n === state.who ? 'active' : ''}" type="button" data-who="${esc(n)}">${esc(n)}</button>`).join('')}</div>
-    <div class="field" style="margin-top:14px"><label for="whoIn">${names.length ? 'Vagy írd be a neved' : 'Írd be a neved'}</label><div class="row-between"><input type="text" id="whoIn" autocomplete="off" placeholder="Név"><button class="btn primary" type="button" id="whoOk">Kész</button></div></div>`,
+  const cur = opts.current || '';
+  openModal(`<h2>${esc(opts.title)}</h2>
+    <p class="muted small" style="margin:0 0 12px">${esc(opts.hint)}</p>
+    <div class="chips">${names.map(n => `<button class="chip ${n === cur ? 'active' : ''}" type="button" data-pick="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+    <div class="field" style="margin-top:14px"><label for="personIn">${names.length ? 'Vagy írj be egy nevet' : 'Írj be egy nevet'}</label><div class="row-between"><input type="text" id="personIn" autocomplete="off" placeholder="Név" value="${esc(names.includes(cur) ? '' : cur)}"><button class="btn primary" type="button" id="personOk">Kész</button></div></div>
+    ${opts.onClear && cur ? `<button class="btn ghost sm block" type="button" id="personClear" style="margin-top:10px">${esc(opts.clearLabel || 'Név törlése')}</button>` : ''}`,
     m => {
-      const pick = n => { state.who = n.trim(); ls.set('bp_who', state.who); closeModal(); render(); if (then && state.who) then(); };
-      m.querySelectorAll('[data-who]').forEach(b => b.addEventListener('click', () => pick(b.dataset.who)));
-      const ok = () => { const v = $('#whoIn', m).value.trim(); if (v) pick(v); };
-      $('#whoOk', m).addEventListener('click', ok);
-      $('#whoIn', m).addEventListener('keydown', e => { if (e.key === 'Enter') ok(); });
-      if (!names.length) setTimeout(() => $('#whoIn', m).focus(), 50);
+      const pick = n => { const v = String(n || '').trim(); if (!v) return; closeModal(); opts.onPick(v); };
+      m.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => pick(b.dataset.pick)));
+      const ok = () => pick($('#personIn', m).value);
+      $('#personOk', m).addEventListener('click', ok);
+      $('#personIn', m).addEventListener('keydown', e => { if (e.key === 'Enter') ok(); });
+      const cl = $('#personClear', m);
+      if (cl) cl.addEventListener('click', () => { closeModal(); opts.onClear(); });
+      if (!names.length) setTimeout(() => $('#personIn', m).focus(), 50);
     });
 }
+
+function whoModal(then) {
+  personModal({
+    title: 'Ki vagy?', hint: 'A neved kerül az általad kipipált feladatok mellé.', current: state.who,
+    onPick: n => { state.who = n; ls.set('bp_who', n); render(); if (then) then(); },
+  });
+}
+
+function ownerModal(then) {
+  const shift = state.openShift;
+  personModal({
+    title: 'A nap felelőse', hint: 'Ezen a listán egy ember dolgozik – az ő neve kerül minden kipipált feladat mellé.',
+    current: (shift && shift.owner) || state.who,
+    onPick: async n => {
+      const sh = await ensureShift(state.route.date, state.route.tplId);
+      state.openShift = { ...(state.openShift || sh), owner: n };
+      render();
+      await patchShift(sh.id, { owner: n });
+      if (!state.who) { state.who = n; ls.set('bp_who', n); render(); }
+      if (then) then();
+    },
+  });
+}
+
+function itemPersonModal(itemId) {
+  const rec = (state.openShift && state.openShift.items && state.openShift.items[itemId]) || {};
+  const def = ((state.openShift && state.openShift.items_def) || []).find(i => i.id === itemId);
+  personModal({
+    title: 'Ki végezte el?', hint: def ? def.text : 'Válaszd ki, ki csinálta meg ezt a feladatot.',
+    current: rec.by || state.who,
+    onPick: n => writeItem(itemId, r => ({ ...r, done: true, by: n, at: r.at || new Date().toISOString() })),
+    clearLabel: 'Mégsem kész – név törlése',
+    onClear: rec.by ? () => writeItem(itemId, r => ({ ...r, done: false, by: null, at: null })) : null,
+  });
+}
+
 
 function noteModal(itemId) {
   const rec = state.openShift && state.openShift.items && state.openShift.items[itemId] || {};
@@ -896,19 +996,31 @@ function signModal() {
 }
 
 /* ---------- Események ---------- */
-async function toggleItem(itemId) {
-  if (!state.who) { whoModal(() => toggleItem(itemId)); return; }
+async function writeItem(itemId, patchFn) {
   const shift = await ensureShift(state.route.date, state.route.tplId);
-  const rec = shift.items && shift.items[itemId] || {};
-  const patch = rec.done
-    ? { ...rec, done: false, by: null, at: null }
-    : { ...rec, done: true, by: state.who, at: new Date().toISOString() };
-  // optimista frissítés
+  const rec = (shift.items && shift.items[itemId]) || {};
+  const next = patchFn(rec);
   state.openShift = state.openShift || shift;
-  state.openShift.items = { ...(state.openShift.items || {}), [itemId]: patch };
+  state.openShift.items = { ...(state.openShift.items || {}), [itemId]: next };
   render();
-  await patchShift(shift.id, { items: { [itemId]: patch } });
+  await patchShift(shift.id, { items: { [itemId]: next } });
 }
+
+async function toggleItem(itemId) {
+  const tpl = templateById(state.route.tplId);
+  if (isPerItem(tpl, state.openShift)) {
+    if (!state.who) { whoModal(() => toggleItem(itemId)); return; }
+    return writeItem(itemId, rec => rec.done
+      ? { ...rec, done: false, by: null, at: null }
+      : { ...rec, done: true, by: state.who, at: new Date().toISOString() });
+  }
+  const owner = state.openShift && state.openShift.owner;
+  if (!owner) { ownerModal(() => toggleItem(itemId)); return; }
+  return writeItem(itemId, rec => rec.done
+    ? { ...rec, done: false, by: null, at: null }
+    : { ...rec, done: true, by: owner, at: new Date().toISOString() });
+}
+
 
 async function onPhoto(itemId, file) {
   if (!file) return;
@@ -949,6 +1061,8 @@ document.addEventListener('click', async e => {
   if (d.open) { go({ tab: 'check', date: d.date, tplId: d.open }); return; }
   if ('back' in d) { go({ tab: state.route.from || 'today' }); return; }
   if (d.toggle) { toggleItem(d.toggle); return; }
+  if (d.person) { itemPersonModal(d.person); return; }
+  if ('owner' in d) { ownerModal(); return; }
   if (d.note) { noteModal(d.note); return; }
   if (d.photo) { photoModal(d.photo); return; }
   if ('sign' in d) { signModal(); return; }
@@ -976,6 +1090,11 @@ document.addEventListener('click', async e => {
     await saveSettings({ staff: [...staff(), v] }); return;
   }
   if (d.staffDel) { if (!confirm(`Törlöd: ${d.staffDel}?`)) return; await saveSettings({ staff: staff().filter(n => n !== d.staffDel) }); return; }
+  if (d.tplMode) {
+    const [ti, v] = d.tplMode.split(':').map(Number);
+    syncTplTexts();
+    state.editTemplates[ti].perItem = !!v; render(); return;
+  }
   if (d.tplDay) {
     const [ti, ii, day] = d.tplDay.split(':').map(Number);
     syncTplTexts();
@@ -1007,7 +1126,7 @@ document.addEventListener('click', async e => {
     syncTplTexts();
     const tpl = state.editTemplates[Number(d.tplSave)];
     tpl.items = tpl.items.filter(it => it.text.trim());
-    const body = { name: tpl.name, section: tpl.section, order: tpl.order, items: tpl.items.map(it => ({ id: it.id, text: it.text.trim(), weekly: it.weekly && it.weekly.length ? it.weekly : [] })), updatedAt: new Date().toISOString() };
+    const body = { name: tpl.name, section: tpl.section, order: tpl.order, perItem: !!tpl.perItem, items: tpl.items.map(it => ({ id: it.id, text: it.text.trim(), weekly: it.weekly && it.weekly.length ? it.weekly : [] })), updatedAt: new Date().toISOString() };
     try { await state.db.doc('templates/' + tpl.id).set(body); toast('Sablon mentve.'); } catch (err) { console.warn(err); toast('Nem sikerült menteni.'); }
     return;
   }
