@@ -374,6 +374,36 @@
   .search { width: 100%; margin-bottom: 10px; }
   .is-hidden { display: none !important; }
 
+  /* ---- napi működés: előkészítés, selejt ---- */
+  .ops-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+  .ops-card .oc-ic { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .ops-card .name { font-family: var(--font-display); font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: .02em; }
+  .ops-card .sub { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+  .ops-card .go { color: var(--ink-3); font-size: 22px; }
+  .v3 { font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.1; }
+
+  .prep-list { display: flex; flex-direction: column; gap: 8px; }
+  .prep-row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .prep-row.done { background: var(--done-soft); border-color: transparent; }
+  .prep-row.enough { background: var(--surface-2); }
+  .prep-row .pr-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .prep-row .pr-name { font-weight: 600; line-height: 1.25; }
+  .prep-row .pr-par { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .prep-row .pr-ctl { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .prep-row .pr-lab { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+  .prep-row .pr-ctl input { width: 76px; min-height: 42px; padding: 8px 10px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .prep-row .pr-unit { font-size: 13px; color: var(--ink-2); margin-left: -4px; }
+  .prep-row .pr-btn { flex: 1; min-width: 118px; min-height: 42px; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .prep-row .pr-btn.on { background: var(--done); border-color: var(--done); color: #fff; }
+  .prep-row .pr-btn svg { width: 18px; height: 18px; }
+  .prep-row .pr-rec { border: 0; background: none; color: var(--ink-2); font-size: 13px; font-weight: 600; text-decoration: underline; padding: 4px 0; }
+
+  .waste-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .waste-row:last-child { border-bottom: 0; }
+  .waste-row .n { font-weight: 600; line-height: 1.25; }
+  .waste-row .s { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .waste-row .thumb { background: var(--surface-2); }
+
 </style>
 
 <header class="top">
@@ -581,6 +611,7 @@ const state = {
   todayShifts: {}, openShift: null, history: [], audits: [],
   unsub: {}, photoCache: {}, editTemplates: null,
   recipes: null, recipeCat: '', scale: 1, editRecipe: null, _layers: {},
+  prepItems: null, prepToday: null, editPrep: null, waste: [], _wastePhoto: null,
   audit: null,           // { verdicts: {itemId:{v,c}}, note }
   _day: ymd(new Date()),
 };
@@ -677,6 +708,18 @@ function subscribeBase() {
     state.templates = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
   }, err => console.warn('templates', err));
+  state.unsub.prepItems = db.collection('prepItems').onSnapshot(snap => {
+    state.prepItems = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('prepItems', err));
+  state.unsub.prep = db.doc('prep/' + ymd(new Date())).onSnapshot(snap => {
+    state.prepToday = snap.exists ? { id: snap.id, ...snap.data() } : null;
+    render();
+  }, err => console.warn('prep', err));
+  state.unsub.waste = db.collection('waste').where('date', '>=', daysAgo(45)).orderBy('date', 'desc').limit(500).onSnapshot(snap => {
+    state.waste = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, err => console.warn('waste', err));
   state.unsub.recipes = db.collection('recipes').onSnapshot(snap => {
     state.recipes = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
@@ -818,7 +861,7 @@ function render() {
   $('#tabSettings').hidden = !state.isAdmin;
   $('#tabs').classList.toggle('admin', state.isAdmin);
   const t0 = state.route.tab;
-  const active = t0 === 'check' ? (state.route.from || 'today') : (t0 === 'recipe' || t0 === 'recipeEdit') ? 'recipes' : t0;
+  const active = t0 === 'check' ? (state.route.from || 'today') : (t0 === 'recipe' || t0 === 'recipeEdit') ? 'recipes' : (t0 === 'prep' || t0 === 'prepEdit' || t0 === 'waste') ? 'today' : t0;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === active));
   const v = $('#view');
   const r = state.route;
@@ -827,6 +870,9 @@ function render() {
   else if (r.tab === 'history') v.innerHTML = renderHistory();
   else if (r.tab === 'audit') { subscribeAudits(); v.innerHTML = renderAudit(); }
   else if (r.tab === 'settings') v.innerHTML = renderSettings();
+  else if (r.tab === 'prep') v.innerHTML = renderPrep();
+  else if (r.tab === 'prepEdit') v.innerHTML = renderPrepEdit();
+  else if (r.tab === 'waste') v.innerHTML = renderWaste();
   else if (r.tab === 'recipe') v.innerHTML = renderRecipe();
   else if (r.tab === 'recipeEdit') v.innerHTML = renderRecipeEdit();
   else if (r.tab === 'recipes') {
@@ -883,6 +929,7 @@ function renderToday() {
   }).join('');
   return `<div class="today-head"><h1>Ma</h1><div class="date">${DAY_NAMES[wd]} · ${longDate(today)}</div></div>
     <div class="stack">${cards}</div>
+    ${renderOpsCards()}
     ${renderTeamStrip()}
     ${renderLeaderboard()}
     <p class="muted small" style="margin-top:18px">Minden kipipált feladat egy réteg a burgeren. Ha az egész lista kész és alá van írva, összeáll a burger.</p>`;
@@ -1518,6 +1565,7 @@ function go(route) {
   if (route.tab !== 'settings') state.editTemplates = null;
   if (route.tab !== 'check') state.audit = null;
   if (route.tab !== 'recipeEdit') state.editRecipe = null;
+  if (route.tab !== 'prepEdit') state.editPrep = null;
   if (route.tab !== 'recipe') state.scale = 1;
   state.route = route;
   window.scrollTo({ top: 0 });
@@ -1704,6 +1752,27 @@ function countsFor(dates) {
 }
 function weekDates() { return Array.from({ length: 7 }, (_, i) => daysAgo(i)); }
 
+function renderOpsCards() {
+  const today = ymd(new Date());
+  const ps = prepStats(today);
+  const wToday = state.waste.filter(w => w.date === today);
+  const wFt = wToday.reduce((a, w) => a + (Number(w.cost) || 0), 0);
+  const prepPill = ps.toMake > 0
+    ? `<span class="pill partial">${ps.toMake} tételt kell gyártani</span>`
+    : ps.counted === 0 ? '<span class="pill">Még nincs leszámolva</span>' : '<span class="pill done">Minden megvan</span>';
+  return `<div class="section"><h3 style="margin-bottom:8px">Napi működés · Konyha</h3><div class="stack">
+    <button class="ops-card" type="button" data-prep>
+      <div class="oc-ic" style="background:var(--accent-soft);color:var(--accent-ink)">🔪</div>
+      <div><div class="name">Előkészítés</div><div class="sub">${ps.done} kész · ${ps.counted}/${ps.total} leszámolva</div><div style="margin-top:6px">${prepPill}</div></div>
+      <span class="go">›</span>
+    </button>
+    <button class="ops-card" type="button" data-waste>
+      <div class="oc-ic" style="background:var(--danger-soft);color:var(--danger)">🗑️</div>
+      <div><div class="name">Selejt napló</div><div class="sub">${wToday.length ? `Ma ${wToday.length} bejegyzés${wFt ? ` · ${fmtQty(wFt)} Ft` : ''}` : 'Ma még nincs bejegyzés'}</div></div>
+      <span class="go">›</span>
+    </button>
+  </div></div>`;
+}
 function renderTeamStrip() {
   const today = countsFor([ymd(new Date())]);
   const names = staff().length ? staff() : Object.keys(today);
@@ -1773,6 +1842,7 @@ function renderRecipe() {
     <div class="scaler">
       <span class="small muted">Adag:</span>
       ${[0.5, 1, 2, 4].map(x => `<button class="sbtn ${sc === x ? 'on' : ''}" type="button" data-scale="${x}">${x === 0.5 ? '½×' : x + '×'}</button>`).join('')}
+      ${[0.5, 1, 2, 4].includes(sc) ? '' : `<button class="sbtn on" type="button" data-scale="${sc}">${fmtQty(sc)}×</button>`}
       <span class="num" style="font-weight:600">${fmtQty((Number(r.yieldQty) || 0) * sc)} ${esc(r.yieldUnit || '')}</span>
     </div>
     <h3 style="margin-bottom:4px">Hozzávalók</h3>
@@ -1840,6 +1910,261 @@ function syncRecipeInputs() {
   });
 }
 
+/* ============================================================
+   Előkészítés (prep) és selejt napló
+   ============================================================ */
+const PREP_UNITS = ['g', 'kg', 'db', 'l', 'adag'];
+const DEFAULT_PREP = [
+  { id: 'p_sauce', order: 1, sample: true, name: 'Burger Prof szósz', unit: 'g', par: 2000, parWeekend: 3000, station: 'Konyha', recipeId: 'r_sauce' },
+  { id: 'p_onion', order: 2, sample: true, name: 'Pirított hagyma', unit: 'g', par: 1000, parWeekend: 1500, station: 'Konyha', recipeId: 'r_onion' },
+  { id: 'p_patty', order: 3, sample: true, name: 'Smash gombóc kiporciózva', unit: 'db', par: 60, parWeekend: 100, station: 'Konyha', recipeId: 'r_smash' },
+  { id: 'p_salad', order: 4, sample: true, name: 'Salátamix mosva, szárítva', unit: 'g', par: 1500, parWeekend: 2000, station: 'Konyha', recipeId: '' },
+  { id: 'p_cheese', order: 5, sample: true, name: 'Sajt kipakolva, lapokra szedve', unit: 'db', par: 200, parWeekend: 300, station: 'Konyha', recipeId: '' },
+  { id: 'p_pickle', order: 6, sample: true, name: 'Savanyú uborka szeletelve', unit: 'g', par: 800, parWeekend: 1200, station: 'Konyha', recipeId: '' },
+  { id: 'p_fries', order: 7, sample: true, name: 'Krumpli előkészítve', unit: 'g', par: 5000, parWeekend: 8000, station: 'Konyha', recipeId: '' },
+  { id: 'p_ice', order: 8, sample: true, name: 'Jégkocka', unit: 'kg', par: 3, parWeekend: 5, station: 'Pult', recipeId: '' },
+];
+const WASTE_REASONS = ['Lejárt / romlott', 'Elrontott adag', 'Leégett', 'Leesett', 'Rossz rendelés', 'Vendégpanasz', 'Túltermelés', 'Sérült áru', 'Egyéb'];
+
+function prepItems() {
+  const p = state.prepItems && state.prepItems.length ? state.prepItems : DEFAULT_PREP;
+  return [...p].filter(x => x.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+function parFor(item, dateStr) {
+  const wd = weekdayOf(dateStr);
+  const w = Number(item.parWeekend);
+  return (wd >= 5 && !isNaN(w) && w > 0) ? w : (Number(item.par) || 0);
+}
+function prepStats(dateStr) {
+  const rec = state.prepToday && state.prepToday.date === dateStr ? state.prepToday : null;
+  const items = prepItems();
+  let toMake = 0, done = 0, counted = 0;
+  items.forEach(it => {
+    const r = (rec && rec.items && rec.items[it.id]) || {};
+    const par = parFor(it, dateStr);
+    const have = r.have == null ? null : Number(r.have);
+    const need = Math.max(0, par - (have || 0));
+    if (have != null) counted++;
+    if (r.done) done++;
+    else if (need > 0) toMake++;
+  });
+  return { total: items.length, toMake, done, counted };
+}
+async function ensurePrep(dateStr) {
+  const ref = state.db.doc('prep/' + dateStr);
+  const snap = await ref.get();
+  if (snap.exists) return { id: dateStr, ...snap.data() };
+  const body = { date: dateStr, weekday: weekdayOf(dateStr), items: {}, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  await ref.set(body);
+  return { id: dateStr, ...body };
+}
+async function writePrep(itemId, patchFn) {
+  const dateStr = ymd(new Date());
+  const doc = await ensurePrep(dateStr);
+  const rec = (doc.items && doc.items[itemId]) || {};
+  const next = patchFn(rec);
+  state.prepToday = { ...(state.prepToday || doc), items: { ...((state.prepToday || doc).items || {}), [itemId]: next } };
+  render();
+  try { await state.db.doc('prep/' + dateStr).update({ items: { [itemId]: next }, updatedAt: new Date().toISOString() }); }
+  catch (e) { console.warn(e); toast('Nem sikerült menteni.'); }
+}
+
+function renderPrep() {
+  const today = ymd(new Date());
+  const items = prepItems();
+  const rec = state.prepToday && state.prepToday.date === today ? state.prepToday : null;
+  const st = prepStats(today);
+  const stations = [...new Set(items.map(i => i.station || 'Konyha'))];
+  const blocks = stations.map(stn => {
+    const rows = items.filter(i => (i.station || 'Konyha') === stn).map(it => {
+      const r = (rec && rec.items && rec.items[it.id]) || {};
+      const par = parFor(it, today);
+      const have = r.have == null ? null : Number(r.have);
+      const need = Math.max(0, par - (have || 0));
+      const doneCls = r.done ? 'done' : need === 0 && have != null ? 'enough' : '';
+      return `<div class="prep-row ${doneCls}">
+        <div class="pr-top">
+          <div><div class="pr-name">${esc(it.name)}</div>
+          <div class="pr-par">Cél: <b class="num">${fmtQty(par)} ${esc(it.unit || '')}</b>${weekdayOf(today) >= 5 && Number(it.parWeekend) > 0 ? ' · hétvégi' : ''}</div></div>
+          ${r.done ? `<span class="pill done">${esc(r.by || '')} · ${hhmm(r.at)}</span>` : need === 0 && have != null ? '<span class="pill done">Elég van</span>' : `<span class="pill partial num">${fmtQty(need)} ${esc(it.unit || '')}</span>`}
+        </div>
+        <div class="pr-ctl">
+          <label class="pr-lab" for="have_${esc(it.id)}">Van</label>
+          <input type="text" inputmode="decimal" id="have_${esc(it.id)}" data-have="${esc(it.id)}" value="${have == null ? '' : esc(fmtQty(have))}" placeholder="0" aria-label="Meglévő mennyiség: ${esc(it.name)}">
+          <span class="pr-unit">${esc(it.unit || '')}</span>
+          <button class="pr-btn ${r.done ? 'on' : ''}" type="button" data-prepdone="${esc(it.id)}">${r.done ? ICON.check : ''}${r.done ? 'Kész' : 'Megcsináltam'}</button>
+          ${it.recipeId ? `<button class="pr-rec" type="button" data-preprec="${esc(it.recipeId)}:${need || par}">Recept ›</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="section"><h3 style="margin-bottom:8px">${esc(stn)}</h3><div class="prep-list">${rows}</div></div>`;
+  }).join('');
+  return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
+    <div class="eyebrow">Napi működés · ${DAY_NAMES[weekdayOf(today)]}</div>
+    <h1>Előkészítés</h1>
+    <p class="mode-note" style="margin-top:8px">Írd be, mennyi van készleten – a rendszer megmondja, mennyit kell gyártani. A cél mennyiség hétvégén magasabb.</p>
+    <div class="card" style="display:flex;gap:18px;align-items:center;justify-content:space-around;text-align:center">
+      <div><div class="v3 num">${st.toMake}</div><div class="small muted">gyártani</div></div>
+      <div><div class="v3 num" style="color:var(--done)">${st.done}</div><div class="small muted">kész</div></div>
+      <div><div class="v3 num">${st.counted}/${st.total}</div><div class="small muted">leszámolva</div></div>
+    </div>
+    ${blocks}
+    ${state.isAdmin ? '<div class="section"><button class="btn block" type="button" data-prepedit>Cél mennyiségek szerkesztése</button></div>' : ''}
+    <p class="muted small" style="margin-top:14px">A lista minden nap nullázódik. A „Van” mező a mai leszámolás.</p>`;
+}
+function renderPrepEdit() {
+  const list = state.editPrep || prepItems().map(x => JSON.parse(JSON.stringify(x)));
+  if (!state.editPrep) state.editPrep = list;
+  return `<button class="back" type="button" data-prepedit-cancel>${ICON.back} Mégse</button>
+    <h1 style="margin-bottom:6px">Előkészítési célok</h1>
+    <p class="muted small" style="margin:0 0 14px">A hétvégi cél péntek, szombat és vasárnap érvényes. Ha üresen hagyod, a hétköznapi cél él minden nap.</p>
+    ${list.map((it, i) => `<div class="card" style="margin-bottom:10px">
+      <div class="field"><label for="pn${i}">Megnevezés</label><input type="text" id="pn${i}" data-pe="${i}:name" value="${esc(it.name || '')}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <div class="field"><label for="pp${i}">Hétköznap</label><input type="text" inputmode="decimal" id="pp${i}" data-pe="${i}:par" value="${esc(it.par == null ? '' : it.par)}"></div>
+        <div class="field"><label for="pw${i}">Hétvége</label><input type="text" inputmode="decimal" id="pw${i}" data-pe="${i}:parWeekend" value="${esc(it.parWeekend == null ? '' : it.parWeekend)}"></div>
+        <div class="field"><label for="pu${i}">Egység</label><input type="text" id="pu${i}" data-pe="${i}:unit" value="${esc(it.unit || '')}"></div>
+      </div>
+      <div class="chips" style="margin-top:8px">
+        ${['Konyha', 'Pult'].map(s => `<button class="chip sm ${(it.station || 'Konyha') === s ? 'active' : ''}" type="button" data-pestn="${i}:${s}">${s}</button>`).join('')}
+        <button class="chip sm" type="button" data-pedel="${i}">Törlés</button>
+      </div>
+      <div class="field" style="margin-top:8px"><label for="pr${i}">Kapcsolt recept</label>
+        <select id="pr${i}" data-pe="${i}:recipeId" style="width:100%;min-height:46px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:11px 12px">
+          <option value="">— nincs —</option>
+          ${recipes().map(r => `<option value="${esc(r.id)}" ${it.recipeId === r.id ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}
+        </select></div>
+    </div>`).join('')}
+    <div class="stack">
+      <button class="btn" type="button" data-peadd>+ Új tétel</button>
+      <button class="btn primary block" type="button" data-pesave>Mentés</button>
+    </div>`;
+}
+function syncPrepEdit() {
+  if (!state.editPrep) return;
+  document.querySelectorAll('[data-pe]').forEach(el => {
+    const [i, f] = el.dataset.pe.split(':');
+    const row = state.editPrep[Number(i)];
+    if (!row) return;
+    if (f === 'par' || f === 'parWeekend') { const v = parseFloat(String(el.value).replace(',', '.')); row[f] = isNaN(v) ? null : v; }
+    else row[f] = el.value;
+  });
+}
+
+/* ---------- Selejt ---------- */
+function wasteOf(dates) { return state.waste.filter(w => dates.includes(w.date)); }
+function renderWaste() {
+  const today = ymd(new Date());
+  const all = [...state.waste].sort((a, b) => (a.at < b.at ? 1 : -1));
+  const byDate = {};
+  all.forEach(w => (byDate[w.date] = byDate[w.date] || []).push(w));
+  const dates = Object.keys(byDate).sort().reverse().slice(0, 14);
+  const m30 = all.filter(w => w.date >= daysAgo(29));
+  const ft = m30.reduce((s, w) => s + (Number(w.cost) || 0), 0);
+  const byItem = {}, byReason = {};
+  m30.forEach(w => { byItem[w.item] = (byItem[w.item] || 0) + 1; byReason[w.reason] = (byReason[w.reason] || 0) + 1; });
+  const topItems = Object.entries(byItem).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topReasons = Object.entries(byReason).sort((a, b) => b[1] - a[1]);
+  const maxR = topReasons.length ? topReasons[0][1] : 1;
+  const days = dates.map(d => `<div class="hist-day">
+      <div class="d"><b>${d === today ? 'Ma' : DAY_NAMES[weekdayOf(d)]}</b><span class="muted num">${longDate(d)}</span></div>
+      ${byDate[d].map(w => {
+        const url = w.photo ? photoUrl(w.photo) : null;
+        return `<div class="waste-row">
+          ${url ? `<button class="thumb" type="button" data-wphoto="${esc(w.id)}"><img src="${esc(url)}" alt=""></button>` : '<div class="thumb"></div>'}
+          <div>
+            <div class="n">${esc(w.item)} · <span class="num">${fmtQty(w.qty)} ${esc(w.unit || '')}</span></div>
+            <div class="s">${esc(w.reason)} · ${esc(w.by || '—')} · ${hhmm(w.at)}${w.cost ? ` · <b>${fmtQty(w.cost)} Ft</b>` : ''}${w.note ? ` · ${esc(w.note)}` : ''}</div>
+          </div>
+          ${state.isAdmin ? `<button class="ico-btn" type="button" data-wdel="${esc(w.id)}" aria-label="Törlés">${ICON.trash}</button>` : '<span></span>'}
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+  return `<button class="back" type="button" data-back>${ICON.back} Vissza</button>
+    <div class="eyebrow">Napi működés</div>
+    <h1>Selejt napló</h1>
+    <p class="mode-note" style="margin-top:8px">Minden kidobott alapanyagot és elrontott adagot rögzíts. Ebből derül ki, hol folyik el a pénz.</p>
+    <button class="btn primary block" type="button" data-wnew style="margin-bottom:14px">+ Selejt rögzítése</button>
+    ${m30.length ? `<div class="card" style="display:flex;gap:18px;align-items:center;justify-content:space-around;text-align:center">
+      <div><div class="v3 num">${m30.length}</div><div class="small muted">bejegyzés · 30 nap</div></div>
+      ${ft ? `<div><div class="v3 num" style="color:var(--danger)">${fmtQty(ft)} Ft</div><div class="small muted">becsült érték</div></div>` : ''}
+    </div>` : ''}
+    ${topReasons.length ? `<div class="section"><h3 style="margin-bottom:8px">Okok · 30 nap</h3><div class="card">
+      ${topReasons.map(([r, n]) => `<div class="stat-row"><div><div class="n">${esc(r)}</div><div class="minibar"><i style="width:${Math.round(100 * n / maxR)}%;background:var(--danger)"></i></div></div><div class="v">${n}</div></div>`).join('')}
+    </div></div>` : ''}
+    ${topItems.length ? `<div class="section"><h3 style="margin-bottom:8px">Leggyakrabban kidobva</h3><div class="card">
+      ${topItems.map(([i, n]) => `<div class="stat-row"><div class="small">${esc(i)}</div><div class="v">${n}×</div></div>`).join('')}
+    </div></div>` : ''}
+    <div class="section"><h3 style="margin-bottom:8px">Bejegyzések</h3>
+      ${days ? `<div class="stack">${days}</div>` : '<div class="empty-state">Még nincs bejegyzés. Ez jó hír – de ha kidobtok valamit, rögzítsétek.</div>'}
+    </div>
+    ${state.isAdmin && all.length ? '<div class="section"><button class="btn block" type="button" data-wexport>Selejt export (CSV)</button></div>' : ''}`;
+}
+function wasteModal() {
+  const names = [...new Set([...prepItems().map(p => p.name), ...recipes().map(r => r.name)])];
+  const go2 = () => openModal(`<h2>Selejt rögzítése</h2>
+    <div class="field"><label for="wItem">Mi lett kidobva?</label>
+      <input type="text" id="wItem" list="wList" autocomplete="off" placeholder="pl. Pirított hagyma">
+      <datalist id="wList">${names.map(n => `<option value="${esc(n)}"></option>`).join('')}</datalist></div>
+    <div style="display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:10px">
+      <div class="field"><label for="wQty">Mennyiség</label><input type="text" inputmode="decimal" id="wQty" placeholder="0"></div>
+      <div class="field"><label for="wUnit">Egység</label><input type="text" id="wUnit" value="g"></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>Miért?</label>
+      <div class="chips" id="wReasons">${WASTE_REASONS.map(r => `<button class="chip sm" type="button" data-wreason="${esc(r)}">${esc(r)}</button>`).join('')}</div></div>
+    <div class="field" style="margin-top:10px"><label>Hol?</label>
+      <div class="chips" id="wStations">${['Konyha', 'Pult'].map(r => `<button class="chip sm ${r === 'Konyha' ? 'active' : ''}" type="button" data-wstation="${esc(r)}">${esc(r)}</button>`).join('')}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+      <div class="field"><label for="wCost">Becsült érték (Ft)</label><input type="text" inputmode="numeric" id="wCost" placeholder="nem kötelező"></div>
+      <div class="field"><label>Fotó</label><label class="btn" style="justify-content:center">${ICON.camera} <span id="wPhotoLbl">Fotó</span><input type="file" accept="image/*" capture="environment" hidden id="wPhoto"></label></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label for="wNote">Megjegyzés</label><textarea id="wNote" placeholder="nem kötelező"></textarea></div>
+    <div class="row-between" style="margin-top:14px"><button class="btn ghost" type="button" data-close2>Mégse</button><button class="btn primary" type="button" id="wOk">Rögzítem</button></div>`,
+    m => {
+      m.querySelector('[data-close2]').addEventListener('click', closeModal);
+      let reason = '', station = 'Konyha';
+      m.querySelectorAll('[data-wreason]').forEach(b => b.addEventListener('click', () => {
+        reason = b.dataset.wreason;
+        m.querySelectorAll('[data-wreason]').forEach(x => x.classList.toggle('active', x === b));
+      }));
+      m.querySelectorAll('[data-wstation]').forEach(b => b.addEventListener('click', () => {
+        station = b.dataset.wstation;
+        m.querySelectorAll('[data-wstation]').forEach(x => x.classList.toggle('active', x === b));
+      }));
+      $('#wOk', m).addEventListener('click', async () => {
+        const item = $('#wItem', m).value.trim();
+        const qty = parseFloat(String($('#wQty', m).value).replace(',', '.'));
+        if (!item) { toast('Írd be, mi lett kidobva.'); return; }
+        if (isNaN(qty) || qty <= 0) { toast('Add meg a mennyiséget.'); return; }
+        if (!reason) { toast('Válaszd ki az okot.'); return; }
+        const cost = parseFloat(String($('#wCost', m).value).replace(/[^\d.,]/g, '').replace(',', '.'));
+        const body = {
+          date: ymd(new Date()), at: new Date().toISOString(), by: state.who || '',
+          item, qty, unit: $('#wUnit', m).value.trim(), reason, station,
+          cost: isNaN(cost) ? null : cost, note: $('#wNote', m).value.trim(), photo: state._wastePhoto || null,
+        };
+        state._wastePhoto = null;
+        try {
+          await state.db.doc('waste/' + ymd(new Date()) + '_' + Date.now()).set(body);
+          closeModal(); toast('Rögzítve. Köszi, hogy bevallottad.');
+        } catch (e) { console.warn(e); toast('Nem sikerült menteni.'); }
+      });
+      setTimeout(() => $('#wItem', m).focus(), 50);
+    });
+  state._wastePhoto = null;
+  if (!state.who) whoModal(go2); else go2();
+}
+async function exportWasteCsv() {
+  const rows = [['Dátum', 'Idő', 'Tétel', 'Mennyiség', 'Egység', 'Ok', 'Hely', 'Rögzítette', 'Becsült érték (Ft)', 'Megjegyzés']];
+  [...state.waste].sort((a, b) => (a.at < b.at ? 1 : -1)).forEach(w => rows.push([w.date, hhmm(w.at), w.item, fmtQty(w.qty), w.unit || '', w.reason, w.station || '', w.by || '', w.cost == null ? '' : fmtQty(w.cost), w.note || '']));
+  const csv = '﻿' + rows.map(r => r.map(c => `"${String(c == null ? '' : c).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  let dl = state.downloads;
+  if (!dl) { try { dl = state.downloads = await window.claude.use('downloads'); } catch (e) { dl = null; } }
+  if (!dl) { toast('A letöltés ebben a nézetben nem érhető el.'); return; }
+  try { await dl.save({ filename: `burgerprof-selejt-${ymd(new Date())}.csv`, data: csv }); }
+  catch (e) { if (e && e.code !== 'declined') toast('Nem sikerült a letöltés.'); }
+}
+
 /* ---------- Események ---------- */
 document.addEventListener('click', async e => {
   const t = e.target.closest('button, [data-open]');
@@ -1875,6 +2200,64 @@ document.addEventListener('click', async e => {
     state.audit.verdicts[id] = { v: 'ok', c: '' }; render(); return;
   }
   if ('export' in d) { exportCsv(); return; }
+  /* előkészítés és selejt */
+  if ('prep' in d) { go({ tab: 'prep' }); return; }
+  if ('waste' in d) { go({ tab: 'waste' }); return; }
+  if (d.prepdone) {
+    if (!state.who) { whoModal(); return; }
+    const id = d.prepdone;
+    writePrep(id, r => r.done ? { ...r, done: false, by: null, at: null } : { ...r, done: true, by: state.who, at: new Date().toISOString() });
+    if (navigator.vibrate) { try { navigator.vibrate(14); } catch (e) {} }
+    return;
+  }
+  if (d.preprec) {
+    const [rid, need] = d.preprec.split(':');
+    const rec = recipeById(rid);
+    const y = rec && Number(rec.yieldQty) ? Number(rec.yieldQty) : 0;
+    state.scale = y ? Math.max(0.25, Math.round((Number(need) / y) * 4) / 4) : 1;
+    state.route = { tab: 'recipe', id: rid, from: 'prep' };
+    window.scrollTo({ top: 0 }); render(); return;
+  }
+  if ('prepedit' in d) { go({ tab: 'prepEdit' }); return; }
+  if ('prepeditCancel' in d) { state.editPrep = null; go({ tab: 'prep' }); return; }
+  if (d.pestn) { const [i, st2] = d.pestn.split(':'); syncPrepEdit(); state.editPrep[Number(i)].station = st2; render(); return; }
+  if (d.pedel != null && 'pedel' in d) {
+    syncPrepEdit();
+    if (!confirm('Törlöd ezt a tételt az előkészítési listáról?')) return;
+    state.editPrep[Number(d.pedel)]._deleted = true;
+    state.editPrep.splice(Number(d.pedel), 1); render(); return;
+  }
+  if ('peadd' in d) { syncPrepEdit(); state.editPrep.push({ id: 'p_' + uid().slice(0, 8), name: '', unit: 'g', par: null, parWeekend: null, station: 'Konyha', recipeId: '', order: (state.editPrep.length + 1) * 10 }); render(); return; }
+  if ('pesave' in d) {
+    syncPrepEdit();
+    const keep = state.editPrep.filter(x => x.name && x.name.trim());
+    const before = prepItems().map(x => x.id);
+    const writes = keep.map((x, i) => ({ id: x.id, body: { name: x.name.trim(), unit: (x.unit || '').trim(), par: x.par, parWeekend: x.parWeekend, station: x.station || 'Konyha', recipeId: x.recipeId || '', order: (i + 1) * 10, sample: false, active: true, updatedAt: new Date().toISOString() } }));
+    try {
+      for (const w of writes) await state.db.doc('prepItems/' + w.id).set(w.body);
+      for (const id of before) if (!keep.some(k => k.id === id)) await state.db.doc('prepItems/' + id).set({ active: false, name: '', order: 999, updatedAt: new Date().toISOString() });
+      state.editPrep = null; go({ tab: 'prep' }); toast('Mentve.');
+    } catch (err) { console.warn(err); toast(err && err.code === 'invalid_argument' ? 'Ehhez vezetői hozzáférés kell.' : 'Nem sikerült menteni.'); }
+    return;
+  }
+  if ('wnew' in d) { wasteModal(); return; }
+  if (d.wdel) {
+    if (!confirm('Törlöd ezt a selejt bejegyzést?')) return;
+    try { await state.db.doc('waste/' + d.wdel).delete(); toast('Törölve.'); } catch (e) { toast('Nem sikerült törölni.'); }
+    return;
+  }
+  if (d.wphoto) {
+    const w = state.waste.find(x => x.id === d.wphoto);
+    if (!w || !w.photo) return;
+    const url = photoUrl(w.photo);
+    openModal(`<div class="lightbox">${url ? `<img src="${esc(url)}" alt="">` : '<p class="muted">Betöltés…</p>'}</div>
+      <p class="small" style="margin:10px 0 0"><b>${esc(w.item)}</b> · ${esc(w.reason)}</p>
+      <p class="small muted" style="margin:2px 0 12px">${esc(w.by || '')} · ${hhmm(w.at)}</p>
+      <button class="btn ghost block" type="button" data-close2>Bezár</button>`,
+      m => m.querySelector('[data-close2]').addEventListener('click', closeModal));
+    return;
+  }
+  if ('wexport' in d) { exportWasteCsv(); return; }
   /* receptek */
   if (d.recipe) { go({ tab: 'recipe', id: d.recipe }); return; }
   if (d.reccat != null && 'reccat' in d) { state.recipeCat = d.reccat; render(); return; }
@@ -1971,6 +2354,19 @@ document.addEventListener('click', async e => {
 });
 document.addEventListener('change', e => {
   const inp = e.target;
+  if (inp.dataset && inp.dataset.have) {
+    const v = parseFloat(String(inp.value).replace(',', '.'));
+    writePrep(inp.dataset.have, r => ({ ...r, have: isNaN(v) ? null : v, countedBy: state.who || r.countedBy || null, countedAt: new Date().toISOString() }));
+    return;
+  }
+  if (inp.id === 'wPhoto') {
+    const f = inp.files && inp.files[0]; inp.value = '';
+    if (!f) return;
+    const lbl = document.getElementById('wPhotoLbl'); if (lbl) lbl.textContent = 'Feltöltés…';
+    storePhoto(f, { kind: 'waste' }).then(ref => { state._wastePhoto = ref; if (lbl) lbl.textContent = 'Fotó kész ✓'; })
+      .catch(() => { if (lbl) lbl.textContent = 'Nem sikerült'; });
+    return;
+  }
   if (inp.dataset && inp.dataset.cam) { const f = inp.files && inp.files[0]; inp.value = ''; onPhoto(inp.dataset.cam, f); }
   if (inp.id === 'rePhoto') {
     const f = inp.files && inp.files[0]; inp.value = '';

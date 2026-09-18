@@ -41,6 +41,14 @@ v1.0) helyett.
   hiányzó rétegek halványan látszanak. Rezgés és pattanó animáció pipáláskor,
   szöveges mérföldkövek 25/50/75/100 %-nál, konfettis ünneplés aláíráskor,
   napi sorozat (🔥 X nap zsinórban), mai csapatsáv és heti toplista.
+* **Előkészítés (prep)** – a Ma képernyőről nyílik. Tételenként cél mennyiség
+  (külön hétköznapi és hétvégi), a dolgozó beírja a meglévő készletet, a
+  rendszer kiszámolja a gyártandó mennyiséget, majd kipipálja, ha megvan.
+  A tételhez recept köthető: a „Recept ›” a szükséges mennyiséghez igazított
+  adagszorzóval nyitja meg. Naponta nullázódik (`prep/<dátum>`).
+* **Selejt napló** – kidobott alapanyag és elrontott adag rögzítése:
+  tétel, mennyiség, ok, hely, opcionális becsült érték forintban, fotó,
+  megjegyzés. 30 napos statisztika okokra és tételekre bontva, CSV export.
 * **Beállítások (csak vezetőknek)** – dolgozók névsora, sablonok szerkesztése
   (szöveg, sorrend, heti napok, kötelező, fotó kell, határidő, aláírási mód).
 
@@ -61,8 +69,8 @@ szabályai:
 
 | útvonal | olvasás | írás |
 |---|---|---|
-| `` (gyökér: `shifts`, `photos`) | interact | interact |
-| `templates`, `recipes`, `settings` | interact | admin |
+| `` (gyökér: `shifts`, `photos`, `prep`, `waste`) | interact | interact |
+| `templates`, `recipes`, `prepItems`, `settings` | interact | admin |
 | `audits`, `admin` | admin | admin |
 
 A dolgozók „megtekintheti” (interact) joggal kapják a linket: kitöltik a
