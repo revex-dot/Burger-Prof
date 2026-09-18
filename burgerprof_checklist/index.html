@@ -472,7 +472,7 @@ const DEFAULT_TEMPLATES = [
     { id: 'm21', text: 'Ablaktisztítás', weekly: [1, 5] },
     { id: 'm22', text: 'Boxok, asztalok elhúzása', weekly: [2, 4, 6, 7] },
   ]},
-  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', perItem: false, dueBy: '23:59', items: [
+  { id: 'evening_counter', order: 2, name: 'Esti feladatok', section: 'Pult', perItem: false, dueBy: '01:00', items: [
     { id: 'e01', text: 'Benti asztalok letörlése' },
     { id: 'e02', text: 'Székek felpakolása az asztalokra', photo: true },
     { id: 'e03', text: 'Padló felsepregetés' },
@@ -489,7 +489,7 @@ const DEFAULT_TEMPLATES = [
     { id: 'e14', text: 'Napi zárás: készpénz leszámolása + papírok + boríték a kasszába (dátum, összeg, aláírás)', required: true },
     { id: 'e15', text: 'Világítás lekapcsolva, ajtó bezárva', required: true },
   ]},
-  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', perItem: true, dueBy: '23:59', items: [
+  { id: 'kitchen_close', order: 3, name: 'Esti záró feladatok', section: 'Konyha', perItem: true, dueBy: '01:00', items: [
     { id: 'k01', text: 'Dohányzó teljes rendezése' },
     { id: 'k02', text: 'Padló teljes tisztítása', photo: true },
     { id: 'k03', text: 'Konyhai kuka kívülről takarítva, zsák kiürítése és új zsák belerakása' },
@@ -527,7 +527,20 @@ const hhmm = iso => { const d = new Date(iso); return isNaN(d) ? '' : `${pad(d.g
 const longDate = s => { const d = parseYmd(s); return `${d.getFullYear()}. ${MONTHS[d.getMonth()]} ${d.getDate()}.`; };
 const shortDate = s => { const d = parseYmd(s); return `${d.getMonth() + 1}. ${d.getDate()}.`; };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return ymd(d); };
+/* Üzleti nap: a vendéglátásban a nap nem éjfélkor vált, hanem hajnalban.
+   Az esti zárás 00:30-kor is az előző naphoz tartozik. */
+function dayStartHour() {
+  const h = state.settings ? Number(state.settings.dayStartHour) : NaN;
+  return (isNaN(h) || h < 0 || h > 12) ? 5 : h;
+}
+function bizDateObj(now) {
+  const d = now ? new Date(now) : new Date();
+  if (d.getHours() < dayStartHour()) d.setDate(d.getDate() - 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+function bizDate(now) { return ymd(bizDateObj(now)); }
+const daysAgo = n => { const d = bizDateObj(); d.setDate(d.getDate() - n); return ymd(d); };
 const ls = {
   get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -613,7 +626,7 @@ const state = {
   recipes: null, recipeCat: '', scale: 1, editRecipe: null, _layers: {},
   prepItems: null, prepToday: null, editPrep: null, waste: [], _wastePhoto: null,
   audit: null,           // { verdicts: {itemId:{v,c}}, note }
-  _day: ymd(new Date()),
+  _day: '',
 };
 
 function templates() {
@@ -639,7 +652,11 @@ function dueOf(tpl, shift) { return (shift && shift.dueBy) || (tpl && tpl.dueBy)
 function dueDate(dateStr, due) {
   if (!due) return null;
   const [h, m] = due.split(':').map(Number);
-  const d = parseYmd(dateStr); d.setHours(h || 0, m || 0, 0, 0); return d;
+  const d = parseYmd(dateStr);
+  /* a nap kezdete előtti óra a következő naptári napot jelenti: 01:00 = hajnali egy */
+  if ((h || 0) < dayStartHour()) d.setDate(d.getDate() + 1);
+  d.setHours(h || 0, m || 0, 0, 0);
+  return d;
 }
 function peopleOf(shift) {
   if (!shift) return [];
@@ -712,10 +729,7 @@ function subscribeBase() {
     state.prepItems = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
   }, err => console.warn('prepItems', err));
-  state.unsub.prep = db.doc('prep/' + ymd(new Date())).onSnapshot(snap => {
-    state.prepToday = snap.exists ? { id: snap.id, ...snap.data() } : null;
-    render();
-  }, err => console.warn('prep', err));
+  subscribePrepDay();
   state.unsub.waste = db.collection('waste').where('date', '>=', daysAgo(45)).orderBy('date', 'desc').limit(500).onSnapshot(snap => {
     state.waste = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     render();
@@ -729,8 +743,16 @@ function subscribeBase() {
     render();
   }, err => console.warn('settings', err));
 }
+function subscribePrepDay() {
+  if (state.unsub.prep) state.unsub.prep();
+  state.prepToday = null;
+  state.unsub.prep = state.db.doc('prep/' + bizDate()).onSnapshot(snap => {
+    state.prepToday = snap.exists ? { id: snap.id, ...snap.data() } : null;
+    render();
+  }, err => console.warn('prep', err));
+}
 function subscribeToday() {
-  const today = ymd(new Date());
+  const today = bizDate();
   if (state.unsub.today) state.unsub.today();
   state.unsub.today = state.db.collection('shifts').where('date', '==', today).onSnapshot(snap => {
     state.todayShifts = {};
@@ -855,6 +877,24 @@ async function deletePhoto(ref) {
 
 /* ---------- Render ---------- */
 function render() {
+  /* a nézetet teljesen újrarajzoljuk, ezért a fókuszban lévő mező tartalmát megőrizzük */
+  const ae = document.activeElement;
+  const view = $('#view');
+  let keep = null;
+  if (ae && ae.id && view && view.contains(ae) && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) {
+    keep = { id: ae.id, val: ae.value, s: ae.selectionStart, e: ae.selectionEnd };
+  }
+  renderView();
+  if (keep) {
+    const el = document.getElementById(keep.id);
+    if (el) {
+      el.value = keep.val;
+      el.focus();
+      try { el.setSelectionRange(keep.s, keep.e); } catch (e) {}
+    }
+  }
+}
+function renderView() {
   $('#whoName').textContent = state.who || 'Ki vagy?';
   $('#whoBtn').classList.toggle('empty', !state.who);
   $('#tabAudit').hidden = !state.isAdmin;
@@ -898,7 +938,7 @@ function ringSvg(done, total, code) {
 }
 
 function renderToday() {
-  const today = ymd(new Date());
+  const today = bizDate();
   const wd = weekdayOf(today);
   const cards = templates().map(tpl => {
     const shift = state.todayShifts[tpl.id];
@@ -942,7 +982,7 @@ function renderCheck() {
   const perItem = isPerItem(tpl, shift);
   const defs = defsOf(shift, tpl, date);
   const st = shiftStats(shift, tpl, date);
-  const today = ymd(new Date());
+  const today = bizDate();
   const editable = (date === today || state.isAdmin) && !state.audit;
   const auditing = !!state.audit;
   const wd = weekdayOf(date);
@@ -1054,7 +1094,7 @@ function renderCheck() {
 function renderHistory() {
   const byDate = {};
   state.history.forEach(s => { (byDate[s.date] = byDate[s.date] || {})[s.templateId] = s; });
-  const today = ymd(new Date());
+  const today = bizDate();
   const dates = Object.keys(byDate).filter(d => d !== today).sort().reverse();
   if (!dates.length) return `<h1 style="margin-bottom:14px">Előzmények</h1><div class="empty-state">Még nincs korábbi nap. A kitöltött listák itt jelennek meg, dátum szerint.</div>`;
   const tpls = templates();
@@ -1079,20 +1119,20 @@ function renderHistory() {
 function shiftMap() {
   const m = {};
   state.history.forEach(s => { (m[s.date] = m[s.date] || {})[s.templateId] = s; });
-  const today = ymd(new Date());
+  const today = bizDate();
   m[today] = m[today] || {};
   Object.values(state.todayShifts).forEach(s => { m[today][s.templateId] = s; });
   return m;
 }
 function firstUseDate() {
-  let first = ymd(new Date());
+  let first = bizDate();
   state.history.forEach(s => { if (s.date < first) first = s.date; });
   return first;
 }
 function problemList(days) {
   const m = shiftMap();
   const tpls = templates();
-  const today = ymd(new Date());
+  const today = bizDate();
   const from = firstUseDate();
   const out = [];
   for (let i = 0; i < days; i++) {
@@ -1123,7 +1163,7 @@ function renderAudit() {
   const tpls = templates();
   const m = shiftMap();
   const probs = problemList(8);
-  const today = ymd(new Date());
+  const today = bizDate();
 
   const alerts = probs.slice(0, 8).map(p => `<button class="alert ${p.sev === 'bad' ? 'bad' : ''}" type="button" data-open="${esc(p.tplId)}" data-date="${esc(p.date)}">
       <span class="ic">${ICON.warn}</span>
@@ -1255,7 +1295,7 @@ function renderSettings() {
       <div class="field" style="margin-bottom:10px"><label for="due${ti}">Határidő (eddig kell lezárni)</label><input type="text" id="due${ti}" data-tpl-due="${ti}" value="${esc(tpl.dueBy || '')}" placeholder="pl. 23:59" inputmode="numeric" style="max-width:140px"></div>
       ${tpl.items.map((it, ii) => `<div class="tpl-item">
         <div>
-          <textarea data-tpl-text="${ti}:${ii}" aria-label="Feladat szövege">${esc(it.text)}</textarea>
+          <textarea id="tpltext_${ti}_${ii}" data-tpl-text="${ti}:${ii}" aria-label="Feladat szövege">${esc(it.text)}</textarea>
           <div class="days"><span class="lbl">Heti:</span>${[1,2,3,4,5,6,7].map(d => `<button class="day ${it.weekly && it.weekly.includes(d) ? 'on' : ''}" type="button" data-tpl-day="${ti}:${ii}:${d}" aria-pressed="${!!(it.weekly && it.weekly.includes(d))}">${DAY_SHORT[d]}</button>`).join('')}<span class="lbl" style="margin-left:6px">${it.weekly && it.weekly.length ? '' : 'minden nap'}</span></div>
           <div class="chips" style="margin-top:6px">
             <button class="chip sm ${it.required ? 'active' : ''}" type="button" data-tpl-req="${ti}:${ii}">Kötelező</button>
@@ -1279,6 +1319,11 @@ function renderSettings() {
       <p class="muted small" style="margin:0">Ezek közül választ mindenki a jobb felső „Ki vagy?” gombnál.</p>
       <div class="chips">${list.map(n => `<span class="chip">${esc(n)} <button class="x" type="button" data-staff-del="${esc(n)}" aria-label="Törlés: ${esc(n)}">✕</button></span>`).join('') || '<span class="muted small">Még nincs senki felvéve.</span>'}</div>
       <div class="row-between"><input type="text" id="staffIn" placeholder="Név" aria-label="Új dolgozó neve"><button class="btn primary" type="button" data-staff-add>Hozzáad</button></div>
+    </div>
+    <div class="card stack" style="margin-top:12px">
+      <h2>Üzleti nap kezdete</h2>
+      <p class="muted small" style="margin:0">A nap nem éjfélkor vált, hanem ekkor. Így a hajnali zárás még az előző naphoz tartozik, és a lista is akkor írható alá. A határidőknél a nap kezdete előtti óra a következő hajnalt jelenti: <b>01:00</b> = éjfél után egy órával.</p>
+      <div class="row-between"><input type="text" id="dayStart" inputmode="numeric" value="${dayStartHour()}" aria-label="Üzleti nap kezdete, óra" style="max-width:120px"><span class="muted small" style="flex:1">óra (0–12)</span><button class="btn" type="button" data-daystart>Mentés</button></div>
     </div>
     <div class="section"><h3>Feladatsablonok</h3>
       <p class="muted small" style="margin:0 0 4px">A módosítás a következő megnyitott naptól érvényes; a már elkezdett napok listája nem változik. <b>Kötelező</b>: nem lehet indoklással kihagyni. <b>Fotó kell</b>: csak fotóval pipálható ki.</p>
@@ -1362,7 +1407,7 @@ function photoModal(itemId) {
   if (!rec || !rec.photo) return;
   const url = photoUrl(rec.photo);
   const def = defsOf(state.openShift, templateById(state.route.tplId), state.route.date).find(i => i.id === itemId);
-  const editable = state.route.date === ymd(new Date()) || state.isAdmin;
+  const editable = state.route.date === bizDate() || state.isAdmin;
   openModal(`<div class="lightbox">${url ? `<img src="${esc(url)}" alt="">` : '<p class="muted">Betöltés…</p>'}</div>
     <p class="small" style="margin:10px 0 0"><b>${esc(def ? def.text : '')}</b></p>
     <p class="small muted" style="margin:2px 0 12px">${esc(rec.photoBy || rec.by || '')} · ${hhmm(rec.photoAt || rec.at)}</p>
@@ -1588,7 +1633,7 @@ async function exportCsv() {
   let dl = state.downloads;
   if (!dl) { try { dl = state.downloads = await window.claude.use('downloads'); } catch (e) { dl = null; } }
   if (!dl) { toast('A letöltés ebben a nézetben nem érhető el.'); return; }
-  try { await dl.save({ filename: `burgerprof-feladatok-${ymd(new Date())}.csv`, data: csv }); }
+  try { await dl.save({ filename: `burgerprof-feladatok-${bizDate()}.csv`, data: csv }); }
   catch (e) { if (e && e.code !== 'declined') toast('Nem sikerült a letöltés.'); }
 }
 
@@ -1621,6 +1666,7 @@ function recipes() {
   return [...r].sort((a, b) => (a.order || 0) - (b.order || 0) || String(a.name).localeCompare(String(b.name), 'hu'));
 }
 function recipeById(id) { return recipes().find(r => r.id === id); }
+const fmtFt = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
 function fmtQty(n) {
   if (n == null || isNaN(n)) return '';
   const v = Number(n);
@@ -1753,7 +1799,7 @@ function countsFor(dates) {
 function weekDates() { return Array.from({ length: 7 }, (_, i) => daysAgo(i)); }
 
 function renderOpsCards() {
-  const today = ymd(new Date());
+  const today = bizDate();
   const ps = prepStats(today);
   const wToday = state.waste.filter(w => w.date === today);
   const wFt = wToday.reduce((a, w) => a + (Number(w.cost) || 0), 0);
@@ -1768,13 +1814,13 @@ function renderOpsCards() {
     </button>
     <button class="ops-card" type="button" data-waste>
       <div class="oc-ic" style="background:var(--danger-soft);color:var(--danger)">🗑️</div>
-      <div><div class="name">Selejt napló</div><div class="sub">${wToday.length ? `Ma ${wToday.length} bejegyzés${wFt ? ` · ${fmtQty(wFt)} Ft` : ''}` : 'Ma még nincs bejegyzés'}</div></div>
+      <div><div class="name">Selejt napló</div><div class="sub">${wToday.length ? `Ma ${wToday.length} bejegyzés${wFt ? ` · ${fmtFt(wFt)} Ft` : ''}` : 'Ma még nincs bejegyzés'}</div></div>
       <span class="go">›</span>
     </button>
   </div></div>`;
 }
 function renderTeamStrip() {
-  const today = countsFor([ymd(new Date())]);
+  const today = countsFor([bizDate()]);
   const names = staff().length ? staff() : Object.keys(today);
   if (!names.length) return '';
   const mates = names.map(n => {
@@ -1867,9 +1913,9 @@ function renderRecipeEdit() {
     <div class="section"><h3 style="margin-bottom:8px">Hozzávalók</h3>
       <div class="card">
         ${(r.ingredients || []).map((i, ii) => `<div class="ing-edit">
-          <input type="text" data-ing="${ii}:n" value="${esc(i.n || '')}" placeholder="Hozzávaló" aria-label="Hozzávaló neve">
-          <input type="text" data-ing="${ii}:q" value="${esc(i.q == null ? '' : i.q)}" inputmode="decimal" placeholder="mennyi" aria-label="Mennyiség">
-          <input type="text" data-ing="${ii}:u" value="${esc(i.u || '')}" placeholder="g" aria-label="Egység">
+          <input type="text" id="ing_${ii}_n" data-ing="${ii}:n" value="${esc(i.n || '')}" placeholder="Hozzávaló" aria-label="Hozzávaló neve">
+          <input type="text" id="ing_${ii}_q" data-ing="${ii}:q" value="${esc(i.q == null ? '' : i.q)}" inputmode="decimal" placeholder="mennyi" aria-label="Mennyiség">
+          <input type="text" id="ing_${ii}_u" data-ing="${ii}:u" value="${esc(i.u || '')}" placeholder="g" aria-label="Egység">
           <button class="ico-btn" type="button" data-ing-del="${ii}" aria-label="Sor törlése">${ICON.trash}</button>
         </div>`).join('')}
         <button class="btn sm" type="button" data-ing-add>+ Sor</button>
@@ -1959,7 +2005,7 @@ async function ensurePrep(dateStr) {
   return { id: dateStr, ...body };
 }
 async function writePrep(itemId, patchFn) {
-  const dateStr = ymd(new Date());
+  const dateStr = bizDate();
   const doc = await ensurePrep(dateStr);
   const rec = (doc.items && doc.items[itemId]) || {};
   const next = patchFn(rec);
@@ -1970,7 +2016,7 @@ async function writePrep(itemId, patchFn) {
 }
 
 function renderPrep() {
-  const today = ymd(new Date());
+  const today = bizDate();
   const items = prepItems();
   const rec = state.prepToday && state.prepToday.date === today ? state.prepToday : null;
   const st = prepStats(today);
@@ -2054,7 +2100,7 @@ function syncPrepEdit() {
 /* ---------- Selejt ---------- */
 function wasteOf(dates) { return state.waste.filter(w => dates.includes(w.date)); }
 function renderWaste() {
-  const today = ymd(new Date());
+  const today = bizDate();
   const all = [...state.waste].sort((a, b) => (a.at < b.at ? 1 : -1));
   const byDate = {};
   all.forEach(w => (byDate[w.date] = byDate[w.date] || []).push(w));
@@ -2074,7 +2120,7 @@ function renderWaste() {
           ${url ? `<button class="thumb" type="button" data-wphoto="${esc(w.id)}"><img src="${esc(url)}" alt=""></button>` : '<div class="thumb"></div>'}
           <div>
             <div class="n">${esc(w.item)} · <span class="num">${fmtQty(w.qty)} ${esc(w.unit || '')}</span></div>
-            <div class="s">${esc(w.reason)} · ${esc(w.by || '—')} · ${hhmm(w.at)}${w.cost ? ` · <b>${fmtQty(w.cost)} Ft</b>` : ''}${w.note ? ` · ${esc(w.note)}` : ''}</div>
+            <div class="s">${esc(w.reason)} · ${esc(w.by || '—')} · ${hhmm(w.at)}${w.cost ? ` · <b>${fmtFt(w.cost)} Ft</b>` : ''}${w.note ? ` · ${esc(w.note)}` : ''}</div>
           </div>
           ${state.isAdmin ? `<button class="ico-btn" type="button" data-wdel="${esc(w.id)}" aria-label="Törlés">${ICON.trash}</button>` : '<span></span>'}
         </div>`;
@@ -2087,7 +2133,7 @@ function renderWaste() {
     <button class="btn primary block" type="button" data-wnew style="margin-bottom:14px">+ Selejt rögzítése</button>
     ${m30.length ? `<div class="card" style="display:flex;gap:18px;align-items:center;justify-content:space-around;text-align:center">
       <div><div class="v3 num">${m30.length}</div><div class="small muted">bejegyzés · 30 nap</div></div>
-      ${ft ? `<div><div class="v3 num" style="color:var(--danger)">${fmtQty(ft)} Ft</div><div class="small muted">becsült érték</div></div>` : ''}
+      ${ft ? `<div><div class="v3 num" style="color:var(--danger)">${fmtFt(ft)} Ft</div><div class="small muted">becsült érték</div></div>` : ''}
     </div>` : ''}
     ${topReasons.length ? `<div class="section"><h3 style="margin-bottom:8px">Okok · 30 nap</h3><div class="card">
       ${topReasons.map(([r, n]) => `<div class="stat-row"><div><div class="n">${esc(r)}</div><div class="minibar"><i style="width:${Math.round(100 * n / maxR)}%;background:var(--danger)"></i></div></div><div class="v">${n}</div></div>`).join('')}
@@ -2139,13 +2185,13 @@ function wasteModal() {
         if (!reason) { toast('Válaszd ki az okot.'); return; }
         const cost = parseFloat(String($('#wCost', m).value).replace(/[^\d.,]/g, '').replace(',', '.'));
         const body = {
-          date: ymd(new Date()), at: new Date().toISOString(), by: state.who || '',
+          date: bizDate(), at: new Date().toISOString(), by: state.who || '',
           item, qty, unit: $('#wUnit', m).value.trim(), reason, station,
           cost: isNaN(cost) ? null : cost, note: $('#wNote', m).value.trim(), photo: state._wastePhoto || null,
         };
         state._wastePhoto = null;
         try {
-          await state.db.doc('waste/' + ymd(new Date()) + '_' + Date.now()).set(body);
+          await state.db.doc('waste/' + bizDate() + '_' + Date.now()).set(body);
           closeModal(); toast('Rögzítve. Köszi, hogy bevallottad.');
         } catch (e) { console.warn(e); toast('Nem sikerült menteni.'); }
       });
@@ -2161,7 +2207,7 @@ async function exportWasteCsv() {
   let dl = state.downloads;
   if (!dl) { try { dl = state.downloads = await window.claude.use('downloads'); } catch (e) { dl = null; } }
   if (!dl) { toast('A letöltés ebben a nézetben nem érhető el.'); return; }
-  try { await dl.save({ filename: `burgerprof-selejt-${ymd(new Date())}.csv`, data: csv }); }
+  try { await dl.save({ filename: `burgerprof-selejt-${bizDate()}.csv`, data: csv }); }
   catch (e) { if (e && e.code !== 'declined') toast('Nem sikerült a letöltés.'); }
 }
 
@@ -2302,6 +2348,11 @@ document.addEventListener('click', async e => {
     return;
   }
   /* beállítások */
+  if ('daystart' in d) {
+    const v = parseInt($('#dayStart').value, 10);
+    if (isNaN(v) || v < 0 || v > 12) { toast('0 és 12 közötti órát adj meg.'); return; }
+    await saveSettings({ dayStartHour: v }); toast('Mentve.'); return;
+  }
   if ('staffAdd' in d) {
     const v = $('#staffIn').value.trim();
     if (!v) return;
@@ -2390,7 +2441,15 @@ async function saveSettings(patch) {
   } catch (err) { console.warn(err); toast(err && err.code === 'invalid_argument' ? 'Ehhez vezetői (szerkesztési) hozzáférés kell.' : 'Nem sikerült menteni.'); }
 }
 
-setInterval(() => { const t = ymd(new Date()); if (t !== state._day) { state._day = t; subscribeToday(); render(); } }, 60000);
+state._day = bizDate();
+setInterval(() => {
+  const t = bizDate();
+  if (t === state._day) return;
+  state._day = t;
+  subscribeToday();
+  subscribePrepDay();
+  render();
+}, 60000);
 
 render();
 initStore();

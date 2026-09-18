@@ -52,6 +52,13 @@ v1.0) helyett.
 * **Beállítások (csak vezetőknek)** – dolgozók névsora, sablonok szerkesztése
   (szöveg, sorrend, heti napok, kötelező, fotó kell, határidő, aláírási mód).
 
+## Üzleti nap
+
+A nap nem éjfélkor vált, hanem a `settings/app.dayStartHour` órában (alap: 5).
+Így a hajnali zárás még az előző naphoz tartozik, és a lista akkor is
+szerkeszthető és aláírható. A `dueBy` határidőnél a nap kezdete előtti óra a
+következő naptári napot jelenti, tehát `01:00` = éjfél után egy órával.
+
 ## Hogyan fut
 
 A fájl a claude.ai Artifact futtatókörnyezetére épül:
