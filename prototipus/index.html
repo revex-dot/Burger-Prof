@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <title>Burger Prof. — Smash burger, Balatonfüred</title>
+  <meta name="description" content="Smash burgers for geniuses. Online rendelés, kiszállítás Balatonfüreden és környékén.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="guest">
+
+  <!-- Szünetel / zárva sáv -->
+  <div id="closed-bar" class="closed-bar" role="status" hidden></div>
+
+  <!-- ÉTLAP NÉZET -->
+  <div id="view-menu">
+    <header class="topbar">
+      <a href="#" class="logo" aria-label="Burger Prof. főoldal">BURGER<span>PROF.</span></a>
+      <span class="topbar-tag" id="tagline"></span>
+    </header>
+
+    <section class="hero" aria-label="Burger Prof.">
+      <div class="ph ph-hero" id="hero-photo"></div>
+      <div class="hero-body">
+        <h1 id="hero-title"></h1>
+        <a href="#etlap" class="btn btn-red btn-xl" id="hero-cta"></a>
+        <p class="hero-info" id="hero-info"></p>
+      </div>
+    </section>
+
+    <nav class="cat-tabs" id="cat-tabs" aria-label="Kategóriák"></nav>
+
+    <main id="etlap" class="menu"></main>
+
+    <footer class="footer" id="footer"></footer>
+  </div>
+
+  <!-- PÉNZTÁR NÉZET -->
+  <div id="view-checkout" class="view" hidden></div>
+
+  <!-- JUTALOM NÉZET -->
+  <div id="view-success" class="view" hidden></div>
+
+  <!-- Kosár-sáv (sticky alul) -->
+  <div id="cart-bar" class="cart-bar" hidden>
+    <div class="progress" id="bar-progress">
+      <div class="progress-text" id="bar-progress-text"></div>
+      <div class="progress-track"><div class="progress-fill" id="bar-progress-fill"></div></div>
+    </div>
+    <button type="button" class="btn btn-red cart-bar-btn" data-action="open-cart" aria-live="polite">
+      <span class="cart-bar-count" id="bar-count"></span>
+      <span id="bar-total"></span>
+      <span class="cart-bar-go">Tovább →</span>
+    </button>
+  </div>
+
+  <!-- Kosár panel -->
+  <div id="cart-sheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-action="close-cart"></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="sheet-head">
+        <h2 id="cart-title">Kosár</h2>
+        <button type="button" class="icon-btn" data-action="close-cart" aria-label="Kosár bezárása">✕</button>
+      </div>
+      <div class="sheet-body" id="cart-body"></div>
+      <div class="sheet-foot" id="cart-foot"></div>
+    </div>
+  </div>
+
+  <!-- Extra panel -->
+  <div id="extra-sheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-action="close-extra"></div>
+    <div class="sheet-panel sheet-small" role="dialog" aria-modal="true" aria-labelledby="extra-title">
+      <div class="sheet-head">
+        <h2 id="extra-title">Extra</h2>
+        <button type="button" class="icon-btn" data-action="close-extra" aria-label="Bezárás">✕</button>
+      </div>
+      <div class="sheet-body" id="extra-body"></div>
+      <div class="sheet-foot" id="extra-foot"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+  <script src="data.js"></script>
+  <script src="kozos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
