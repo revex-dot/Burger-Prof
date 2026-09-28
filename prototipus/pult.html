@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <meta name="robots" content="noindex">
+  <title>Pult — Burger Prof.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pult">
+
+  <header class="pult-top">
+    <span class="logo">BURGER<span>PROF.</span> <span class="muted">pult</span></span>
+    <button type="button" class="switch" id="ordering-switch" role="switch" aria-checked="true" data-action="toggle-ordering">
+      <span class="switch-knob" aria-hidden="true"></span><span id="ordering-label">Online rendelés BE</span>
+    </button>
+    <button type="button" class="pult-btn" id="sound-btn" data-action="sound">🔈 Hang bekapcsolása</button>
+    <button type="button" class="pult-btn" data-action="test-order">＋ Teszt rendelés</button>
+  </header>
+
+  <nav class="pult-tabs" aria-label="Nézetek">
+    <button type="button" class="pult-tab active" data-action="tab" data-tab="active">Aktív <span class="badge" id="active-badge" hidden></span></button>
+    <button type="button" class="pult-tab" data-action="tab" data-tab="history">Korábbi rendelések</button>
+    <button type="button" class="pult-tab" data-action="tab" data-tab="menu">Étlap</button>
+  </nav>
+
+  <main class="pult-main">
+    <section id="tab-active"></section>
+    <section id="tab-history" hidden>
+      <input type="search" class="pult-search" id="search" placeholder="Keresés: név, telefon, rendelési szám" aria-label="Keresés a korábbi rendelések között">
+      <div id="history-list"></div>
+    </section>
+    <section id="tab-menu" hidden></section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="kozos.js"></script>
+  <script src="pult.js"></script>
+</body>
+</html>

@@ -113,11 +113,12 @@ class ProgressStats {
   /// Sessions + average rating for a single goal.
   static ({int count, double avg, int lastWeek}) forGoal(
     List<TrainingSession> sessions,
-    String goalId,
-  ) {
+    String goalId, {
+    DateTime? now,
+  }) {
     final mine = sessions.where((s) => s.behaviorId == goalId).toList();
     if (mine.isEmpty) return (count: 0, avg: 0, lastWeek: 0);
-    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+    final weekAgo = (now ?? DateTime.now()).subtract(const Duration(days: 7));
     return (
       count: mine.length,
       avg: mine.map((s) => s.successRating).reduce((a, b) => a + b) /

@@ -144,7 +144,7 @@ void main() {
         _session('g1', now.subtract(const Duration(days: 10)), 3),
         _session('g2', now, 1),
       ];
-      final r = ProgressStats.forGoal(sessions, 'g1');
+      final r = ProgressStats.forGoal(sessions, 'g1', now: now);
       expect(r.count, 2);
       expect(r.avg, closeTo(4.0, 0.0001));
       expect(r.lastWeek, 1);
