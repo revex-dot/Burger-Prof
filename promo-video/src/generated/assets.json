@@ -1,0 +1,81 @@
+{
+  "poster": {
+    "width": 1600,
+    "height": 2000
+  },
+  "orange": "#E64F1C",
+  "yellow": "#F4D002",
+  "method": "rect",
+  "classic": {
+    "bg": "#E64F1C",
+    "ink": "#F4D002",
+    "title": {
+      "left": 114,
+      "top": 107,
+      "width": 1153,
+      "height": 151
+    },
+    "subtitle": {
+      "left": 113,
+      "top": 292,
+      "width": 767,
+      "height": 76
+    },
+    "burger": {
+      "left": 0,
+      "top": 900,
+      "width": 1600,
+      "height": 1100
+    },
+    "keyHoleRatio": 0.0060790407449908485,
+    "seam": 0
+  },
+  "prof": {
+    "bg": "#E64F1C",
+    "ink": "#F4CF02",
+    "title": {
+      "left": 118,
+      "top": 115,
+      "width": 1216,
+      "height": 235
+    },
+    "subtitle": {
+      "left": 113,
+      "top": 382,
+      "width": 1045,
+      "height": 76
+    },
+    "burger": {
+      "left": 0,
+      "top": 900,
+      "width": 1600,
+      "height": 1100
+    },
+    "keyHoleRatio": 0.012979070097856394,
+    "seam": 0
+  },
+  "genius": {
+    "bg": "#E64F1C",
+    "ink": "#F7D104",
+    "title": {
+      "left": 114,
+      "top": 110,
+      "width": 1125,
+      "height": 175
+    },
+    "subtitle": {
+      "left": 115,
+      "top": 303,
+      "width": 670,
+      "height": 77
+    },
+    "burger": {
+      "left": 0,
+      "top": 900,
+      "width": 1600,
+      "height": 1100
+    },
+    "keyHoleRatio": 0.005876801889617839,
+    "seam": 0
+  }
+}
